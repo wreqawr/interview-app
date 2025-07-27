@@ -129,7 +129,7 @@ public class ResumeServiceImpl implements ResumeService {
         String hashKey = String.valueOf(user.getUserId()) == null ? "" : String.valueOf(user.getUserId());
         List<String> hashValueList = JSONUtil.toList((String) redisTemplate.opsForHash().get(redisKey, hashKey), String.class);
         try {
-            if (hashValueList == null || hashValueList.isEmpty() || !hashValueList.contains(fileName)) {
+            if (hashValueList == null || !hashValueList.contains(fileName)) {
                 throw new ResumeNoPermissionDownloadException("当前用户无权限下载该简历！");
             }
             String bucketName = globalProperties.getMinio().getBucketName().get("resumeUpload");
