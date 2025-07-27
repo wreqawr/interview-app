@@ -69,6 +69,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 // 要在spring security的上下文中放置一个认证对象。
                 // 这样的话，spring security在执行后续的Filter的时候，
                 // 才知道这个人是登录了的。
+                System.out.println(user);
+                System.out.println(user.getAuthorities());
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 filterChain.doFilter(request, response);

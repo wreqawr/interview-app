@@ -3,9 +3,12 @@ package cn.minglg.interview.minio.service.impl;
 import cn.minglg.interview.minio.service.MinioService;
 import io.minio.*;
 import io.minio.http.Method;
+import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
 
 /**
  * ClassName:MinioServiceImpl
@@ -44,6 +47,10 @@ public class MinioServiceImpl implements MinioService {
     public void deleteBucketIfExist(String bucketName) throws Exception {
         BucketExistsArgs bucketExistsArgs = BucketExistsArgs.builder().bucket(bucketName).build();
         boolean bucketExists = minioClient.bucketExists(bucketExistsArgs);
+        if (bucketExists) {
+            deleteAllFiles(bucketName);
+            minioClient.removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
+        }
     }
 
     /**
@@ -91,7 +98,11 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public void deleteFile(String bucketName, String fileName) throws Exception {
-
+        RemoveObjectArgs objectArgs = RemoveObjectArgs.builder()
+                .bucket(bucketName)
+                .object(fileName)
+                .build();
+        minioClient.removeObject(objectArgs);
     }
 
     /**
@@ -99,9 +110,47 @@ public class MinioServiceImpl implements MinioService {
      *
      * @param bucketName 桶名称
      * @param fileName   文件名
+     * @return 文件流
+     * @throws Exception 异常
      */
     @Override
-    public void downloadFile(String bucketName, String fileName) {
+    public InputStream downloadFile(String bucketName, String fileName) throws Exception {
+        GetObjectArgs objectArgs = GetObjectArgs.builder()
+                .bucket(bucketName)
+                .object(fileName)
+                .build();
+        return minioClient.getObject(objectArgs);
+    }
 
+    /**
+     * 获取文件类型
+     *
+     * @param bucketName 桶名称
+     * @param fileName   文件名
+     * @return 文件类型
+     * @throws Exception 异常
+     */
+    @Override
+    public String getContentType(String bucketName, String fileName) throws Exception {
+        StatObjectResponse stat = minioClient.statObject(
+                StatObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(fileName)
+                        .build());
+        return stat.contentType();
+    }
+
+    private void deleteAllFiles(String bucketName) throws Exception {
+        // 列出所有对象
+        Iterable<Result<Item>> results = minioClient.listObjects(
+                ListObjectsArgs.builder()
+                        .bucket(bucketName)
+                        .recursive(true)
+                        .build());
+
+        for (Result<Item> result : results) {
+            Item item = result.get();
+            deleteFile(bucketName, item.objectName());
+        }
     }
 }

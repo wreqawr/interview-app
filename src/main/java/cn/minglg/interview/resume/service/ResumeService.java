@@ -4,6 +4,7 @@ import cn.minglg.interview.common.response.R;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * ClassName:ResumeService
@@ -23,6 +24,22 @@ public interface ResumeService {
      * @return 上传结果
      */
     R resumeUpload(MultipartFile file);
+
+    /**
+     * 简历下载接口
+     *
+     * @param fileName 文件名
+     * @return 文件流
+     */
+    Map<String, Object> resumeDownload(String fileName);
+
+    /**
+     * 简历删除接口
+     *
+     * @param fileName 文件名
+     * @return 操作结果
+     */
+    R resumeDelete(String fileName);
 
     /**
      * 获取文件扩展名

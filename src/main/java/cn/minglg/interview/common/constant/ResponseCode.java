@@ -27,6 +27,12 @@ public enum ResponseCode {
     REGISTER_FAIL(204, "注册失败"),
     // 简历上传失败
     RESUME_UPLOAD_FAIL(205, "简历上传失败"),
+    // 简历下载失败
+    RESUME_DOWNLOAD_FAIL(206, "简历下载失败"),
+    // 简历删除失败
+    RESUME_DELETE_FAIL(207, "简历删除失败"),
+
+
     // 登录认证失败
     AUTH_FAIL(401, "登录认证失败"),
     // 权限不足
