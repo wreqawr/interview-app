@@ -20,10 +20,6 @@ import java.util.List;
 @Data
 public class ResumeProperties {
     /**
-     * 文件上传的临时目录
-     */
-    private String fileUploadPath;
-    /**
      * 允许上传的文件类型
      */
     private List<String> allowFileTypes;
@@ -31,4 +27,8 @@ public class ResumeProperties {
      * 简历上传成功后，新的简历文件名称需要保存在redis中
      */
     private String resumeRedisKeyPrefix;
+    /**
+     * 简历解析器选择策略（fast/accurate/auto）
+     */
+    private String parserStrategy = "auto";
 }

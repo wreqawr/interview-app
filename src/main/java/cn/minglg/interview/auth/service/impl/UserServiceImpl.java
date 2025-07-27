@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
             // 第三步：判断是否有公司信息需要添加，如有，也应该一并添加
             Company company = user.getCompany();
             if (company != null) {
-                String companyName = user.getCompany().getCompanyName();
+                String companyName = company.getCompanyName();
                 if (companyName != null && !companyName.trim().isEmpty()) {
                     // 第四步：获取公司的id
                     companyMapper.upsertCompany(company);

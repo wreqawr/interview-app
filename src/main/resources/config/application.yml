@@ -134,15 +134,30 @@ global:
 
   # 简历相关
   resume:
-    # 文件上传临时目录
-    file-upload-path: resumeUploads
     # 文件类型白名单（仅允许以下类型的文件上传）
     allow-file-types:
       - .pdf
       - .doc
       - .docx
+      - .txt
     # 简历保存在redis中的简历文件名的key前缀
-    resume-redis-key-prefix: resume:save
+    resume-redis-key-prefix: resume:resume-upload
+    # 简历解析器选择策略，不配置默认是auto（fast/accurate/auto）
+    parser-strategy: auto
+
+  # minio文件存储相关
+  minio:
+    # minio服务API地址
+    endpoint: ${MINIO_ENDPOINT}
+    # 管理员账户
+    access-key: ${MINIO_ACCESS_KEY}
+    # 管理员密码
+    secret-key: ${MINIO_SECRET_KEY}
+    # 桶信息（map集合）
+    bucket-name:
+      resumeUpload: resume-upload
+
+
 
 
 

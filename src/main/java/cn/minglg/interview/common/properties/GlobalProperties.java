@@ -31,6 +31,8 @@ public class GlobalProperties {
     private CaptchaProperties captcha;
     private RegisterProperties register;
     private ResumeProperties resume;
+    private MinioProperties minio;
+
 
     public void initWhiteListPatternsAsRequestMatcher() {
         whiteListPatterns = whiteListPatterns == null ? Collections.emptyList() : whiteListPatterns;

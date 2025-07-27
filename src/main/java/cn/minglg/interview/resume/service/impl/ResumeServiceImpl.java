@@ -6,6 +6,7 @@ import cn.minglg.interview.common.constant.ResponseCode;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.common.utils.UserUtils;
+import cn.minglg.interview.minio.service.MinioService;
 import cn.minglg.interview.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -14,9 +15,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,6 +34,7 @@ import java.util.UUID;
 public class ResumeServiceImpl implements ResumeService {
     private final GlobalProperties globalProperties;
     private final StringRedisTemplate redisTemplate;
+    private final MinioService minioService;
 
 
     /**
@@ -46,7 +45,6 @@ public class ResumeServiceImpl implements ResumeService {
      */
     @Override
     public R resumeUpload(MultipartFile file) {
-        String fileUploadPath = globalProperties.getResume().getFileUploadPath();
         List<String> allowFileTypes = globalProperties.getResume().getAllowFileTypes();
 
         // 第一步：基础校验
@@ -70,19 +68,15 @@ public class ResumeServiceImpl implements ResumeService {
 
             // 第四步：生成唯一文件名（防止重名和安全问题）
             String fileExtension = getFileExtension(originalFilename);
-            String randomPrefix = UUID.randomUUID().toString().replace("-", "").substring(0, 5) + System.currentTimeMillis();
+            String randomPrefix = System.currentTimeMillis() + UUID.randomUUID().toString().replace("-", "").substring(0, 5);
             String newFilename = randomPrefix + fileExtension;
 
             // 第五步：文件大小校验（自动生效于application配置）
 
-            // 第六步：路径拼接（使用系统临时目录 + 应用目录，避免权限问题）
-            Path fileStorageLocation = Paths.get(System.getProperty("java.io.tmpdir"), fileUploadPath);
-            Path targetLocation = fileStorageLocation.resolve(newFilename);
-            // 确保目录存在
-            Files.createDirectories(fileStorageLocation);
-            // 第七步：实际保存
-            file.transferTo(targetLocation);
-            // 第八步：用户简历元信息保存至redis
+            // 第六步：文件保存至Minio
+            String resumeUploadBucketName = globalProperties.getMinio().getBucketName().get("resumeUpload");
+            minioService.uploadFile(resumeUploadBucketName, file, newFilename);
+            // 第七步：用户简历元信息保存至redis
             User user = UserUtils.getCurrentUser();
             String redisKey = globalProperties.getResume().getResumeRedisKeyPrefix();
             String hashKey = "";
@@ -92,7 +86,7 @@ public class ResumeServiceImpl implements ResumeService {
             String hashValueStr = (String) redisTemplate.opsForHash().get(redisKey, hashKey);
             hashValueStr = hashValueStr == null ? "[]" : hashValueStr;
             List<String> hashValueList = JSONUtil.toList(hashValueStr, String.class);
-            hashValueList.add(targetLocation.toString());
+            hashValueList.add(minioService.getFileUrl(resumeUploadBucketName, newFilename));
             hashValueStr = JSONUtil.toJsonStr(hashValueList);
             redisTemplate.opsForHash().put(redisKey, hashKey, hashValueStr);
 
