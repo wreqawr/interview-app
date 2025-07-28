@@ -68,6 +68,8 @@ public class JwtUtils {
         } catch (JWTVerificationException e) {
             throw new JWTVerificationException("JWT认证失败：" + e.getMessage(), e);
         }
+        System.out.println("============claims==========");
+        System.out.println(claims);
         return JSONUtil.toBean(claims, JSON_CONFIG, User.class);
     }
 }

@@ -1,6 +1,8 @@
 # 项目运行端口
 server:
   port: 8081
+#  tomcat:
+#    max-http-response-header-size: 16KB
 
 # actuator观测指标
 management:

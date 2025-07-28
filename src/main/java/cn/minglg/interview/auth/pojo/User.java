@@ -40,6 +40,7 @@ public class User implements UserDetails, Serializable {
     private String nickname;
     private String email;
     private UserStatus status;
+    @PropIgnore
     private LocalDateTime createdAt;
 
     /**
@@ -58,7 +59,7 @@ public class User implements UserDetails, Serializable {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         this.getRoles().forEach(role -> {
             authorities.add(new SimpleGrantedAuthority(role.getRoleName().toString()));
-            role.getPermissions().forEach(permission -> authorities.add(new SimpleGrantedAuthority(permission.getPermissionCode())));
+//            role.getPermissions().forEach(permission -> authorities.add(new SimpleGrantedAuthority(permission.getPermissionCode())));
         });
         return authorities;
     }

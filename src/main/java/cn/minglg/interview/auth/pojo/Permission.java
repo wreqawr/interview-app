@@ -1,6 +1,5 @@
 package cn.minglg.interview.auth.pojo;
 
-import cn.hutool.core.annotation.PropIgnore;
 import lombok.Data;
 
 /**
@@ -14,7 +13,6 @@ import lombok.Data;
  */
 @Data
 public class Permission {
-    @PropIgnore
     private Long permissionId;
     private String permissionCode;
     private String description;
