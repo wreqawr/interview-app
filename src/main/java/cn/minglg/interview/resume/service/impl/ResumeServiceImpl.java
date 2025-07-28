@@ -127,6 +127,7 @@ public class ResumeServiceImpl implements ResumeService {
         }
         String redisKey = globalProperties.getResume().getResumeRedisKeyPrefix();
         String hashKey = String.valueOf(user.getUserId()) == null ? "" : String.valueOf(user.getUserId());
+        // 当前用户可下载的简历列表
         List<String> hashValueList = JSONUtil.toList((String) redisTemplate.opsForHash().get(redisKey, hashKey), String.class);
         try {
             if (hashValueList == null || !hashValueList.contains(fileName)) {
