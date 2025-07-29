@@ -89,9 +89,9 @@ global:
   # 认证信息相关
   auth:
     # 登录请求超时时间（秒）
-    request-timeout-seconds: 5000
+    request-timeout-seconds: 5
     # jwt/redis过期时间（分）
-    jwt-expiration-minutes: 10
+    jwt-expiration-minutes: 30
     # 登录认证信息存储在redis中的key前缀
     auth-key-prefix: user:security:login
     # 登录页
@@ -118,7 +118,7 @@ global:
     # 随机字符序列（当验证码生成器为RandomGenerator时有效，不配置默认为26位大小写字母+10位数字组合）
     # baseStr:
     # 验证码生成器（用于条件注解，不配置默认是cn.hutool.captcha.generator.MathGenerator）
-    code-generator: cn.hutool.captcha.generator.RandomGenerator
+    code-generator: cn.hutool.captcha.generator.MathGenerator
     # 保存在redis中的key前缀
     redis-key-prefix: user:captcha
     # redis中保存key的过期时间
