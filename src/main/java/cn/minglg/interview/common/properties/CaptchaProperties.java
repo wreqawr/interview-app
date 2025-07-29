@@ -45,6 +45,11 @@ public class CaptchaProperties {
      * 随机字符序列（当验证码生成器为RandomGenerator时有效，不配置默认为26位大小写字母+10位数字组合）
      */
     private String baseStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    /**
+     * 验证码生成器（用于条件注解）
+     */
+    private String codeGenerator;
     /**
      * 保存在redis中的key前缀
      */

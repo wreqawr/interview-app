@@ -112,11 +112,13 @@ global:
     # 验证码高度
     height: 40
     # 验证码数字个数
-    codeCount: 4
+    code-count: 4
     # 干扰元素个数
     thickness: 10
     # 随机字符序列（当验证码生成器为RandomGenerator时有效，不配置默认为26位大小写字母+10位数字组合）
     # baseStr:
+    # 验证码生成器（用于条件注解，不配置默认是cn.hutool.captcha.generator.MathGenerator）
+    code-generator: cn.hutool.captcha.generator.RandomGenerator
     # 保存在redis中的key前缀
     redis-key-prefix: user:captcha
     # redis中保存key的过期时间

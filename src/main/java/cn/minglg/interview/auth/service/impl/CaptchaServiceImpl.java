@@ -5,7 +5,7 @@ import cn.hutool.captcha.generator.CodeGenerator;
 import cn.minglg.interview.auth.service.CaptchaService;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.utils.CaptchaUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,20 +21,13 @@ import java.util.concurrent.TimeUnit;
  * @Create 2025/7/18
  * @Version 1.0
  */
+@RequiredArgsConstructor
 @Service
 public class CaptchaServiceImpl implements CaptchaService {
     private final GlobalProperties globalProperties;
     private final CodeGenerator codeGenerator;
     private final StringRedisTemplate redisTemplate;
 
-    public CaptchaServiceImpl(GlobalProperties globalProperties,
-                              @Qualifier("mathGenerator")
-                              CodeGenerator codeGenerator,
-                              StringRedisTemplate redisTemplate) {
-        this.globalProperties = globalProperties;
-        this.codeGenerator = codeGenerator;
-        this.redisTemplate = redisTemplate;
-    }
 
     /**
      * 生成验证码

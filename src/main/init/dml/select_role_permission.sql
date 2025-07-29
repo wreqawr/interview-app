@@ -5,5 +5,5 @@ from t_role tr,
 where tr.role_id = trp.role_id
   and trp.permission_id = tp.permission_id;
 
-select count(*)
-from t_role_permission;
+select tp.permission_code,tp.description
+from t_permission tp;
