@@ -5,7 +5,7 @@ set -e
 
 # 定义镜像名称
 # shellcheck disable=SC2269
-IMAGE_NAME="interview-web:latest"
+IMAGE_NAME="interview-app:latest"
 
 # 检查镜像是否存在
 if docker image inspect "$IMAGE_NAME" &> /dev/null; then
@@ -25,13 +25,13 @@ fi
 
 echo "开始构建 Docker 镜像..."
 
-docker build --no-cache -t interview-app:latest .
+docker build --no-cache -t $IMAGE_NAME .
 
 echo "构建完成！"
 
 # 可选：推送到镜像仓库
-# docker tag interview-app:latest your-registry/interview-app:latest
-# docker push your-registry/interview-app:latest
+# docker tag $IMAGE_NAME your-registry/$IMAGE_NAME
+# docker push your-registry/$IMAGE_NAME
 
 echo "镜像构建完成，可以使用以下命令运行："
 echo "docker run -d -p 8081:8081 --name interview-app \
@@ -40,6 +40,6 @@ echo "docker run -d -p 8081:8081 --name interview-app \
   -e MYSQL_PASSWORD=your_db_password \
   -e REDIS_HOST=your-redis-host \
   -e REDIS_PASSWORD=your_redis_password \
-  interview-app:latest"
+  $IMAGE_NAME"
 echo "或者使用 docker-compose:"
 echo "docker-compose up -d" 
