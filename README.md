@@ -6,16 +6,16 @@
 
 ## 一、项目简介
 
-本项目为"AI模拟面试系统"后端，基于Spring Boot 3.4.6，集成Spring Security、JWT、Mybatis、MinIO、Apache Tika等，提供认证授权、简历解析、文件存储、AI面试、RBAC权限、数据存储等核心服务。支持Docker容器化部署，敏感信息通过环境变量注入，适合企业级生产环境。
+本项目为"AI模拟面试系统"后端，基于Spring Boot 3.4.6，集成Spring Security、JWT、Mybatis、MinIO、Apache Tika、阿里云AI等，提供认证授权、简历解析、文件存储、AI智能分析、RBAC权限、数据存储等核心服务。支持Docker容器化部署，敏感信息通过环境变量注入，适合企业级生产环境。
 
 ---
 
 ## 二、主要功能
 
 - **用户认证与权限管理**：基于RBAC模型，支持JWT、RSA加密、验证码校验、权限细粒度控制
-- **简历管理与智能解析**：简历上传、解析（PDF/Word/TXT）、关键信息提取、评分、格式转换
+- **简历管理与智能解析**：简历上传、解析（PDF/Word/TXT）、关键信息提取、AI智能分析、结构化数据输出
 - **文件存储服务**：基于MinIO的对象存储，支持文件上传、下载、删除、URL生成
-- **AI面试引擎**：支持多场景AI问答、面试流程管理、答题评估（预留接口）
+- **AI智能分析引擎**：集成阿里云通义千问，支持简历智能解析、结构化数据提取、智能纠错
 - **企业与岗位管理**：企业、岗位、用户、角色、权限等基础数据管理
 - **统一响应与异常处理**：标准化API响应结构，丰富的异常处理机制
 - **安全加固**：RSA加密、BCrypt密码、敏感数据脱敏、全链路HTTPS
@@ -25,17 +25,18 @@
 
 ## 三、技术栈
 
-| 模块 | 技术实现 | 版本 | 说明 |
-|------|----------|------|------|
-| **后端框架** | Spring Boot | 3.4.6 | Java 17基础 |
+| 模块 | 技术实现 | 版本          | 说明 |
+|------|----------|-------------|------|
+| **后端框架** | Spring Boot | 3.4.6       | Java 17基础 |
 | **安全框架** | Spring Security + JWT | 6.x + 4.5.0 | OAuth2.0兼容 |
-| **数据访问** | MyBatis + MySQL | 3.x + 8.x | 关系型数据库 |
-| **缓存** | Redis Cluster | 7.x | 分布式缓存 |
-| **文件存储** | MinIO | 8.5.17 | 对象存储服务 |
-| **文档解析** | Apache Tika | 3.1.0 | PDF/Word/TXT解析 |
-| **工具库** | Hutool | 5.8.39 | 工具类集合 |
-| **构建工具** | Maven | 3.9.9 | 依赖管理 |
-| **容器化** | Docker | - | 容器化部署 |
+| **数据访问** | MyBatis + MySQL | 3.x + 8.x   | 关系型数据库 |
+| **缓存** | Redis Cluster | 8.2         | 分布式缓存 |
+| **文件存储** | MinIO | 8.5.17      | 对象存储服务 |
+| **文档解析** | Apache Tika | 3.1.0       | PDF/Word/TXT解析 |
+| **AI服务** | 阿里云通义千问 | 1.0.0.2     | 智能简历分析 |
+| **工具库** | Hutool | 5.8.39      | 工具类集合 |
+| **构建工具** | Maven | 3.9.9       | 依赖管理 |
+| **容器化** | Docker | -           | 容器化部署 |
 
 ---
 
@@ -73,7 +74,9 @@ interview-app/
 │   │   │   ├── minio/                              # 文件存储模块
 │   │   │   │   ├── service/                        # MinIO服务接口与实现
 │   │   │   │   └── config/                         # MinIO配置
-│   │   │   └── ai/                                 # AI模块（预留）
+│   │   │   └── ai/                                 # AI模块
+│   │   │       ├── config/                         # AI配置（通义千问）
+│   │   │       └── service/                        # AI服务（简历分析）
 │   │   ├── resources/
 │   │   │   ├── config/application.yml              # 配置文件，端口8081，敏感信息用环境变量
 │   │   │   ├── mapper/                             # MyBatis XML映射
@@ -102,16 +105,23 @@ interview-app/
 ### 5.2 简历管理（resume）
 - **文件上传**：支持PDF、Word、TXT格式，文件大小限制5MB
 - **智能解析**：基于Apache Tika的文档内容提取
+- **AI分析**：集成阿里云通义千问，智能解析简历内容，提取结构化数据
 - **文件存储**：集成MinIO对象存储，支持分布式部署
 - **下载管理**：文件下载、删除、权限控制
 
-### 5.3 文件存储（minio）
+### 5.3 AI智能分析（ai）
+- **简历智能解析**：基于通义千问的简历内容分析
+- **结构化数据提取**：自动提取个人信息、教育背景、工作经验、项目经历等
+- **智能纠错**：自动修正文本中的错别字和技术术语错误
+- **格式标准化**：统一日期、技能名称等字段格式
+
+### 5.4 文件存储（minio）
 - **对象存储**：基于MinIO的文件上传、下载、删除
 - **URL生成**：预签名URL，支持临时访问
 - **桶管理**：自动创建、删除存储桶
 - **文件类型**：支持多种文件类型识别
 
-### 5.4 通用与全局（common）
+### 5.5 通用与全局（common）
 - **统一响应**：标准化API响应结构
 - **异常处理**：全局异常捕获与处理
 - **工具类**：JWT、RSA、验证码、用户工具等
@@ -129,6 +139,7 @@ interview-app/
 - **MySQL**：8.0+
 - **Redis**：7.0+（集群模式）
 - **MinIO**：8.5.17+
+- **阿里云API**：通义千问API密钥
 
 ### 6.2 本地构建
 
@@ -146,6 +157,7 @@ export REDIS_PASSWORD=your_redis_password
 export MINIO_ENDPOINT=http://localhost:9000
 export MINIO_ACCESS_KEY=admin
 export MINIO_SECRET_KEY=your_minio_password
+export ALIYUN_API_KEY=your_aliyun_api_key
 
 # 3. 构建jar包
 mvn clean package -DskipTests
@@ -168,6 +180,7 @@ docker run -d \
   -e MINIO_ENDPOINT=http://your-minio-host:9000 \
   -e MINIO_ACCESS_KEY=admin \
   -e MINIO_SECRET_KEY=your_minio_password \
+  -e ALIYUN_API_KEY=your_aliyun_api_key \
   --name interview-app interview-app:latest
 ```
 
@@ -191,6 +204,7 @@ services:
       - MINIO_ENDPOINT=http://minio:9000
       - MINIO_ACCESS_KEY=admin
       - MINIO_SECRET_KEY=minio_password
+      - ALIYUN_API_KEY=your_aliyun_api_key
     restart: unless-stopped
     networks:
       - interview-net
@@ -236,9 +250,10 @@ docker exec -it minio mc mb myminio/resume-upload
 ### 7.1 核心配置
 
 - **端口**：默认8081（见`application.yml`）
-- **敏感信息**：数据库、Redis、MinIO等均通过环境变量注入
+- **敏感信息**：数据库、Redis、MinIO、阿里云API等均通过环境变量注入
 - **文件上传**：单文件最大5MB，总请求最大20MB
-- **JWT过期时间**：默认10分钟，可配置
+- **JWT过期时间**：默认30分钟，可配置
+- **AI模型**：默认使用通义千问qwen-turbo模型
 
 ### 7.2 环境变量
 
@@ -252,6 +267,7 @@ docker exec -it minio mc mb myminio/resume-upload
 | `MINIO_ENDPOINT` | MinIO服务地址 | `http://localhost:9000` |
 | `MINIO_ACCESS_KEY` | MinIO访问密钥 | `admin` |
 | `MINIO_SECRET_KEY` | MinIO秘密密钥 | `minio_password` |
+| `ALIYUN_API_KEY` | 阿里云API密钥 | `your_aliyun_api_key` |
 
 ### 7.3 数据库初始化
 
@@ -284,9 +300,15 @@ mysql -u root -p interview_db < src/main/init/dml/*.sql
 
 | 接口 | 方法 | 路径 | 说明 |
 |------|------|------|------|
-| 简历上传 | POST | `/api/resume/upload` | 上传简历文件 |
-| 简历下载 | GET | `/api/resume/download/{fileName}` | 下载简历文件 |
-| 简历删除 | DELETE | `/api/resume/delete/{fileName}` | 删除简历文件 |
+| 简历上传 | POST | `/api/resume/upload` | 上传简历文件（需要JOB_SEEKER角色） |
+| 简历下载 | GET | `/api/resume/download` | 下载简历文件 |
+| 简历删除 | DELETE | `/api/resume/delete` | 删除简历文件 |
+
+### 8.3 权限说明
+
+- **JOB_SEEKER**：求职者角色，可以上传简历
+- **HR**：人力资源角色，可以查看和管理简历
+- **ADMIN**：管理员角色，拥有所有权限
 
 ---
 
@@ -315,6 +337,11 @@ curl -X GET http://localhost:8081/api/auth/publicKey
 curl -X POST http://localhost:8081/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"encrypted_password","captcha":"1234"}'
+
+# 4. 上传简历（需要JWT token）
+curl -X POST http://localhost:8081/api/resume/upload \
+  -H "Authorization: your_jwt_token" \
+  -F "resume=@/path/to/resume.pdf"
 ```
 
 ---
@@ -339,7 +366,13 @@ curl -X POST http://localhost:8081/api/auth/login \
 - **验证码错误**：检查验证码生成和校验逻辑
 - **权限不足**：检查用户角色和权限配置
 
-### 10.4 部署问题
+### 10.4 AI服务问题
+
+- **阿里云API调用失败**：检查`ALIYUN_API_KEY`环境变量配置
+- **AI模型响应慢**：检查网络连接和API配额
+- **简历解析失败**：检查文件格式和内容质量
+
+### 10.5 部署问题
 
 - **环境变量未配置**：确保所有必需的环境变量都已设置
 - **容器启动失败**：查看Docker日志`docker logs interview-app`
@@ -363,6 +396,12 @@ curl -X POST http://localhost:8081/api/auth/login \
 - **异常处理**：统一使用全局异常处理
 - **日志记录**：使用SLF4J记录关键操作
 - **注释规范**：类和方法必须有注释
+
+### 11.3 AI功能扩展
+
+- **添加新的AI模型**：在`AiConfig`中配置新的ChatClient
+- **自定义提示词**：修改`RESUME_SUMMARIZE_PROMPT`常量
+- **扩展AI服务**：在`ai.service`包下添加新的服务类
 
 ---
 
