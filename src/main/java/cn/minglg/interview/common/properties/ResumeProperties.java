@@ -27,8 +27,4 @@ public class ResumeProperties {
      * 简历上传成功后，新的简历文件名称需要保存在redis中
      */
     private String resumeRedisKeyPrefix;
-    /**
-     * 简历解析器选择策略（fast/accurate/auto）
-     */
-    private String parserStrategy = "auto";
 }

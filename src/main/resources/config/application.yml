@@ -74,6 +74,15 @@ spring:
       # 单次请求最大总大小（多个文件）
       max-request-size: 20MB
 
+  # ai-alibaba配置
+  ai:
+    dashscope:
+      api-key: ${ALIYUN_API_KEY}
+      chat:
+        options:
+          model: qwen-turbo
+
+
 #mybatis配置
 mybatis:
   configuration:
@@ -146,8 +155,6 @@ global:
       - .txt
     # 简历保存在redis中的简历文件名的key前缀
     resume-redis-key-prefix: resume:resume-upload
-    # 简历解析器选择策略，不配置默认是auto（fast/accurate/auto）
-    parser-strategy: auto
 
   # minio文件存储相关
   minio:

@@ -1,6 +1,7 @@
 package cn.minglg.interview.resume.service.impl;
 
 import cn.hutool.json.JSONUtil;
+import cn.minglg.interview.ai.service.AiResumeSummarizeService;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.constant.ResponseCode;
 import cn.minglg.interview.common.exception.UnKnowUserException;
@@ -10,6 +11,7 @@ import cn.minglg.interview.common.utils.UserUtils;
 import cn.minglg.interview.minio.service.MinioService;
 import cn.minglg.interview.resume.exception.ResumeDownloadException;
 import cn.minglg.interview.resume.exception.ResumeNoPermissionDownloadException;
+import cn.minglg.interview.resume.service.ResumeParserService;
 import cn.minglg.interview.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,8 @@ public class ResumeServiceImpl implements ResumeService {
     private final GlobalProperties globalProperties;
     private final StringRedisTemplate redisTemplate;
     private final MinioService minioService;
+    private final ResumeParserService resumeParserService;
+    private final AiResumeSummarizeService aiResumeSummarizeService;
 
 
     /**
@@ -61,7 +66,7 @@ public class ResumeServiceImpl implements ResumeService {
 
         // 第二步：文件名安全处理
         String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        try {
+        try (InputStream is = file.getInputStream()) {
             // 第三步：校验文件格式（根据需要扩展）
             if (!isValidFileType(originalFilename, allowFileTypes)) {
                 return R.builder()
@@ -77,25 +82,23 @@ public class ResumeServiceImpl implements ResumeService {
 
             // 第五步：文件大小校验（自动生效于application配置）
 
-            // 第六步：文件保存至Minio
+            // 第六步：解析文件内容
+            String parseResult = resumeParserService.parseResume(is);
+
+            // 第七步：调用ai解析文件内容，并结构化输出
+            String summarizedResult = aiResumeSummarizeService.resumeSummarize(parseResult);
+            System.out.println("==============ai总结如下==============");
+            System.out.println(summarizedResult);
+            // 第八步：将ai结构化输出的结果，保存至mongodb
+
+            // 第九步：文件保存至Minio
             String resumeUploadBucketName = globalProperties.getMinio().getBucketName().get("resumeUpload");
             minioService.uploadFile(resumeUploadBucketName, file, newFilename);
             String resumeDownloadUrl = minioService.getFileUrl(resumeUploadBucketName, newFilename);
-            // 第七步：用户简历元信息保存至redis
-            User user = UserUtils.getCurrentUser();
-            String redisKey = globalProperties.getResume().getResumeRedisKeyPrefix();
-            String hashKey = "";
-            if (user != null) {
-                hashKey = String.valueOf(user.getUserId());
-            }
-            String hashValueStr = (String) redisTemplate.opsForHash().get(redisKey, hashKey);
-            hashValueStr = hashValueStr == null ? "[]" : hashValueStr;
-            List<String> hashValueList = JSONUtil.toList(hashValueStr, String.class);
-            hashValueList.add(newFilename);
-            hashValueStr = JSONUtil.toJsonStr(hashValueList);
-            redisTemplate.opsForHash().put(redisKey, hashKey, hashValueStr);
 
-            // 第八步：构建响应
+            // 第十步：文件元信息保存至mongodb
+
+            // 第十一步：构建响应
             Map<String, ? extends Serializable> data = Map.of("原始文件名", originalFilename,
                     "存储文件名", newFilename,
                     "文件类型", Objects.requireNonNull(file.getContentType()),

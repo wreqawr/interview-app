@@ -28,8 +28,35 @@
     </scm>
     <properties>
         <java.version>17</java.version>
+        <ai.alibaba.version>1.0.0.2</ai.alibaba.version>
+        <mybatis.starter.version>3.0.4</mybatis.starter.version>
+        <druid.starter.version>1.2.23</druid.starter.version>
+        <hutool.version>5.8.39</hutool.version>
+        <jwt.tool.version>4.5.0</jwt.tool.version>
+        <minio.version>8.5.17</minio.version>
+        <apache.tika.version>3.1.0</apache.tika.version>
+        <apache.pdfbox.version>3.0.5</apache.pdfbox.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-bom</artifactId>
+                <version>${ai.alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <!--alibaba-ai-->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -37,7 +64,7 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>3.0.4</version>
+            <version>${mybatis.starter.version}</version>
         </dependency>
 
         <dependency>
@@ -49,7 +76,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-3-starter</artifactId>
-            <version>1.2.23</version>
+            <version>${druid.starter.version}</version>
         </dependency>
 
         <dependency>
@@ -66,7 +93,7 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter-test</artifactId>
-            <version>3.0.4</version>
+            <version>${mybatis.starter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -95,14 +122,14 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.8.39</version>
+            <version>${hutool.version}</version>
         </dependency>
 
         <!--jwt相关依赖-->
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>4.5.0</version>
+            <version>${jwt.tool.version}</version>
         </dependency>
 
         <!--Redis相关-->
@@ -115,35 +142,26 @@
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
-            <version>8.5.17</version>
+            <version>${minio.version}</version>
         </dependency>
 
-        <!--tika简历解析工具-->
+        <!-- Apache Tika核心 -->
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-            <version>3.1.0</version>
+            <version>${apache.tika.version}</version>
         </dependency>
-
-        <!-- PDF解析模块 -->
         <dependency>
             <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parser-pdf-module</artifactId>
-            <version>3.1.0</version>
+            <artifactId>tika-parsers-standard-package</artifactId>
+            <version>${apache.tika.version}</version>
         </dependency>
 
-        <!-- Microsoft Office解析模块 -->
+        <!-- 可选：PDFBOX用于增强PDF处理 -->
         <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parser-microsoft-module</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-
-        <!-- 纯文本解析模块 -->
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parser-text-module</artifactId>
-            <version>3.1.0</version>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${apache.pdfbox.version}</version>
         </dependency>
 
         <dependency>
