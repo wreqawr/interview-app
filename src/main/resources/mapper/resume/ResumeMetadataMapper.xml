@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.minglg.interview.resume.mapper.ResumeMetadataMapper">
+
+    <insert id="addResumeMetadata">
+        insert into t_resume_metadata(resume_id, user_id, bucket_name, object_name, object_url, original_name,
+                                      file_size,
+                                      mime_type, sha256,
+                                      status, created_at, updated_at)
+        values (#{resumeMetadata.resumeId}, #{resumeMetadata.userId}, #{resumeMetadata.bucketName},
+                #{resumeMetadata.objectName}, #{resumeMetadata.objectUrl},
+                #{resumeMetadata.originalName}, #{resumeMetadata.fileSize}, #{resumeMetadata.mimeType},
+                #{resumeMetadata.sha256},
+                #{resumeMetadata.status}, #{resumeMetadata.createdAt}, #{resumeMetadata.updatedAt})
+    </insert>
+
+    <delete id="deleteResumeMetadataByUserIdAndResumeId">
+        delete
+        from t_resume_metadata
+        where user_id=#{userId} and resume_id in
+        <foreach collection="resumeIdList" item="resumeId" separator="," open="(" close=")">
+            #{resumeId}
+        </foreach>
+    </delete>
+
+    <select id="getResumeMetadataByUserId" resultType="cn.minglg.interview.resume.pojo.ResumeMetadata">
+        select resume_id,
+               user_id,
+               bucket_name,
+               object_name,
+               object_url,
+               original_name,
+               file_size,
+               mime_type,
+               sha256,
+               status,
+               created_at,
+               updated_at
+        from t_resume_metadata
+        where user_id = #{userId}
+    </select>
+
+    <select id="getResumeMetadataByUserIdAndResumeId"
+            resultType="cn.minglg.interview.resume.pojo.ResumeMetadata">
+        select resume_id,
+               user_id,
+               bucket_name,
+               object_name,
+               object_url,
+               original_name,
+               file_size,
+               mime_type,
+               sha256,
+               status,
+               created_at,
+               updated_at
+        from t_resume_metadata
+        where user_id = #{userId}
+          and resume_id = #{resumeId}
+    </select>
+    <select id="getResumeMetadataByUserIdAndResumeIdList"
+            resultType="cn.minglg.interview.resume.pojo.ResumeMetadata">
+        select resume_id,
+        user_id,
+        bucket_name,
+        object_name,
+        object_url,
+        original_name,
+        file_size,
+        mime_type,
+        sha256,
+        status,
+        created_at,
+        updated_at
+        from t_resume_metadata
+        where user_id = #{userId}
+        and resume_id in
+        <foreach collection="resumeIdList" item="resumeId" separator="," open="(" close=")">
+            #{resumeId}
+        </foreach>
+    </select>
+
+
+</mapper>

@@ -1,6 +1,7 @@
 package cn.minglg.interview;
 
 import cn.minglg.interview.common.constant.UserRole;
+import cn.minglg.interview.common.utils.FileUtils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -10,6 +11,7 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ResourceLoader;
 
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
@@ -30,6 +32,9 @@ import java.util.UUID;
  */
 @SpringBootTest
 public class UuidTest {
+    @Autowired
+    private ResourceLoader resourceLoader;
+
     @Test
     public void test1() {
         for (int i = 0; i < 10; i++) {
@@ -97,8 +102,15 @@ public class UuidTest {
 
     @Test
     public void testDecode() {
-        String role="ROLE_ADMIN";
+        String role = "ROLE_ADMIN";
         UserRole userRole = UserRole.valueOf(role);
         System.out.println(userRole.getDisplayName());
+    }
+
+    @Test
+    public void testResource() {
+        String file="classpath:prompt/ResumeSummarize.txt";
+        String result = FileUtils.readFileFromClassPath(resourceLoader, file);
+        System.out.println(result);
     }
 }

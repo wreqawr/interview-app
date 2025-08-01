@@ -23,8 +23,5 @@ public class ResumeProperties {
      * 允许上传的文件类型
      */
     private List<String> allowFileTypes;
-    /**
-     * 简历上传成功后，新的简历文件名称需要保存在redis中
-     */
-    private String resumeRedisKeyPrefix;
+
 }

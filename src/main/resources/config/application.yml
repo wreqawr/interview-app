@@ -90,7 +90,7 @@ mybatis:
     # 开启懒加载配置
     lazy-loading-enabled: true
     aggressive-lazy-loading: false
-  mapper-locations: classpath:mapper/*.xml
+  mapper-locations: classpath:mapper/**/*.xml
 
 
 # 全局配置
@@ -153,8 +153,6 @@ global:
       - .doc
       - .docx
       - .txt
-    # 简历保存在redis中的简历文件名的key前缀
-    resume-redis-key-prefix: resume:resume-upload
 
   # minio文件存储相关
   minio:
@@ -165,8 +163,20 @@ global:
     # 管理员密码
     secret-key: ${MINIO_SECRET_KEY}
     # 桶信息（map集合）
-    bucket-name:
-      resumeUpload: resume-upload
+    bucket-name-prefix:
+      resumeUpload: resume-upload-
+
+  # 线程池相关
+  async:
+    # 核心线程数：线程池长期保持的线程数
+    core-pool-size: 5
+    # 最大线程数：线程池允许创建的最大线程数
+    max-pool-size: 10
+    # 队列容量：当核心线程都在忙时，新任务进入队列等待，这里设置队列容量为100
+    queue-capacity: 100
+    # 线程名前缀：线程名称的前缀，方便日志追踪（如：AsyncTask-1, AsyncTask-2...）
+    thread-name-prefix: AsyncTask-
+
 
 
 

@@ -68,7 +68,7 @@ public class ResumeController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<R> resumeDelete(@RequestParam("resumeName") String resumeName) {
-        return new ResponseEntity<>(resumeService.resumeDelete(resumeName), HttpStatus.OK);
+    public ResponseEntity<R> resumeDelete(@RequestBody String[] resumeIds) {
+        return new ResponseEntity<>(resumeService.resumeDelete(resumeIds), HttpStatus.OK);
     }
 }

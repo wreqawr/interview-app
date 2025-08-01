@@ -32,6 +32,7 @@ public class GlobalProperties {
     private RegisterProperties register;
     private ResumeProperties resume;
     private MinioProperties minio;
+    private AsyncProperties async;
 
 
     public void initWhiteListPatternsAsRequestMatcher() {

@@ -36,10 +36,10 @@ public interface ResumeService {
     /**
      * 简历删除接口
      *
-     * @param fileName 文件名
+     * @param resumeIds 简历id列表
      * @return 操作结果
      */
-    R resumeDelete(String fileName);
+    R resumeDelete(String[] resumeIds);
 
     /**
      * 获取文件扩展名

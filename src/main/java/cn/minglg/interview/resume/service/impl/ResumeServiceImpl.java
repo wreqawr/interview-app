@@ -1,31 +1,30 @@
 package cn.minglg.interview.resume.service.impl;
 
-import cn.hutool.json.JSONUtil;
-import cn.minglg.interview.ai.service.AiResumeSummarizeService;
+import cn.hutool.crypto.digest.DigestAlgorithm;
+import cn.hutool.crypto.digest.Digester;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.constant.ResponseCode;
+import cn.minglg.interview.common.constant.ResumeStatus;
 import cn.minglg.interview.common.exception.UnKnowUserException;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.common.utils.UserUtils;
 import cn.minglg.interview.minio.service.MinioService;
 import cn.minglg.interview.resume.exception.ResumeDownloadException;
-import cn.minglg.interview.resume.exception.ResumeNoPermissionDownloadException;
-import cn.minglg.interview.resume.service.ResumeParserService;
+import cn.minglg.interview.resume.exception.ResumeNoFoundException;
+import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
+import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import cn.minglg.interview.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * ClassName:ResumeServiceImpl
@@ -40,10 +39,8 @@ import java.util.UUID;
 @Service
 public class ResumeServiceImpl implements ResumeService {
     private final GlobalProperties globalProperties;
-    private final StringRedisTemplate redisTemplate;
     private final MinioService minioService;
-    private final ResumeParserService resumeParserService;
-    private final AiResumeSummarizeService aiResumeSummarizeService;
+    private final ResumeMetadataMapper resumeMetadataMapper;
 
 
     /**
@@ -55,6 +52,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public R resumeUpload(MultipartFile file) {
         List<String> allowFileTypes = globalProperties.getResume().getAllowFileTypes();
+        User currentUser = UserUtils.getCurrentUser();
 
         // 第一步：基础校验
         if (file.isEmpty()) {
@@ -65,45 +63,53 @@ public class ResumeServiceImpl implements ResumeService {
         }
 
         // 第二步：文件名安全处理
-        String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        String originalName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         try (InputStream is = file.getInputStream()) {
             // 第三步：校验文件格式（根据需要扩展）
-            if (!isValidFileType(originalFilename, allowFileTypes)) {
+            if (!isValidFileType(originalName, allowFileTypes)) {
                 return R.builder()
                         .code(ResponseCode.RESUME_UPLOAD_FAIL.getCode())
                         .message("不支持的文件格式")
                         .build();
             }
 
-            // 第四步：生成唯一文件名（防止重名和安全问题）
-            String fileExtension = getFileExtension(originalFilename);
-            String randomPrefix = System.currentTimeMillis() + UUID.randomUUID().toString().replace("-", "").substring(0, 5);
-            String newFilename = randomPrefix + fileExtension;
+            // 第三步：文件大小校验（自动生效于application配置）
 
-            // 第五步：文件大小校验（自动生效于application配置）
+            // 第四步：文件保存至Minio
+            String resumeId = UUID.randomUUID().toString().replace("-", "").substring(0, 15);
+            Long userId = currentUser == null ? 0 : currentUser.getUserId();
+            String bucketName = globalProperties.getMinio().getBucketNamePrefix().get("resumeUpload") + userId;
+            String objectName = System.currentTimeMillis() + getFileExtension(originalName);
+            String sha256 = new Digester(DigestAlgorithm.SHA256).digestHex(is);
+            Long fileSize = file.getSize();
+            String mimeType = Objects.requireNonNull(file.getContentType());
+            minioService.uploadFile(bucketName, file, objectName);
+            String objectUrl = minioService.getFileUrl(bucketName, objectName);
 
-            // 第六步：解析文件内容
-            String parseResult = resumeParserService.parseResume(is);
+            // 第五步：保存简历元信息至mysql
+            ResumeMetadata resumeMetadata = ResumeMetadata.builder()
+                    .resumeId(resumeId)
+                    .userId(userId)
+                    .bucketName(bucketName)
+                    .objectName(objectName)
+                    .objectUrl(objectUrl)
+                    .originalName(originalName)
+                    .fileSize(fileSize)
+                    .mimeType(mimeType)
+                    .sha256(sha256)
+                    .status(ResumeStatus.EFFECTIVE)
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+            resumeMetadataMapper.addResumeMetadata(resumeMetadata);
 
-            // 第七步：调用ai解析文件内容，并结构化输出
-            String summarizedResult = aiResumeSummarizeService.resumeSummarize(parseResult);
-            System.out.println("==============ai总结如下==============");
-            System.out.println(summarizedResult);
-            // 第八步：将ai结构化输出的结果，保存至mongodb
-
-            // 第九步：文件保存至Minio
-            String resumeUploadBucketName = globalProperties.getMinio().getBucketName().get("resumeUpload");
-            minioService.uploadFile(resumeUploadBucketName, file, newFilename);
-            String resumeDownloadUrl = minioService.getFileUrl(resumeUploadBucketName, newFilename);
-
-            // 第十步：文件元信息保存至mongodb
-
-            // 第十一步：构建响应
-            Map<String, ? extends Serializable> data = Map.of("原始文件名", originalFilename,
-                    "存储文件名", newFilename,
-                    "文件类型", Objects.requireNonNull(file.getContentType()),
-                    "文件大小", file.getSize(),
-                    "文件下载地址", resumeDownloadUrl);
+            // 第六步：构建响应
+            Map<String, ? extends Serializable> data = Map.of("原始文件名", originalName,
+                    "存储文件名", objectName,
+                    "文件类型", mimeType,
+                    "文件大小", fileSize,
+                    "文件哈希码", sha256,
+                    "文件下载地址", objectUrl);
 
             return R.builder().code(ResponseCode.OK.getCode())
                     .message("文件上传成功！")
@@ -119,26 +125,27 @@ public class ResumeServiceImpl implements ResumeService {
     /**
      * 简历下载接口
      *
-     * @param fileName 文件名
+     * @param resumeId 文件编号
      * @return 文件流
      */
+
     @Override
-    public Map<String, Object> resumeDownload(String fileName) {
-        User user = UserUtils.getCurrentUser();
-        if (user == null) {
+    public Map<String, Object> resumeDownload(String resumeId) {
+        User currentUser = UserUtils.getCurrentUser();
+        if (currentUser == null) {
             throw new UnKnowUserException("无效用户！");
         }
-        String redisKey = globalProperties.getResume().getResumeRedisKeyPrefix();
-        String hashKey = String.valueOf(user.getUserId()) == null ? "" : String.valueOf(user.getUserId());
-        // 当前用户可下载的简历列表
-        List<String> hashValueList = JSONUtil.toList((String) redisTemplate.opsForHash().get(redisKey, hashKey), String.class);
         try {
-            if (hashValueList == null || !hashValueList.contains(fileName)) {
-                throw new ResumeNoPermissionDownloadException("当前用户无权限下载该简历！");
+            Long userId = currentUser.getUserId();
+            ResumeMetadata metadata = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(userId, resumeId);
+            if (metadata == null) {
+                throw new ResumeNoFoundException("简历不存在！");
             }
-            String bucketName = globalProperties.getMinio().getBucketName().get("resumeUpload");
-            InputStreamResource isr = new InputStreamResource(minioService.downloadFile(bucketName, fileName));
-            String contentType = minioService.getContentType(bucketName, fileName);
+            String bucketName = metadata.getBucketName();
+            String objectName = metadata.getObjectName();
+
+            InputStreamResource isr = new InputStreamResource(minioService.downloadFile(bucketName, objectName));
+            String contentType = minioService.getContentType(bucketName, objectName);
             return Map.of("isr", isr, "contentType", contentType);
 
         } catch (Exception e) {
@@ -149,15 +156,30 @@ public class ResumeServiceImpl implements ResumeService {
     /**
      * 简历删除接口
      *
-     * @param fileName 文件名
+     * @param resumeIds 简历id列表
      * @return 操作结果
      */
+
     @Override
-    public R resumeDelete(String fileName) {
+    public R resumeDelete(String[] resumeIds) {
         R result;
+        User currentUser = UserUtils.getCurrentUser();
+        if (currentUser == null) {
+            throw new UnKnowUserException("无效用户！");
+        }
         try {
-            String bucketName = globalProperties.getMinio().getBucketName().get("resumeUpload");
-            minioService.deleteFile(bucketName, fileName);
+            Long userId = currentUser.getUserId();
+            List<String> resumeIdList = Arrays.stream(resumeIds).toList();
+            List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeIdList(userId, resumeIdList);
+            int affectRows = resumeMetadataMapper.deleteResumeMetadataByUserIdAndResumeId(userId, resumeIdList);
+            if (affectRows == 0) {
+                throw new ResumeNoFoundException("删除失败，简历信息不存在！");
+            }
+            for (ResumeMetadata resumeMetadata : resumeMetadataList) {
+                String bucketName = resumeMetadata.getBucketName();
+                String objectName = resumeMetadata.getObjectName();
+                minioService.deleteFile(bucketName, objectName);
+            }
             result = R.builder()
                     .code(ResponseCode.OK.getCode())
                     .message("简历删除成功！").build();
