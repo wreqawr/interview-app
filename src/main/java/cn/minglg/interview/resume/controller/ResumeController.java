@@ -9,7 +9,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,10 +36,19 @@ public class ResumeController {
      * @param file 上传文件
      * @return 响应结果
      */
+    //    @PreAuthorize("hasRole('JOB_SEEKER')")
     @PostMapping("/upload")
-    @PreAuthorize("hasRole('JOB_SEEKER')")
     public ResponseEntity<R> resumeUpload(@RequestParam("resume") MultipartFile file) {
-        return new ResponseEntity<>(resumeService.resumeUpload(file), HttpStatus.OK);
+        R result;
+        try {
+            result = resumeService.resumeUpload(file);
+        } catch (Exception e) {
+            result = R.builder()
+                    .code(ResponseCode.RESUME_DELETE_FAIL.getCode())
+                    .message("简历删除失败，原因为：" + e.getMessage())
+                    .build();
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     /**
@@ -67,8 +75,43 @@ public class ResumeController {
         }
     }
 
+    /**
+     * 简历删除接口
+     *
+     * @param resumeIds 简历id列表
+     * @return 删除结果
+     */
     @DeleteMapping("/delete")
     public ResponseEntity<R> resumeDelete(@RequestBody String[] resumeIds) {
-        return new ResponseEntity<>(resumeService.resumeDelete(resumeIds), HttpStatus.OK);
+        R result;
+        try {
+            result = resumeService.resumeDelete(resumeIds);
+        } catch (Exception e) {
+            result = R.builder()
+                    .code(ResponseCode.RESUME_DELETE_FAIL.getCode())
+                    .message("简历删除失败，原因为：" + e.getMessage())
+                    .build();
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    /**
+     * 简历元信息列表展示接口
+     *
+     * @return 简历元信息列表
+     */
+    @GetMapping("/getMyResume")
+    public ResponseEntity<R> resumeDisplay() {
+        R result;
+        try {
+            result = resumeService.resumeMetadataDisplay();
+        } catch (Exception e) {
+            result = R.builder()
+                    .code(ResponseCode.RESUME_DELETE_FAIL.getCode())
+                    .message("简历查询失败，原因为：" + e.getMessage())
+                    .build();
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }

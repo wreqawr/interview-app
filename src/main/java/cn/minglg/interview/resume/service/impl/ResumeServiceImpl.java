@@ -10,8 +10,9 @@ import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.common.utils.UserUtils;
 import cn.minglg.interview.minio.service.MinioService;
+import cn.minglg.interview.resume.exception.ResumeDeleteException;
 import cn.minglg.interview.resume.exception.ResumeDownloadException;
-import cn.minglg.interview.resume.exception.ResumeNoFoundException;
+import cn.minglg.interview.resume.exception.ResumeUploadException;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import cn.minglg.interview.resume.service.ResumeService;
@@ -53,13 +54,13 @@ public class ResumeServiceImpl implements ResumeService {
     public R resumeUpload(MultipartFile file) {
         List<String> allowFileTypes = globalProperties.getResume().getAllowFileTypes();
         User currentUser = UserUtils.getCurrentUser();
+        if (currentUser == null) {
+            throw new UnKnowUserException("无效请求用户！");
+        }
 
         // 第一步：基础校验
         if (file.isEmpty()) {
-            return R.builder()
-                    .code(ResponseCode.RESUME_UPLOAD_FAIL.getCode())
-                    .message("上传文件不能为空")
-                    .build();
+            throw new ResumeUploadException("上传文件大小不能为空！");
         }
 
         // 第二步：文件名安全处理
@@ -67,17 +68,14 @@ public class ResumeServiceImpl implements ResumeService {
         try (InputStream is = file.getInputStream()) {
             // 第三步：校验文件格式（根据需要扩展）
             if (!isValidFileType(originalName, allowFileTypes)) {
-                return R.builder()
-                        .code(ResponseCode.RESUME_UPLOAD_FAIL.getCode())
-                        .message("不支持的文件格式")
-                        .build();
+                throw new ResumeUploadException("不支持的文件格式！");
             }
 
             // 第三步：文件大小校验（自动生效于application配置）
 
             // 第四步：文件保存至Minio
             String resumeId = UUID.randomUUID().toString().replace("-", "").substring(0, 15);
-            Long userId = currentUser == null ? 0 : currentUser.getUserId();
+            Long userId = currentUser.getUserId();
             String bucketName = globalProperties.getMinio().getBucketNamePrefix().get("resumeUpload") + userId;
             String objectName = System.currentTimeMillis() + getFileExtension(originalName);
             String sha256 = new Digester(DigestAlgorithm.SHA256).digestHex(is);
@@ -104,12 +102,11 @@ public class ResumeServiceImpl implements ResumeService {
             resumeMetadataMapper.addResumeMetadata(resumeMetadata);
 
             // 第六步：构建响应
-            Map<String, ? extends Serializable> data = Map.of("原始文件名", originalName,
-                    "存储文件名", objectName,
-                    "文件类型", mimeType,
-                    "文件大小", fileSize,
-                    "文件哈希码", sha256,
-                    "文件下载地址", objectUrl);
+            Map<String, ? extends Serializable> data = Map.of("originalName", originalName,
+                    "objectName", objectName,
+                    "mimeType", mimeType,
+                    "fileSize", fileSize,
+                    "sha256", sha256);
 
             return R.builder().code(ResponseCode.OK.getCode())
                     .message("文件上传成功！")
@@ -133,13 +130,13 @@ public class ResumeServiceImpl implements ResumeService {
     public Map<String, Object> resumeDownload(String resumeId) {
         User currentUser = UserUtils.getCurrentUser();
         if (currentUser == null) {
-            throw new UnKnowUserException("无效用户！");
+            throw new UnKnowUserException("无效请求用户！");
         }
         try {
             Long userId = currentUser.getUserId();
             ResumeMetadata metadata = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(userId, resumeId);
             if (metadata == null) {
-                throw new ResumeNoFoundException("简历不存在！");
+                throw new ResumeDeleteException("简历不存在！");
             }
             String bucketName = metadata.getBucketName();
             String objectName = metadata.getObjectName();
@@ -167,13 +164,16 @@ public class ResumeServiceImpl implements ResumeService {
         if (currentUser == null) {
             throw new UnKnowUserException("无效用户！");
         }
+        if (resumeIds == null || resumeIds.length == 0) {
+            throw new ResumeDeleteException("简历信息不能为空！");
+        }
         try {
             Long userId = currentUser.getUserId();
             List<String> resumeIdList = Arrays.stream(resumeIds).toList();
             List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeIdList(userId, resumeIdList);
             int affectRows = resumeMetadataMapper.deleteResumeMetadataByUserIdAndResumeId(userId, resumeIdList);
             if (affectRows == 0) {
-                throw new ResumeNoFoundException("删除失败，简历信息不存在！");
+                throw new ResumeDeleteException("删除失败，简历信息不存在！");
             }
             for (ResumeMetadata resumeMetadata : resumeMetadataList) {
                 String bucketName = resumeMetadata.getBucketName();
@@ -190,5 +190,27 @@ public class ResumeServiceImpl implements ResumeService {
 
         }
         return result;
+    }
+
+    /**
+     * 简历展示接口，获取当前用户的所有简历元信息
+     *
+     * @return 简历信息列表
+     */
+    @Override
+    public R resumeMetadataDisplay() {
+        User currentUser = UserUtils.getCurrentUser();
+        if (currentUser == null) {
+            throw new UnKnowUserException("无效用户！");
+        }
+        List<String> resumeIdList = resumeMetadataMapper.getResumeMetadataByUserId(currentUser.getUserId())
+                .stream()
+                .map(ResumeMetadata::getResumeId)
+                .toList();
+        return R.builder()
+                .code(ResponseCode.OK.getCode())
+                .data(resumeIdList)
+                .message("简历信息获取成功！")
+                .build();
     }
 }

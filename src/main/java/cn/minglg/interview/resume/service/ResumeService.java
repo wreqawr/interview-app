@@ -42,6 +42,13 @@ public interface ResumeService {
     R resumeDelete(String[] resumeIds);
 
     /**
+     * 简历展示接口，获取当前用户的所有简历元信息
+     *
+     * @return 简历信息列表
+     */
+    R resumeMetadataDisplay();
+
+    /**
      * 获取文件扩展名
      *
      * @param filename 文件名
