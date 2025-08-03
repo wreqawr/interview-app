@@ -36,7 +36,6 @@ public class ResumeController {
      * @param file 上传文件
      * @return 响应结果
      */
-    //    @PreAuthorize("hasRole('JOB_SEEKER')")
     @PostMapping("/upload")
     public ResponseEntity<R> resumeUpload(@RequestParam("resume") MultipartFile file) {
         R result;

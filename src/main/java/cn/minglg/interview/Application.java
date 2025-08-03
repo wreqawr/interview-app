@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @version 1.0
  */
 @SpringBootApplication
-@MapperScan(value = {"cn.minglg.interview.auth.mapper", "cn.minglg.interview.resume.mapper"})
+@MapperScan(value = {"cn.minglg.interview.auth.mapper", "cn.minglg.interview.resume.mapper", "cn.minglg.interview.common.mapper"})
 @EnableAsync
 public class Application {
     public static void main(String[] args) {

@@ -74,7 +74,7 @@ public class ResumeServiceImpl implements ResumeService {
             // 第三步：文件大小校验（自动生效于application配置）
 
             // 第四步：文件保存至Minio
-            String resumeId = UUID.randomUUID().toString().replace("-", "").substring(0, 15);
+            String resumeId = System.currentTimeMillis() + UUID.randomUUID().toString().replace("-", "").substring(0, 15);
             Long userId = currentUser.getUserId();
             String bucketName = globalProperties.getMinio().getBucketNamePrefix().get("resumeUpload") + userId;
             String objectName = System.currentTimeMillis() + getFileExtension(originalName);

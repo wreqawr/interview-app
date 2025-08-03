@@ -19,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class MinioServiceImplTest {
     @Autowired
     private MinioService minioService;
-    private final String bucketName = "resume-upload-4";
+    private final String bucketName = "resume-upload-1";
 
     @SneakyThrows
     @Test

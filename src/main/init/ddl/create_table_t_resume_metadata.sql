@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS t_resume_metadata;
 CREATE TABLE IF NOT EXISTS t_resume_metadata
 (
-    resume_id     VARCHAR(15) PRIMARY KEY COMMENT '文件ID',
+    resume_id     VARCHAR(50) PRIMARY KEY COMMENT '文件ID',
     user_id       BIGINT UNSIGNED                          NOT NULL COMMENT '用户ID',
     bucket_name   VARCHAR(63)                              NOT NULL COMMENT 'MinIO桶名称',
     object_name   VARCHAR(700)                             NOT NULL COMMENT 'MinIO对象名称',

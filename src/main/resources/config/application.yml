@@ -60,11 +60,19 @@ spring:
           max-idle: 8
           min-idle: 0
           max-wait: -1ms
-  #        cluster:
-  #          refresh:
-  #            adaptive: true
-  #            period: 2000
-  #            dynamic-refresh-sources: true
+    #        cluster:
+    #          refresh:
+    #            adaptive: true
+    #            period: 2000
+    #            dynamic-refresh-sources: true
+
+    # mongodb配置
+    mongodb:
+      host: ${MONGODB_HOST}
+      port: ${MONGODB_PORT}
+      username: ${MONGODB_USERNAME}
+      password: ${MONGODB_PASSWORD}
+      database: interview
 
   # 文件上传参数
   servlet:
@@ -134,7 +142,7 @@ global:
     redis-key-expire-minutes: 5
     # 需要使用验证码的请求路径
     effective-patterns:
-      - /api/auth/login
+      #      - /api/auth/login
       - /api/auth/register
 
   # 注册相关
