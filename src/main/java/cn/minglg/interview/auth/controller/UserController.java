@@ -2,6 +2,7 @@ package cn.minglg.interview.auth.controller;
 
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.auth.service.UserService;
+import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
 import cn.minglg.interview.common.constant.ResponseCode;
 import cn.minglg.interview.common.response.R;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,9 @@ public class UserController {
      * @return 注册结果通知
      */
     @PostMapping("/register")
+    @ResponseEntityExceptionHandler(
+            errResponseCode = ResponseCode.RESUME_UPLOAD_FAIL,
+            errorMessagePrefix = "用户注册失败")
     public ResponseEntity<R> register(@RequestBody User user) {
         /*
           必填项：
@@ -50,15 +54,8 @@ public class UserController {
           默认项：
             状态、注册时间
          */
-        R result;
-        try {
-            result = userService.register(user);
-        } catch (Exception e) {
-            result = R.builder().code(ResponseCode.REGISTER_FAIL.getCode()).message(e.getMessage()).build();
-        }
+        R result = userService.register(user);
         return new ResponseEntity<>(result, HttpStatus.OK);
-
     }
-
 
 }

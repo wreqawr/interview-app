@@ -49,6 +49,15 @@ public interface ResumeService {
     R resumeMetadataDisplay();
 
     /**
+     * 简历信息提取结果查询接口
+     *
+     * @param taskId   任务id
+     * @param resumeId 简历id
+     * @return 查询结果
+     */
+    R getResumeSummarizeResult(String taskId, String resumeId);
+
+    /**
      * 获取文件扩展名
      *
      * @param filename 文件名

@@ -1,5 +1,6 @@
 package cn.minglg.interview.resume.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,10 +33,12 @@ public class ResumeDetail {
     /**
      * 用户id
      */
+    @JsonIgnore
     private Long userId;
     /**
      * 任务id
      */
+    @JsonIgnore
     private String taskId;
     /**
      * 基本信息

@@ -1,5 +1,6 @@
 package cn.minglg.interview.resume.controller;
 
+import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
 import cn.minglg.interview.common.constant.ResponseCode;
 import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.resume.service.ResumeService;
@@ -37,16 +38,11 @@ public class ResumeController {
      * @return 响应结果
      */
     @PostMapping("/upload")
+    @ResponseEntityExceptionHandler(
+            errResponseCode = ResponseCode.RESUME_UPLOAD_FAIL,
+            errorMessagePrefix = "简历上传失败")
     public ResponseEntity<R> resumeUpload(@RequestParam("resume") MultipartFile file) {
-        R result;
-        try {
-            result = resumeService.resumeUpload(file);
-        } catch (Exception e) {
-            result = R.builder()
-                    .code(ResponseCode.RESUME_DELETE_FAIL.getCode())
-                    .message("简历删除失败，原因为：" + e.getMessage())
-                    .build();
-        }
+        R result = resumeService.resumeUpload(file);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -81,16 +77,11 @@ public class ResumeController {
      * @return 删除结果
      */
     @DeleteMapping("/delete")
+    @ResponseEntityExceptionHandler(
+            errResponseCode = ResponseCode.RESUME_DELETE_FAIL,
+            errorMessagePrefix = "简历删除失败")
     public ResponseEntity<R> resumeDelete(@RequestBody String[] resumeIds) {
-        R result;
-        try {
-            result = resumeService.resumeDelete(resumeIds);
-        } catch (Exception e) {
-            result = R.builder()
-                    .code(ResponseCode.RESUME_DELETE_FAIL.getCode())
-                    .message("简历删除失败，原因为：" + e.getMessage())
-                    .build();
-        }
+        R result = resumeService.resumeDelete(resumeIds);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -100,16 +91,22 @@ public class ResumeController {
      * @return 简历元信息列表
      */
     @GetMapping("/getMyResume")
+    @ResponseEntityExceptionHandler(
+            errResponseCode = ResponseCode.RESUME_QUERY_FAIL,
+            errorMessagePrefix = "简历查询失败")
     public ResponseEntity<R> resumeDisplay() {
-        R result;
-        try {
-            result = resumeService.resumeMetadataDisplay();
-        } catch (Exception e) {
-            result = R.builder()
-                    .code(ResponseCode.RESUME_DELETE_FAIL.getCode())
-                    .message("简历查询失败，原因为：" + e.getMessage())
-                    .build();
-        }
+        R result = resumeService.resumeMetadataDisplay();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/queryResumeSummarizeResult")
+    @ResponseEntityExceptionHandler(
+            errResponseCode = ResponseCode.RESUME_SUMMARIZE_FAIL,
+            errorMessagePrefix = "简历分析失败")
+    public ResponseEntity<R> queryResumeSummarizeResult(
+            @RequestParam("taskId") String taskId,
+            @RequestParam("resumeId") String resumeId) {
+        R result = resumeService.getResumeSummarizeResult(taskId, resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

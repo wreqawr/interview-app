@@ -5,16 +5,23 @@ import cn.hutool.crypto.digest.Digester;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.constant.ResponseCode;
 import cn.minglg.interview.common.constant.ResumeStatus;
+import cn.minglg.interview.common.constant.TaskStatus;
+import cn.minglg.interview.common.exception.NoSuchTaskException;
 import cn.minglg.interview.common.exception.UnKnowUserException;
+import cn.minglg.interview.common.mapper.TaskMapper;
+import cn.minglg.interview.common.pojo.Task;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
+import cn.minglg.interview.common.utils.TaskUtils;
 import cn.minglg.interview.common.utils.UserUtils;
 import cn.minglg.interview.minio.service.MinioService;
 import cn.minglg.interview.resume.exception.ResumeDeleteException;
 import cn.minglg.interview.resume.exception.ResumeDownloadException;
 import cn.minglg.interview.resume.exception.ResumeUploadException;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
+import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
+import cn.minglg.interview.resume.repository.ResumeDetailRepository;
 import cn.minglg.interview.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -42,6 +49,8 @@ public class ResumeServiceImpl implements ResumeService {
     private final GlobalProperties globalProperties;
     private final MinioService minioService;
     private final ResumeMetadataMapper resumeMetadataMapper;
+    private final TaskMapper taskMapper;
+    private final ResumeDetailRepository resumeDetailRepository;
 
 
     /**
@@ -212,5 +221,43 @@ public class ResumeServiceImpl implements ResumeService {
                 .data(resumeIdList)
                 .message("简历信息获取成功！")
                 .build();
+    }
+
+    /**
+     * 简历信息提取结果查询接口
+     *
+     * @param taskId   任务id
+     * @param resumeId 简历id
+     * @return 查询结果
+     */
+    @Override
+    public R getResumeSummarizeResult(String taskId, String resumeId) {
+        User currentUser = UserUtils.getCurrentUser();
+        if (currentUser == null) {
+            throw new UnKnowUserException("无效用户！");
+        }
+        Task task = TaskUtils.queryTaskByUserIdAndTaskId(taskMapper, currentUser.getUserId(), taskId);
+        if (task == null) {
+            throw new NoSuchTaskException("任务查询失败，不存在taskId为" + taskId + "的任务！");
+        }
+        TaskStatus taskStatus = task.getTaskStatus();
+        if (taskStatus == TaskStatus.FINISHED) {
+            ResumeDetail queryResult = resumeDetailRepository.findByUserIdAndResumeId(currentUser.getUserId(), resumeId);
+            return R.builder()
+                    .code(ResponseCode.OK.getCode())
+                    .data(queryResult)
+                    .message(task.getTaskStatus().getDescription())
+                    .build();
+        } else if (taskStatus == TaskStatus.FAILED) {
+            return R.builder()
+                    .code(ResponseCode.ASYNC_TASK_FAIL.getCode())
+                    .message(task.getErrorMessage())
+                    .build();
+        } else {
+            return R.builder()
+                    .code(ResponseCode.ASYNC_TASK_RUNNING.getCode())
+                    .message(task.getTaskStatus().getDescription())
+                    .build();
+        }
     }
 }

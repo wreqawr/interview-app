@@ -60,7 +60,7 @@ public class ResumeSummarizeCoreServiceTest {
 
     @Test
     public void testFindByResumeId() {
-        String resumeId = "1754187583194aa7a0cabe97e41c";
+        String resumeId = "17542321523836abdc5b03c4d4ee";
         ResumeDetail byResumeId = resumeDetailRepository.findByResumeId(resumeId);
         System.out.println(JSONUtil.toJsonStr(byResumeId));
     }

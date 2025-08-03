@@ -31,12 +31,24 @@ public enum ResponseCode {
     RESUME_DOWNLOAD_FAIL(206, "简历下载失败"),
     // 简历删除失败
     RESUME_DELETE_FAIL(207, "简历删除失败"),
+    // 简历查询失败
+    RESUME_QUERY_FAIL(207, "简历查询失败"),
+    // 简历信息提取失败
+    RESUME_SUMMARIZE_FAIL(208, "简历信息提取失败"),
 
 
     // 登录认证失败
     AUTH_FAIL(401, "登录认证失败"),
     // 权限不足
-    PERMISSION_DENY(403, "权限不足");
+    PERMISSION_DENY(403, "权限不足"),
+
+    // 异步任务执行中
+    ASYNC_TASK_RUNNING(900, "异步任务执行中"),
+    // 异步任务执行失败
+    ASYNC_TASK_FAIL(901, "异步任务执行失败"),
+
+    // 其它未知错误
+    OTHER_EXCEPTION(1000, "其它未知错误");
 
     /**
      * 状态码

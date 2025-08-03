@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -18,7 +17,7 @@ import java.util.Arrays;
 /**
  * ClassName:AsyncTaskAspect
  * Package:cn.minglg.interview.aspects
- * Description:
+ * Description:异步任务切面类
  *
  * @Author kfzx-minglg
  * @Create 2025/8/3
@@ -30,6 +29,14 @@ import java.util.Arrays;
 public class AsyncTaskAspect {
     private final TaskMapper taskMapper;
 
+    /**
+     * 给所有加了@AsyncTaskHandler注解的方法添加执行状态记录
+     *
+     * @param pjp     连接点（被增强的方法）
+     * @param handler 注解对象
+     * @return 执行结果
+     * @throws Throwable 异常
+     */
     @Around("@annotation(handler)")
     public Object handleAsyncTask(ProceedingJoinPoint pjp, AsyncTaskHandler handler) throws Throwable {
         // 第一步：获取初始化参数
@@ -38,7 +45,7 @@ public class AsyncTaskAspect {
         String taskId = (String) args[1];
         TaskType taskType = handler.taskType();
         TaskStatus taskStatus = TaskStatus.RUNNING;
-        String methodName = ((MethodSignature) pjp.getSignature()).getMethod().getName();
+        String methodName = pjp.getSignature().toLongString();
         String methodArgs = Arrays.toString(args);
         LocalDateTime startTime = LocalDateTime.now();
         Task task = Task.builder().userId(userId)

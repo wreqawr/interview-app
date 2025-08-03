@@ -3,8 +3,6 @@ package cn.minglg.interview.resume.repository;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
-
 /**
  * ClassName:ResumeDetailRepository
  * Package:cn.minglg.interview.resume.mapper
@@ -24,10 +22,11 @@ public interface ResumeDetailRepository extends MongoRepository<ResumeDetail, St
     ResumeDetail findByResumeId(String resumeId);
 
     /**
-     * 根据用户id查询简历信息
+     * 根据用户id以及简历id查询简历信息
      *
-     * @param userId 用户id
+     * @param userId   用户id
+     * @param resumeId 简历id
      * @return 简历信息
      */
-    List<ResumeDetail> findByUserId(Long userId);
+    ResumeDetail findByUserIdAndResumeId(Long userId, String resumeId);
 }
