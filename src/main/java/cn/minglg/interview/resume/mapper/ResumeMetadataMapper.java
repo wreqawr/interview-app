@@ -50,4 +50,11 @@ public interface ResumeMetadataMapper {
      * @return 受影响的行数
      */
     int deleteResumeMetadataByUserIdAndResumeId(@Param("userId") Long userId, @Param("resumeIdList") List<String> resumeIdList);
+
+    /**
+     * 更新简历
+     *
+     * @param resumeMetadata 简历元信息
+     */
+    //void updateResumeMetadata(@Param("resumeMetadata") ResumeMetadata resumeMetadata);
 }

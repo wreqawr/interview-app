@@ -42,9 +42,9 @@ public interface ResumeService {
     R resumeDelete(String[] resumeIds);
 
     /**
-     * 简历展示接口，获取当前用户的所有简历元信息
+     * 简历元信息展示接口，获取当前用户的所有简历元信息
      *
-     * @return 简历信息列表
+     * @return 简历元信息列表
      */
     R resumeMetadataDisplay();
 
@@ -55,7 +55,7 @@ public interface ResumeService {
      * @param resumeId 简历id
      * @return 查询结果
      */
-    R getResumeSummarizeResult(String taskId, String resumeId);
+    R getResumeAsyncUploadResult(String taskId, String resumeId);
 
     /**
      * 获取文件扩展名

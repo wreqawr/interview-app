@@ -62,7 +62,7 @@ public class ResumeDetail {
     private List<Project> projects;
 
     @Data
-    private static class BasicInfo {
+    public static class BasicInfo {
         private String name;         // 姓名
         private String phone;        // 手机号
         private String email;        // 邮箱
@@ -72,7 +72,7 @@ public class ResumeDetail {
     }
 
     @Data
-    private static class WorkExperience {
+    public static class WorkExperience {
         private String company;       // 公司名称
         private String title;         // 职位名称
         private String duration;      // 时间段（YYYY.MM-YYYY.MM）
@@ -82,7 +82,7 @@ public class ResumeDetail {
     }
 
     @Data
-    private static class Education {
+    public static class Education {
         private String school;    // 学校名称
         private String degree;    // 学历（本科/硕士等）
         private String major;     // 专业
@@ -91,20 +91,20 @@ public class ResumeDetail {
     }
 
     @Data
-    private static class Skills {
+    public static class Skills {
         private List<String> technical;   // 技术技能
         private List<Language> languages; // 语言能力
         private List<String> certificates; // 证书
 
         @Data
-        private static class Language {
+        public static class Language {
             private String language; // 语言名称
             private String level;    // 熟练程度
         }
     }
 
     @Data
-    private static class Project {
+    public static class Project {
         private String name;       // 项目名称
         private String role;       // 担任角色
         private String duration;   // 时间段

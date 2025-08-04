@@ -1,7 +1,9 @@
 package cn.minglg.interview.ai.facade.resume;
 
 import cn.minglg.interview.ai.core.resume.ResumeSummarizeCoreService;
+import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
+import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import cn.minglg.interview.resume.repository.ResumeDetailRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class ResumeSummarizeFacadeService {
     private final ResumeSummarizeCoreService resumeCoreService;
     private final ResumeDetailRepository resumeDetailRepository;
+    private final ResumeMetadataMapper resumeMetadataMapper;
 
     /**
      * 使用@Lazy解决代理初始化问题
@@ -29,9 +32,11 @@ public class ResumeSummarizeFacadeService {
     public ResumeSummarizeFacadeService(
             @Lazy
             ResumeSummarizeCoreService resumeCoreService,
-            ResumeDetailRepository resumeDetailRepository) {
+            ResumeDetailRepository resumeDetailRepository,
+            ResumeMetadataMapper resumeMetadataMapper) {
         this.resumeCoreService = resumeCoreService;
         this.resumeDetailRepository = resumeDetailRepository;
+        this.resumeMetadataMapper = resumeMetadataMapper;
     }
 
     /**
@@ -43,8 +48,14 @@ public class ResumeSummarizeFacadeService {
      * @param content  简历内容
      */
     @Async("taskExecutor")
-    public void resumeSummarize(Long userId, String taskId, String resumeId, String content) {
+    public void resumeSummarizeAndSave(Long userId, String taskId, String resumeId, String content, ResumeMetadata resumeMetadata) {
+        // 第一步：获取ai解析结果
         ResumeDetail resumeDetail = resumeCoreService.resumeSummarize(userId, taskId, resumeId, content);
+        // 第二步：mongodb保存解析结果
         resumeDetailRepository.save(resumeDetail);
+        // 第三步：mysql保存简历元信息
+        String resumeTitle = resumeDetail.getBasicInfo().getTargetTitle();
+        resumeMetadata.setResumeTitle(resumeTitle);
+        resumeMetadataMapper.addResumeMetadata(resumeMetadata);
     }
 }

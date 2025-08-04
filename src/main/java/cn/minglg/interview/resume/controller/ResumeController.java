@@ -94,19 +94,19 @@ public class ResumeController {
     @ResponseEntityExceptionHandler(
             errResponseCode = ResponseCode.RESUME_QUERY_FAIL,
             errorMessagePrefix = "简历查询失败")
-    public ResponseEntity<R> resumeDisplay() {
+    public ResponseEntity<R> resumeMetadataDisplay() {
         R result = resumeService.resumeMetadataDisplay();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/queryResumeSummarizeResult")
+    @GetMapping("/queryResumeAsyncUploadResult")
     @ResponseEntityExceptionHandler(
             errResponseCode = ResponseCode.RESUME_SUMMARIZE_FAIL,
             errorMessagePrefix = "简历分析失败")
     public ResponseEntity<R> queryResumeSummarizeResult(
             @RequestParam("taskId") String taskId,
             @RequestParam("resumeId") String resumeId) {
-        R result = resumeService.getResumeSummarizeResult(taskId, resumeId);
+        R result = resumeService.getResumeAsyncUploadResult(taskId, resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

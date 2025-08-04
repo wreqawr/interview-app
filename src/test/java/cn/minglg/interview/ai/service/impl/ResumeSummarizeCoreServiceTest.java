@@ -3,7 +3,9 @@ package cn.minglg.interview.ai.service.impl;
 import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.ai.facade.resume.ResumeSummarizeFacadeService;
 import cn.minglg.interview.minio.service.MinioService;
+import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
+import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import cn.minglg.interview.resume.repository.ResumeDetailRepository;
 import cn.minglg.interview.resume.service.ResumeParserService;
 import lombok.SneakyThrows;
@@ -33,6 +35,8 @@ public class ResumeSummarizeCoreServiceTest {
     private ResumeSummarizeFacadeService resumeSummarizeFacadeService;
     @Autowired
     private ResumeDetailRepository resumeDetailRepository;
+    @Autowired
+    private ResumeMetadataMapper resumeMetadataMapper;
 
 
     String getFileContent() {
@@ -54,14 +58,22 @@ public class ResumeSummarizeCoreServiceTest {
         System.out.println("==========异步调用开始==========");
         System.out.println(resumeId);
         String content = getFileContent();
-        resumeSummarizeFacadeService.resumeSummarize(userId, taskId, resumeId, content);
+//        resumeSummarizeFacadeService.resumeSummarizeAndSave(userId, taskId, resumeId, content);
         System.out.println("==========异步调用结束==========");
     }
 
     @Test
     public void testFindByResumeId() {
-        String resumeId = "17542321523836abdc5b03c4d4ee";
+        String resumeId = "1754272085576f72aefd20103463";
         ResumeDetail byResumeId = resumeDetailRepository.findByResumeId(resumeId);
-        System.out.println(JSONUtil.toJsonStr(byResumeId));
+        System.out.println(byResumeId);
     }
+    @Test
+    public void testGetResumeAsyncUploadResult(){
+        long userId = 4L;
+        String resumeId ="1754288236657261b0c7b827c4bf";
+        ResumeMetadata metadata = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(userId, resumeId);
+        System.out.println(JSONUtil.toJsonStr(metadata));
+    }
+
 }

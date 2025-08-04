@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS t_task
     task_id       VARCHAR(50) COMMENT '任务ID',
     task_type     VARCHAR(50)                                      NOT NULL COMMENT '任务类型',
     task_status   ENUM ('PENDING', 'RUNNING', 'FINISHED','FAILED') NOT NULL DEFAULT 'PENDING' NOT NULL COMMENT '任务状态',
-    method_name   VARCHAR(500) COMMENT '方法名',
+    method_name   TEXT COMMENT '方法名',
     method_args   TEXT COMMENT '方法参数',
     start_time    DATETIME                                                  DEFAULT CURRENT_TIMESTAMP COMMENT '开始时间',
     end_time      DATETIME                                                  DEFAULT CURRENT_TIMESTAMP COMMENT '结束时间',

@@ -2,6 +2,7 @@ package cn.minglg.interview.resume.service.impl;
 
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
+import cn.minglg.interview.ai.facade.resume.ResumeSummarizeFacadeService;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.constant.ResponseCode;
 import cn.minglg.interview.common.constant.ResumeStatus;
@@ -19,9 +20,9 @@ import cn.minglg.interview.resume.exception.ResumeDeleteException;
 import cn.minglg.interview.resume.exception.ResumeDownloadException;
 import cn.minglg.interview.resume.exception.ResumeUploadException;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
-import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import cn.minglg.interview.resume.repository.ResumeDetailRepository;
+import cn.minglg.interview.resume.service.ResumeParserService;
 import cn.minglg.interview.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -31,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -51,6 +53,8 @@ public class ResumeServiceImpl implements ResumeService {
     private final ResumeMetadataMapper resumeMetadataMapper;
     private final TaskMapper taskMapper;
     private final ResumeDetailRepository resumeDetailRepository;
+    private final ResumeSummarizeFacadeService resumeSummarizeFacadeService;
+    private final ResumeParserService resumeParserService;
 
 
     /**
@@ -74,7 +78,8 @@ public class ResumeServiceImpl implements ResumeService {
 
         // 第二步：文件名安全处理
         String originalName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        try (InputStream is = file.getInputStream()) {
+        try (InputStream is1 = file.getInputStream();
+             InputStream is2 = file.getInputStream()) {
             // 第三步：校验文件格式（根据需要扩展）
             if (!isValidFileType(originalName, allowFileTypes)) {
                 throw new ResumeUploadException("不支持的文件格式！");
@@ -87,15 +92,18 @@ public class ResumeServiceImpl implements ResumeService {
             Long userId = currentUser.getUserId();
             String bucketName = globalProperties.getMinio().getBucketNamePrefix().get("resumeUpload") + userId;
             String objectName = System.currentTimeMillis() + getFileExtension(originalName);
-            String sha256 = new Digester(DigestAlgorithm.SHA256).digestHex(is);
+            String sha256 = new Digester(DigestAlgorithm.SHA256).digestHex(is1);
             Long fileSize = file.getSize();
             String mimeType = Objects.requireNonNull(file.getContentType());
             minioService.uploadFile(bucketName, file, objectName);
             String objectUrl = minioService.getFileUrl(bucketName, objectName);
 
-            // 第五步：保存简历元信息至mysql
+            // 第五步：封装简历元信息
             ResumeMetadata resumeMetadata = ResumeMetadata.builder()
                     .resumeId(resumeId)
+                    .viewCount(500)
+                    .downloadCount(100)
+                    .rate(new BigDecimal("4.8"))
                     .userId(userId)
                     .bucketName(bucketName)
                     .objectName(objectName)
@@ -108,17 +116,16 @@ public class ResumeServiceImpl implements ResumeService {
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
                     .build();
-            resumeMetadataMapper.addResumeMetadata(resumeMetadata);
-
-            // 第六步：构建响应
-            Map<String, ? extends Serializable> data = Map.of("originalName", originalName,
-                    "objectName", objectName,
-                    "mimeType", mimeType,
-                    "fileSize", fileSize,
-                    "sha256", sha256);
+            // 第六步：使用Tika提取简历文本信息
+            String content = resumeParserService.parseResume(is2);
+            // 第七步：调用异步方法，分析提取简历信息，并持久化保存
+            String taskId = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+            resumeSummarizeFacadeService.resumeSummarizeAndSave(userId, taskId, resumeId, content, resumeMetadata);
+            // 第八步：构建响应
+            Map<String, ? extends Serializable> data = Map.of("taskId", taskId, "resumeId", resumeId);
 
             return R.builder().code(ResponseCode.OK.getCode())
-                    .message("文件上传成功！")
+                    .message("简历上传成功，请等待后台解析！")
                     .data(data)
                     .build();
         } catch (Exception e) {
@@ -212,14 +219,12 @@ public class ResumeServiceImpl implements ResumeService {
         if (currentUser == null) {
             throw new UnKnowUserException("无效用户！");
         }
-        List<String> resumeIdList = resumeMetadataMapper.getResumeMetadataByUserId(currentUser.getUserId())
-                .stream()
-                .map(ResumeMetadata::getResumeId)
-                .toList();
+        List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserId(currentUser.getUserId());
+        String message = resumeMetadataList == null ? "未查询到当前用户的简历信息！" : "简历信息获取成功！";
         return R.builder()
                 .code(ResponseCode.OK.getCode())
-                .data(resumeIdList)
-                .message("简历信息获取成功！")
+                .data(resumeMetadataList)
+                .message(message)
                 .build();
     }
 
@@ -231,7 +236,7 @@ public class ResumeServiceImpl implements ResumeService {
      * @return 查询结果
      */
     @Override
-    public R getResumeSummarizeResult(String taskId, String resumeId) {
+    public R getResumeAsyncUploadResult(String taskId, String resumeId) {
         User currentUser = UserUtils.getCurrentUser();
         if (currentUser == null) {
             throw new UnKnowUserException("无效用户！");
@@ -242,7 +247,8 @@ public class ResumeServiceImpl implements ResumeService {
         }
         TaskStatus taskStatus = task.getTaskStatus();
         if (taskStatus == TaskStatus.FINISHED) {
-            ResumeDetail queryResult = resumeDetailRepository.findByUserIdAndResumeId(currentUser.getUserId(), resumeId);
+//            ResumeDetail queryResult = resumeDetailRepository.findByUserIdAndResumeId(currentUser.getUserId(), resumeId);
+            ResumeMetadata queryResult = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(currentUser.getUserId(), resumeId);
             return R.builder()
                     .code(ResponseCode.OK.getCode())
                     .data(queryResult)

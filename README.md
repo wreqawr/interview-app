@@ -17,6 +17,7 @@
 - **⚡ 异步任务处理**：基于AOP的异步任务管理，支持任务状态跟踪
 - **🛡️ 权限控制**：基于RBAC模型的细粒度权限管理
 - **📊 统一异常处理**：自定义AOP切面，统一API响应格式
+- **🔄 异步简历处理**：简历上传后异步AI解析，提升用户体验
 
 ---
 
@@ -30,16 +31,19 @@
 
 ### 2.2 简历管理与智能解析
 - **文件上传**：支持PDF、Word、TXT格式，文件大小限制5MB
+- **异步AI解析**：简历上传后立即返回taskId，后台异步进行AI解析
 - **智能解析**：基于Apache Tika的文档内容提取
 - **AI分析**：集成阿里云通义千问，智能解析简历内容，提取结构化数据
 - **文件存储**：集成MinIO对象存储，支持分布式部署
 - **下载管理**：文件下载、删除、权限控制
+- **简历元信息**：支持简历标题、查看次数、下载次数、综合评分等扩展字段
 
 ### 2.3 AI智能分析引擎
 - **简历智能解析**：基于通义千问的简历内容分析
 - **结构化数据提取**：自动提取个人信息、教育背景、工作经验、项目经历等
 - **智能纠错**：自动修正文本中的错别字和技术术语错误
 - **格式标准化**：统一日期、技能名称等字段格式
+- **异步处理**：支持长时间AI解析任务，避免接口超时
 
 ### 2.4 异步任务管理
 - **任务状态跟踪**：PENDING、RUNNING、FINISHED、FAILED四种状态
@@ -172,8 +176,18 @@ interview-app/
 
 #### 5.2.3 数据结构
 - **ResumeMetadata**：简历元数据（MySQL存储）
+  - 基本信息：resumeId、userId、bucketName、objectName等
+  - 扩展信息：resumeTitle、viewCount、downloadCount、rate等
 - **ResumeDetail**：简历详细信息（MongoDB存储）
 - **结构化数据**：基本信息、工作经历、教育背景、技能、项目经历
+
+#### 5.2.4 异步处理流程
+1. **文件上传**：用户上传简历文件
+2. **立即响应**：返回taskId和resumeId，提示用户等待后台解析
+3. **异步解析**：后台使用Tika提取文本内容
+4. **AI分析**：调用通义千问进行智能解析
+5. **数据持久化**：保存解析结果到MongoDB和MySQL
+6. **状态查询**：用户可通过taskId查询解析进度
 
 ### 5.3 AI智能分析（ai）
 
@@ -459,11 +473,11 @@ global:
 
 | 接口 | 方法 | 路径 | 说明 |
 |------|------|------|------|
-| 简历上传 | POST | `/api/resume/upload` | 上传简历文件 |
+| 简历上传 | POST | `/api/resume/upload` | 上传简历文件（异步解析） |
 | 简历下载 | GET | `/api/resume/download` | 下载简历文件 |
 | 简历删除 | DELETE | `/api/resume/delete` | 删除简历文件 |
-| 简历列表 | GET | `/api/resume/getMyResume` | 获取简历列表 |
-| 简历分析结果 | GET | `/api/resume/queryResumeSummarizeResult` | 查询简历分析结果 |
+| 简历列表 | GET | `/api/resume/getMyResume` | 获取简历元信息列表 |
+| 异步解析结果 | GET | `/api/resume/queryResumeAsyncUploadResult` | 查询简历异步解析结果 |
 
 ### 8.3 权限说明
 
@@ -489,6 +503,18 @@ global:
 {
   "code": 208,
   "message": "简历分析失败，原因为：无效用户！"
+}
+```
+
+#### 8.4.3 异步任务响应
+```json
+{
+  "code": 900,
+  "message": "异步任务执行中",
+  "data": {
+    "taskId": "task_123456",
+    "status": "RUNNING"
+  }
 }
 ```
 
@@ -525,8 +551,8 @@ curl -X POST http://localhost:8081/api/resume/upload \
   -H "Authorization: your_jwt_token" \
   -F "resume=@/path/to/resume.pdf"
 
-# 5. 查询简历分析结果
-curl -X GET "http://localhost:8081/api/resume/queryResumeSummarizeResult?taskId=xxx&resumeId=xxx" \
+# 5. 查询简历异步解析结果
+curl -X GET "http://localhost:8081/api/resume/queryResumeAsyncUploadResult?taskId=xxx&resumeId=xxx" \
   -H "Authorization: your_jwt_token"
 ```
 
