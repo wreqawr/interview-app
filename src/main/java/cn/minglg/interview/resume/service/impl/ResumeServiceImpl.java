@@ -187,10 +187,14 @@ public class ResumeServiceImpl implements ResumeService {
             Long userId = currentUser.getUserId();
             List<String> resumeIdList = Arrays.stream(resumeIds).toList();
             List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeIdList(userId, resumeIdList);
+            // 第一步：删除mysql中元信息
             int affectRows = resumeMetadataMapper.deleteResumeMetadataByUserIdAndResumeId(userId, resumeIdList);
             if (affectRows == 0) {
                 throw new ResumeDeleteException("删除失败，简历信息不存在！");
             }
+            // 第二步：删除mongodb中的详细信息
+            resumeIdList.forEach(resumeId -> resumeDetailRepository.deleteResumeDetailByUserIdAndResumeId(userId, resumeId));
+            // 第三步：删除minio存储的物理文件
             for (ResumeMetadata resumeMetadata : resumeMetadataList) {
                 String bucketName = resumeMetadata.getBucketName();
                 String objectName = resumeMetadata.getObjectName();
@@ -247,7 +251,6 @@ public class ResumeServiceImpl implements ResumeService {
         }
         TaskStatus taskStatus = task.getTaskStatus();
         if (taskStatus == TaskStatus.FINISHED) {
-//            ResumeDetail queryResult = resumeDetailRepository.findByUserIdAndResumeId(currentUser.getUserId(), resumeId);
             ResumeMetadata queryResult = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(currentUser.getUserId(), resumeId);
             return R.builder()
                     .code(ResponseCode.OK.getCode())

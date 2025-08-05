@@ -35,6 +35,12 @@ public class ResumeDetail {
      */
     @JsonIgnore
     private Long userId;
+
+    /**
+     * Tika提取后的简历文件原始纯文本
+     */
+    @JsonIgnore
+    private String rawText;
     /**
      * 任务id
      */

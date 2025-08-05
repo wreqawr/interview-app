@@ -50,8 +50,12 @@ public class ResumeSummarizeFacadeService {
     @Async("taskExecutor")
     public void resumeSummarizeAndSave(Long userId, String taskId, String resumeId, String content, ResumeMetadata resumeMetadata) {
         // 第一步：获取ai解析结果
-        ResumeDetail resumeDetail = resumeCoreService.resumeSummarize(userId, taskId, resumeId, content);
+        ResumeDetail resumeDetail = resumeCoreService.resumeSummarize(userId, taskId, content);
         // 第二步：mongodb保存解析结果
+        resumeDetail.setUserId(userId);
+        resumeDetail.setTaskId(taskId);
+        resumeDetail.setResumeId(resumeId);
+        resumeDetail.setRawText(content);
         resumeDetailRepository.save(resumeDetail);
         // 第三步：mysql保存简历元信息
         String resumeTitle = resumeDetail.getBasicInfo().getTargetTitle();

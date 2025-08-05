@@ -28,21 +28,14 @@ public class ResumeSummarizeCoreService {
     /**
      * 简历分析
      *
-     * @param userId   用户id
-     * @param taskId   任务id
-     * @param resumeId 简历id
      * @param content  简历内容
      */
     @AsyncTaskHandler(taskType = TaskType.RESUME_SUMMARIZE)
-    public ResumeDetail resumeSummarize(Long userId, String taskId, String resumeId, String content) {
+    public ResumeDetail resumeSummarize(Long userId, String taskId, String content) {
         String chatResult = chatClient
                 .prompt(content)
                 .call()
                 .content();
-        ResumeDetail resumeDetail = JSONUtil.toBean(chatResult, ResumeDetail.class);
-        resumeDetail.setUserId(userId);
-        resumeDetail.setTaskId(taskId);
-        resumeDetail.setResumeId(resumeId);
-        return resumeDetail;
+        return JSONUtil.toBean(chatResult, ResumeDetail.class);
     }
 }

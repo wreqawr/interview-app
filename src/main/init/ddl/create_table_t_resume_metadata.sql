@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS t_resume_metadata
     resume_title   VARCHAR(50) COMMENT '简历标题',
     view_count     INT COMMENT '查看次数',
     download_count INT COMMENT '下载次数',
-    rate           Decimal COMMENT '综合评分',
+    rate           Decimal(5, 1) COMMENT '综合评分',
     user_id        BIGINT UNSIGNED                          NOT NULL COMMENT '用户ID',
     bucket_name    VARCHAR(63)                              NOT NULL COMMENT 'MinIO桶名称',
     object_name    VARCHAR(700)                             NOT NULL COMMENT 'MinIO对象名称',

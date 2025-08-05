@@ -52,8 +52,8 @@ public class ResumeController {
      * @param resumeName 简历名称
      * @return 响应结果
      */
-    @GetMapping("/download")
-    public ResponseEntity<Object> resumeDownload(@RequestParam("resumeName") String resumeName) {
+    @GetMapping("/download/{resumeName}")
+    public ResponseEntity<Object> resumeDownload(@PathVariable("resumeName") String resumeName) {
         try {
             Map<String, Object> map = resumeService.resumeDownload(resumeName);
             InputStreamResource isr = (InputStreamResource) map.get("isr");
@@ -99,13 +99,13 @@ public class ResumeController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/queryResumeAsyncUploadResult")
+    @GetMapping("/queryResumeAsyncUploadResult/{taskId}/{resumeId}")
     @ResponseEntityExceptionHandler(
             errResponseCode = ResponseCode.RESUME_SUMMARIZE_FAIL,
             errorMessagePrefix = "简历分析失败")
     public ResponseEntity<R> queryResumeSummarizeResult(
-            @RequestParam("taskId") String taskId,
-            @RequestParam("resumeId") String resumeId) {
+            @PathVariable("taskId") String taskId,
+            @PathVariable("resumeId") String resumeId) {
         R result = resumeService.getResumeAsyncUploadResult(taskId, resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

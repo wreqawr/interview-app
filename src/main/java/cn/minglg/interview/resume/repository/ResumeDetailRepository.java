@@ -39,4 +39,12 @@ public interface ResumeDetailRepository extends MongoRepository<ResumeDetail, St
      * @return 简历列表
      */
     List<ResumeDetail> findByUserId(Long userId);
+
+    /**
+     * 根据用户id和简历id删除简历详细信息
+     *
+     * @param userId 用户id
+     * @param resumeId 简历id
+     */
+    void deleteResumeDetailByUserIdAndResumeId(Long userId, String resumeId);
 }
