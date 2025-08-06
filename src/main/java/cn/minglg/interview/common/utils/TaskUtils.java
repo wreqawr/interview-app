@@ -3,6 +3,8 @@ package cn.minglg.interview.common.utils;
 import cn.minglg.interview.common.mapper.TaskMapper;
 import cn.minglg.interview.common.pojo.Task;
 
+import java.util.UUID;
+
 /**
  * ClassName:TaskUtils
  * Package:cn.minglg.interview.common.utils
@@ -26,5 +28,14 @@ public class TaskUtils {
                 .userId(userId)
                 .taskId(taskId).build();
         return taskMapper.getTask(task);
+    }
+
+    /**
+     * 生成taskId
+     *
+     * @return 任务id
+     */
+    public static String generateTaskId() {
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
     }
 }

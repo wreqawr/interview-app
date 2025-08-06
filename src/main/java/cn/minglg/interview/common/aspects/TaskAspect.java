@@ -1,21 +1,25 @@
 package cn.minglg.interview.common.aspects;
 
-import cn.minglg.interview.common.annotation.AsyncTaskHandler;
+import cn.minglg.interview.auth.pojo.User;
+import cn.minglg.interview.common.annotation.TaskHandler;
 import cn.minglg.interview.common.constant.TaskStatus;
 import cn.minglg.interview.common.constant.TaskType;
 import cn.minglg.interview.common.mapper.TaskMapper;
 import cn.minglg.interview.common.pojo.Task;
+import cn.minglg.interview.common.utils.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
 /**
- * ClassName:AsyncTaskAspect
+ * ClassName:TaskAspect
  * Package:cn.minglg.interview.aspects
  * Description:异步任务切面类
  *
@@ -26,7 +30,8 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Aspect
 @Component
-public class AsyncTaskAspect {
+@Order(Ordered.LOWEST_PRECEDENCE - 1)
+public class TaskAspect {
     private final TaskMapper taskMapper;
 
     /**
@@ -35,14 +40,17 @@ public class AsyncTaskAspect {
      * @param pjp     连接点（被增强的方法）
      * @param handler 注解对象
      * @return 执行结果
-     * @throws Throwable 异常
      */
     @Around("@annotation(handler)")
-    public Object handleAsyncTask(ProceedingJoinPoint pjp, AsyncTaskHandler handler) throws Throwable {
+    public Object handleAsyncTask(ProceedingJoinPoint pjp, TaskHandler handler) {
         // 第一步：获取初始化参数
         Object[] args = pjp.getArgs();
-        Long userId = (Long) args[0];
-        String taskId = (String) args[1];
+        User currentUser = UserUtils.getCurrentUser();
+        if (currentUser == null) {
+            return null;
+        }
+        Long userId = currentUser.getUserId();
+        String taskId = (String) args[0];
         TaskType taskType = handler.taskType();
         TaskStatus taskStatus = TaskStatus.RUNNING;
         String methodName = pjp.getSignature().toLongString();

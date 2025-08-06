@@ -1,14 +1,14 @@
 package cn.minglg.interview.ai.service.impl;
 
 import cn.hutool.json.JSONUtil;
-import cn.minglg.interview.ai.facade.resume.ResumeSummarizeFacadeService;
+import cn.minglg.interview.common.utils.FileUtils;
 import cn.minglg.interview.minio.service.MinioService;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import cn.minglg.interview.resume.repository.ResumeDetailRepository;
-import cn.minglg.interview.resume.service.ResumeParserService;
 import lombok.SneakyThrows;
+import org.apache.tika.parser.AutoDetectParser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,9 +30,7 @@ public class ResumeSummarizeCoreServiceTest {
     @Autowired
     private MinioService minioService;
     @Autowired
-    private ResumeParserService resumeParserService;
-    @Autowired
-    private ResumeSummarizeFacadeService resumeSummarizeFacadeService;
+    AutoDetectParser autoDetectParser;
     @Autowired
     private ResumeDetailRepository resumeDetailRepository;
     @Autowired
@@ -43,7 +41,7 @@ public class ResumeSummarizeCoreServiceTest {
         String bucketName = "resume-upload-4";
         String fileName = "1754140081897.pdf";
         try (InputStream is = minioService.downloadFile(bucketName, fileName)) {
-            return resumeParserService.parseResume(is);
+            return FileUtils.getContentFromFile(autoDetectParser,is);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -68,10 +66,11 @@ public class ResumeSummarizeCoreServiceTest {
         ResumeDetail byResumeId = resumeDetailRepository.findByResumeId(resumeId);
         System.out.println(byResumeId);
     }
+
     @Test
-    public void testGetResumeAsyncUploadResult(){
+    public void testGetResumeAsyncUploadResult() {
         long userId = 4L;
-        String resumeId ="1754288236657261b0c7b827c4bf";
+        String resumeId = "1754288236657261b0c7b827c4bf";
         ResumeMetadata metadata = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(userId, resumeId);
         System.out.println(JSONUtil.toJsonStr(metadata));
     }

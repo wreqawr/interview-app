@@ -24,4 +24,13 @@ public class ResumeProperties {
      */
     private List<String> allowFileTypes;
 
+    /**
+     * 支持预览的文件类型
+     */
+    private List<String> allowPreviewTypes = List.of(".pdf");
+
+    /**
+     * 预览url有效时间（单位：秒）
+     */
+    private Integer previewExpired = 10;
 }

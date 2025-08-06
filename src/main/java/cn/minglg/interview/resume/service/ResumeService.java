@@ -58,6 +58,15 @@ public interface ResumeService {
     R getResumeAsyncUploadResult(String taskId, String resumeId);
 
     /**
+     * 获取简历预览url
+     *
+     * @param resumeId 简历id
+     * @return 简历预览url
+     */
+
+    R getResumePreviewUrl(String resumeId);
+
+    /**
      * 获取文件扩展名
      *
      * @param filename 文件名
@@ -78,6 +87,17 @@ public interface ResumeService {
     default boolean isValidFileType(String filename, List<String> allowFileTypes) {
         String extension = getFileExtension(filename).toLowerCase();
         return allowFileTypes.contains(extension);
+    }
+
+    /**
+     * 文件是否支持预览
+     *
+     * @param filename            文件名
+     * @param previewEnabledTypes 支持预览的文件后缀列表
+     * @return 判断结果
+     */
+    default boolean isPreviewEnabled(String filename, List<String> previewEnabledTypes) {
+        return previewEnabledTypes.contains(getFileExtension(filename).toLowerCase());
     }
 
 }

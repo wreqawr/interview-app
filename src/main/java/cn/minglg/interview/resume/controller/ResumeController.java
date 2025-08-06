@@ -110,4 +110,14 @@ public class ResumeController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/preview/{resumeId}")
+    @ResponseEntityExceptionHandler(
+            errResponseCode = ResponseCode.RESUME_PREVIEW_FAIL,
+            errorMessagePrefix = "简历预览失败")
+    public ResponseEntity<R> getPreviewUrl(
+            @PathVariable("resumeId") String resumeId) {
+        R result = resumeService.getResumePreviewUrl(resumeId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }

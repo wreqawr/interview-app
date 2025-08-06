@@ -2,7 +2,7 @@ package cn.minglg.interview.resume.service.impl;
 
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
-import cn.minglg.interview.ai.facade.resume.ResumeSummarizeFacadeService;
+import cn.minglg.interview.ai.core.resume.AiResumeCoreService;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.constant.ResponseCode;
 import cn.minglg.interview.common.constant.ResumeStatus;
@@ -13,18 +13,20 @@ import cn.minglg.interview.common.mapper.TaskMapper;
 import cn.minglg.interview.common.pojo.Task;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
+import cn.minglg.interview.common.utils.FileUtils;
 import cn.minglg.interview.common.utils.TaskUtils;
 import cn.minglg.interview.common.utils.UserUtils;
 import cn.minglg.interview.minio.service.MinioService;
 import cn.minglg.interview.resume.exception.ResumeDeleteException;
 import cn.minglg.interview.resume.exception.ResumeDownloadException;
+import cn.minglg.interview.resume.exception.ResumePreviewException;
 import cn.minglg.interview.resume.exception.ResumeUploadException;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import cn.minglg.interview.resume.repository.ResumeDetailRepository;
-import cn.minglg.interview.resume.service.ResumeParserService;
 import cn.minglg.interview.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
+import org.apache.tika.parser.AutoDetectParser;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -50,11 +52,11 @@ import java.util.*;
 public class ResumeServiceImpl implements ResumeService {
     private final GlobalProperties globalProperties;
     private final MinioService minioService;
+    private final AutoDetectParser autoDetectParser;
     private final ResumeMetadataMapper resumeMetadataMapper;
     private final TaskMapper taskMapper;
     private final ResumeDetailRepository resumeDetailRepository;
-    private final ResumeSummarizeFacadeService resumeSummarizeFacadeService;
-    private final ResumeParserService resumeParserService;
+    private final AiResumeCoreService aiResumeCoreService;
 
 
     /**
@@ -95,8 +97,8 @@ public class ResumeServiceImpl implements ResumeService {
             String sha256 = new Digester(DigestAlgorithm.SHA256).digestHex(is1);
             Long fileSize = file.getSize();
             String mimeType = Objects.requireNonNull(file.getContentType());
+            boolean previewEnabled = isPreviewEnabled(originalName, globalProperties.getResume().getAllowPreviewTypes());
             minioService.uploadFile(bucketName, file, objectName);
-            String objectUrl = minioService.getFileUrl(bucketName, objectName);
 
             // 第五步：封装简历元信息
             ResumeMetadata resumeMetadata = ResumeMetadata.builder()
@@ -107,20 +109,20 @@ public class ResumeServiceImpl implements ResumeService {
                     .userId(userId)
                     .bucketName(bucketName)
                     .objectName(objectName)
-                    .objectUrl(objectUrl)
                     .originalName(originalName)
                     .fileSize(fileSize)
                     .mimeType(mimeType)
+                    .previewEnabled(previewEnabled)
                     .sha256(sha256)
                     .status(ResumeStatus.EFFECTIVE)
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
                     .build();
             // 第六步：使用Tika提取简历文本信息
-            String content = resumeParserService.parseResume(is2);
+            String content = FileUtils.getContentFromFile(autoDetectParser, is2);
             // 第七步：调用异步方法，分析提取简历信息，并持久化保存
-            String taskId = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
-            resumeSummarizeFacadeService.resumeSummarizeAndSave(userId, taskId, resumeId, content, resumeMetadata);
+            String taskId = TaskUtils.generateTaskId();
+            aiResumeCoreService.resumeSummarizeAndSave(taskId, resumeId, content, resumeMetadata);
             // 第八步：构建响应
             Map<String, ? extends Serializable> data = Map.of("taskId", taskId, "resumeId", resumeId);
 
@@ -267,6 +269,40 @@ public class ResumeServiceImpl implements ResumeService {
                     .code(ResponseCode.ASYNC_TASK_RUNNING.getCode())
                     .message(task.getTaskStatus().getDescription())
                     .build();
+        }
+    }
+
+    /**
+     * 获取简历预览url
+     *
+     * @param resumeId 简历id
+     * @return 简历预览url
+     */
+    @Override
+    public R getResumePreviewUrl(String resumeId) {
+        User currentUser = UserUtils.getCurrentUser();
+        if (currentUser == null) {
+            throw new UnKnowUserException("无效用户！");
+        }
+        ResumeMetadata resumeMetadata = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(currentUser.getUserId(), resumeId);
+        Boolean previewEnabled = resumeMetadata.getPreviewEnabled();
+        if (!previewEnabled) {
+            throw new ResumePreviewException("文件不支持预览！");
+        }
+        String bucketName = resumeMetadata.getBucketName();
+        String objectName = resumeMetadata.getObjectName();
+        Integer expired = globalProperties.getResume().getPreviewExpired();
+        try {
+            String fileUrl = minioService.getFileUrl(bucketName, objectName, expired);
+            String taskId = TaskUtils.generateTaskId();
+            resumeMetadata.setViewCount(resumeMetadata.getViewCount() + 1);
+            resumeMetadataMapper.updateResumeMetadata(taskId, resumeMetadata);
+            return R.builder().code(ResponseCode.OK.getCode())
+                    .data(Map.of("previewUrl", fileUrl))
+                    .message("预览地址获取成功！")
+                    .build();
+        } catch (Exception e) {
+            throw new ResumePreviewException(e.getMessage());
         }
     }
 }

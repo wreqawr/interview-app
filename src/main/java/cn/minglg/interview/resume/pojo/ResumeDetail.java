@@ -41,11 +41,7 @@ public class ResumeDetail {
      */
     @JsonIgnore
     private String rawText;
-    /**
-     * 任务id
-     */
-    @JsonIgnore
-    private String taskId;
+
     /**
      * 基本信息
      */

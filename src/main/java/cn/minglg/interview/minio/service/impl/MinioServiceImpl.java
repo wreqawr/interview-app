@@ -73,19 +73,21 @@ public class MinioServiceImpl implements MinioService {
     }
 
     /**
-     * 获取文件访问url
+     * 生成短时效预签名URL
      *
      * @param bucketName 桶名
      * @param fileName   文件名
+     * @param expired    有效时间
      * @return 文件url
      * @throws Exception 异常
      */
     @Override
-    public String getFileUrl(String bucketName, String fileName) throws Exception {
+    public String getFileUrl(String bucketName, String fileName, Integer expired) throws Exception {
         GetPresignedObjectUrlArgs objectUrlArgs = GetPresignedObjectUrlArgs.builder()
                 .bucket(bucketName)
                 .object(fileName)
                 .method(Method.GET)
+                .expiry(expired)
                 .build();
         return minioClient.getPresignedObjectUrl(objectUrlArgs);
     }

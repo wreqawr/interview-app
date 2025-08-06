@@ -47,7 +47,7 @@
 
 ### 2.4 异步任务管理
 - **任务状态跟踪**：PENDING、RUNNING、FINISHED、FAILED四种状态
-- **AOP切面管理**：基于`@AsyncTaskHandler`注解的异步任务处理
+- **AOP切面管理**：基于`@TaskHandler`注解的异步任务处理
 - **任务类型支持**：简历解析、能力评估、岗位匹配度分析等
 - **异常处理**：任务失败时的错误信息记录和重试机制
 
@@ -121,13 +121,10 @@ interview-app/
 │   │   │   │   └── config/                         # MinIO配置
 │   │   │   └── ai/                                 # AI模块
 │   │   │       ├── config/                         # AI配置（通义千问）
-│   │   │       ├── core/                           # AI核心服务
-│   │   │       └── facade/                         # AI门面服务
+│   │   │       └── core/                           # AI核心服务
 │   │   ├── resources/
 │   │   │   ├── config/application.yml              # 配置文件，端口8081，敏感信息用环境变量
 │   │   │   ├── mapper/                             # MyBatis XML映射
-│   │   │   ├── init/ddl/                           # 数据库表结构SQL
-│   │   │   ├── init/dml/                           # 数据库初始化数据SQL
 │   │   │   ├── prompt/                             # AI提示词模板
 │   │   │   └── banner/                             # 启动Banner
 │   ├── test/java/cn/minglg/interview/              # 单元测试
@@ -192,8 +189,7 @@ interview-app/
 ### 5.3 AI智能分析（ai）
 
 #### 5.3.1 核心服务
-- **ResumeSummarizeCoreService**：简历分析核心服务
-- **ResumeSummarizeFacadeService**：简历分析门面服务
+- **AiResumeCoreService**：简历分析核心服务
 - **异步处理**：基于`@Async`注解的异步任务执行
 
 #### 5.3.2 智能解析
@@ -213,10 +209,10 @@ interview-app/
     "years_exp": 5.5,
     "target_title": "高级Java开发工程师"
   },
-  "work_experience": [...],
-  "education": [...],
-  "skills": {...},
-  "projects": [...]
+  "work_experience": [],
+  "education": [],
+  "skills": {},
+  "projects": []
 }
 ```
 
@@ -236,7 +232,7 @@ interview-app/
 #### 5.4.3 AOP切面
 - **AsyncTaskAspect**：异步任务状态管理切面
 - **ResponseEntityAspect**：统一响应处理切面
-- **注解驱动**：`@AsyncTaskHandler`、`@ResponseEntityExceptionHandler`
+- **注解驱动**：`@TaskHandler`、`@ResponseEntityExceptionHandler`
 
 ### 5.5 文件存储（minio）
 
@@ -474,10 +470,11 @@ global:
 | 接口 | 方法 | 路径 | 说明 |
 |------|------|------|------|
 | 简历上传 | POST | `/api/resume/upload` | 上传简历文件（异步解析） |
-| 简历下载 | GET | `/api/resume/download` | 下载简历文件 |
+| 简历下载 | GET | `/api/resume/download/{resumeName}` | 下载简历文件 |
 | 简历删除 | DELETE | `/api/resume/delete` | 删除简历文件 |
 | 简历列表 | GET | `/api/resume/getMyResume` | 获取简历元信息列表 |
-| 异步解析结果 | GET | `/api/resume/queryResumeAsyncUploadResult` | 查询简历异步解析结果 |
+| 异步解析结果 | GET | `/api/resume/queryResumeAsyncUploadResult/{taskId}/{resumeId}` | 查询简历异步解析结果 |
+| 简历预览 | GET | `/api/resume/preview/{resumeId}` | 获取简历预览URL |
 
 ### 8.3 权限说明
 
@@ -493,7 +490,7 @@ global:
   "code": 200,
   "message": "操作成功",
   "data": {
-    // 响应数据
+    "xxx": "yyy"
   }
 }
 ```
@@ -552,7 +549,7 @@ curl -X POST http://localhost:8081/api/resume/upload \
   -F "resume=@/path/to/resume.pdf"
 
 # 5. 查询简历异步解析结果
-curl -X GET "http://localhost:8081/api/resume/queryResumeAsyncUploadResult?taskId=xxx&resumeId=xxx" \
+curl -X GET "http://localhost:8081/api/resume/queryResumeAsyncUploadResult/xxx/xxx" \
   -H "Authorization: your_jwt_token"
 ```
 

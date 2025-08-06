@@ -42,14 +42,15 @@ public interface MinioService {
     void uploadFile(String bucketName, MultipartFile originFile, String targetFileName) throws Exception;
 
     /**
-     * 获取文件访问url
+     * 生成短时效预签名URL
      *
      * @param bucketName 桶名
      * @param fileName   文件名
+     * @param expired    有效时间
      * @return 文件url
      * @throws Exception 异常
      */
-    String getFileUrl(String bucketName, String fileName) throws Exception;
+    String getFileUrl(String bucketName, String fileName, Integer expired) throws Exception;
 
     /**
      * 文件删除

@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AsyncTaskHandler {
+public @interface TaskHandler {
     @AliasFor("taskType")
     TaskType value() default TaskType.OTHER;
 

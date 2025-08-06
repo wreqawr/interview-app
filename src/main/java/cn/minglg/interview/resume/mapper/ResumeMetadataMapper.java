@@ -1,5 +1,7 @@
 package cn.minglg.interview.resume.mapper;
 
+import cn.minglg.interview.common.annotation.TaskHandler;
+import cn.minglg.interview.common.constant.TaskType;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import org.apache.ibatis.annotations.Param;
 
@@ -52,9 +54,11 @@ public interface ResumeMetadataMapper {
     int deleteResumeMetadataByUserIdAndResumeId(@Param("userId") Long userId, @Param("resumeIdList") List<String> resumeIdList);
 
     /**
-     * 更新简历
+     * 更新简历元信息
      *
+     * @param taskId         任务id
      * @param resumeMetadata 简历元信息
      */
-    //void updateResumeMetadata(@Param("resumeMetadata") ResumeMetadata resumeMetadata);
+    @TaskHandler(taskType = TaskType.RESUME_METADATA_UPDATE)
+    void updateResumeMetadata(String taskId, @Param("resumeMetadata") ResumeMetadata resumeMetadata);
 }

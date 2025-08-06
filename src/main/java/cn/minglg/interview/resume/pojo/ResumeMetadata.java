@@ -69,12 +69,6 @@ public class ResumeMetadata implements Serializable {
     private String objectName;
 
     /**
-     * 文件下载路径
-     */
-    @JsonIgnore
-    private String objectUrl;
-
-    /**
      * 原始文件名
      */
     @JsonIgnore
@@ -89,6 +83,11 @@ public class ResumeMetadata implements Serializable {
      * 文件类型
      */
     private String mimeType;
+
+    /**
+     * 是否支持预览
+     */
+    private Boolean previewEnabled;
 
     /**
      * 文件哈希值（校验用）
