@@ -88,6 +88,13 @@ public class ResumeController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * 简历上传异步任务查询接口
+     *
+     * @param taskId   任务id
+     * @param resumeId 简历id
+     * @return 查询信息
+     */
     @GetMapping("/queryResumeAsyncUploadResult/{taskId}/{resumeId}")
     @ResponseEntityExceptionHandler(
             errResponseCode = ResponseCode.RESUME_SUMMARIZE_FAIL,
@@ -103,6 +110,12 @@ public class ResumeController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * 简历预览接口
+     *
+     * @param resumeId 简历id
+     * @return 预览url地址
+     */
     @GetMapping("/preview/{resumeId}")
     @ResponseEntityExceptionHandler(
             errResponseCode = ResponseCode.RESUME_PREVIEW_FAIL,
@@ -113,6 +126,12 @@ public class ResumeController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * 简历分析接口
+     *
+     * @param resumeId 简历id
+     * @return 同步返回分析结果，异步返回taskId
+     */
     @GetMapping("/analyze/{resumeId}")
     @ResponseEntityExceptionHandler(
             errResponseCode = ResponseCode.RESUME_PREVIEW_FAIL,
@@ -123,6 +142,13 @@ public class ResumeController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * 简历分析异步任务查询接口
+     *
+     * @param taskId   任务id
+     * @param resumeId 简历id
+     * @return 任务信息
+     */
     @GetMapping("/queryResumeAsyncAnalyzeResult/{taskId}/{resumeId}")
     @ResponseEntityExceptionHandler(
             errResponseCode = ResponseCode.RESUME_SUMMARIZE_FAIL,

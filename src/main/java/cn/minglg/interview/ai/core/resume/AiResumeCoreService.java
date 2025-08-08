@@ -1,7 +1,9 @@
 package cn.minglg.interview.ai.core.resume;
 
 import cn.hutool.json.JSONUtil;
+import cn.minglg.interview.ai.exception.AiResumeAnalyzeAndSaveException;
 import cn.minglg.interview.common.annotation.TaskHandler;
+import cn.minglg.interview.common.constant.TaskStatus;
 import cn.minglg.interview.common.constant.TaskType;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
@@ -65,25 +67,44 @@ public class AiResumeCoreService {
 
     }
 
+    /**
+     * 面向求职者分析简历优劣势
+     *
+     * @param userId   用户id
+     * @param taskId   任务id
+     * @param resumeId 简历id
+     */
     @Async
     @TaskHandler(taskType = TaskType.RESUME_ANALYZE)
     public void resumeAnalyzeAndSave(Long userId, String taskId, String resumeId) {
+
         ResumeDetail resumeDetail = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId);
-        String analyzeResult = chatClient
-                .prompt()
-                // 本次对话的系统提示词
-                .system(systemPrompts.get(TaskType.RESUME_ANALYZE))
-                .user(resumeDetail.getRawText())
-                .call()
-                .content();
-        if (analyzeResult != null) {
-            String redisKey = globalProperties.getResume().getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
-            String hashKey = "analyzeHtmlContent";
-            redisTemplate.opsForHash().put(redisKey, hashKey, analyzeResult);
-            resumeDetail.setResumeAnalyzeHtmlContentForJobSeekers(analyzeResult);
-            resumeDetailRepository.updateResumeAnalyzeHtmlContentForJobSeekersByUserIdAndResumeId(userId, resumeId, analyzeResult);
+        String redisKey = globalProperties.getResume().getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
+        String hashKeyForAnalyze = "analyzeHtmlContent";
+        String hashKeyForAnalyzeStatus = "analyzeStatus";
+        String hashKeyForAnalyzeTaskId = "analyzeTaskId";
+        // 开始前更新简历的分析状态
+        try {
+            redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyzeStatus, TaskStatus.RUNNING.toString());
+            redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyzeTaskId, taskId);
+            String analyzeResult = chatClient
+                    .prompt()
+                    // 本次对话的系统提示词
+                    .system(systemPrompts.get(TaskType.RESUME_ANALYZE))
+                    .user(resumeDetail.getRawText())
+                    .call()
+                    .content();
+            if (analyzeResult != null) {
+                redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyze, analyzeResult);
+                redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyzeStatus, TaskStatus.FINISHED.toString());
+                resumeDetail.setResumeAnalyzeHtmlContentForJobSeekers(analyzeResult);
+                resumeDetailRepository.updateResumeAnalyzeHtmlContentForJobSeekersByUserIdAndResumeId(userId, resumeId, analyzeResult);
+            }
+        } catch (Exception e) {
+            redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyzeStatus, TaskStatus.FAILED.toString());
+            throw new AiResumeAnalyzeAndSaveException(e.getMessage());
         }
     }
 
-
 }
+

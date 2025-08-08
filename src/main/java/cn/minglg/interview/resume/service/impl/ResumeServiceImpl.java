@@ -7,6 +7,7 @@ import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.annotation.AsyncTaskQuery;
 import cn.minglg.interview.common.constant.ResponseCode;
 import cn.minglg.interview.common.constant.ResumeStatus;
+import cn.minglg.interview.common.constant.TaskStatus;
 import cn.minglg.interview.common.exception.NoSuchResumeException;
 import cn.minglg.interview.common.exception.UnKnowUserException;
 import cn.minglg.interview.common.properties.GlobalProperties;
@@ -318,16 +319,29 @@ public class ResumeServiceImpl implements ResumeService {
             throw new UnKnowUserException("无效用户！");
         }
         Long userId = currentUser.getUserId();
-        // 第一步：首先查询数据库中是否已经保存了该简历的解析结果，采用：Redis-mongodb-ai，3级缓存提高查询效率
-        // 一级缓存：redis读取
         String redisKey = globalProperties.getResume().getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
-        String hashKey = "analyzeHtmlContent";
-        String analyzeResult = (String) redisTemplate.opsForHash().get(redisKey, hashKey);
+        String hashKeyForAnalyze = "analyzeHtmlContent";
+        String hashKeyForAnalyzeStatus = "analyzeStatus";
+        String hashKeyForAnalyzeTaskId = "analyzeTaskId";
+        // 第一步：查询该简历是否已经处于分析状态，如是则避免重复请求，消耗资源
+        String status = (String) redisTemplate.opsForHash().get(redisKey, hashKeyForAnalyzeStatus);
+        String runningTaskId = (String) redisTemplate.opsForHash().get(redisKey, hashKeyForAnalyzeTaskId);
+        if (TaskStatus.RUNNING.toString().equals(status) && runningTaskId != null) {
+            return R.builder()
+                    .code(ResponseCode.ASYNC_TASK_RUNNING.getCode())
+                    .data(Map.of("taskId", runningTaskId))
+                    .message("简历正在分析中，请勿重复提交！")
+                    .build();
+        }
+        // 第二步：首先查询数据库中是否已经保存了该简历的解析结果，采用：Redis-mongodb-ai，3级缓存提高查询效率
+        // 一级缓存：redis读取
+
+        String analyzeResult = (String) redisTemplate.opsForHash().get(redisKey, hashKeyForAnalyze);
         if (StringUtils.hasText(analyzeResult)) {
             return R.builder()
                     .code(ResponseCode.OK.getCode())
                     .data(analyzeResult)
-                    .message("简历分析结果获取成功！")
+                    .message("简历分析完毕！")
                     .build();
         }
         // 二级缓存从mongodb取，能取到就回写redis
@@ -337,7 +351,7 @@ public class ResumeServiceImpl implements ResumeService {
         }
         analyzeResult = resumeDetail.getResumeAnalyzeHtmlContentForJobSeekers();
         if (StringUtils.hasText(analyzeResult)) {
-            redisTemplate.opsForHash().put(redisKey, hashKey, analyzeResult);
+            redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyze, analyzeResult);
             return R.builder()
                     .code(ResponseCode.OK.getCode())
                     .data(analyzeResult)
@@ -372,14 +386,14 @@ public class ResumeServiceImpl implements ResumeService {
             return R.builder()
                     .code(ResponseCode.OK.getCode())
                     .data(analyzeResult)
-                    .message("简历分析结果获取成功")
+                    .message("简历分析完毕！")
                     .build();
         }
         String result = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId).getResumeAnalyzeHtmlContentForJobSeekers();
         return R.builder()
                 .code(ResponseCode.OK.getCode())
                 .data(result)
-                .message("简历分析结果获取成功")
+                .message("简历分析完毕！")
                 .build();
     }
 }
