@@ -3,7 +3,6 @@ package cn.minglg.interview.aop;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.Ordered;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 /**

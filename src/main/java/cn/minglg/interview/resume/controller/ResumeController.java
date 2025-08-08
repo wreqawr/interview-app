@@ -1,19 +1,17 @@
 package cn.minglg.interview.resume.controller;
 
+import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
 import cn.minglg.interview.common.constant.ResponseCode;
+import cn.minglg.interview.common.exception.UnKnowUserException;
 import cn.minglg.interview.common.response.R;
+import cn.minglg.interview.common.utils.UserUtils;
 import cn.minglg.interview.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Map;
 
 /**
  * ClassName:ResumeController
@@ -49,25 +47,16 @@ public class ResumeController {
     /**
      * 简历下载接口
      *
-     * @param resumeName 简历名称
+     * @param resumeIds 简历id列表
      * @return 响应结果
      */
-    @GetMapping("/download/{resumeName}")
-    public ResponseEntity<Object> resumeDownload(@PathVariable("resumeName") String resumeName) {
-        try {
-            Map<String, Object> map = resumeService.resumeDownload(resumeName);
-            InputStreamResource isr = (InputStreamResource) map.get("isr");
-            String contentType = (String) map.get("contentType");
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resumeName + "\"")
-                    .body(isr);
-        } catch (Exception e) {
-            R result = R.builder().code(ResponseCode.RESUME_DOWNLOAD_FAIL.getCode())
-                    .message("简历下载失败，原因为：" + e.getMessage())
-                    .build();
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-        }
+    @GetMapping("/download")
+    @ResponseEntityExceptionHandler(
+            errResponseCode = ResponseCode.RESUME_DOWNLOAD_FAIL,
+            errorMessagePrefix = "简历下载失败")
+    public ResponseEntity<R> resumeDownload(@RequestParam("resumeIds") String[] resumeIds) {
+        R result = resumeService.resumeDownload(resumeIds);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     /**
@@ -102,11 +91,15 @@ public class ResumeController {
     @GetMapping("/queryResumeAsyncUploadResult/{taskId}/{resumeId}")
     @ResponseEntityExceptionHandler(
             errResponseCode = ResponseCode.RESUME_SUMMARIZE_FAIL,
-            errorMessagePrefix = "简历分析失败")
+            errorMessagePrefix = "简历结果提取失败")
     public ResponseEntity<R> queryResumeSummarizeResult(
             @PathVariable("taskId") String taskId,
             @PathVariable("resumeId") String resumeId) {
-        R result = resumeService.getResumeAsyncUploadResult(taskId, resumeId);
+        User currentUser = UserUtils.getCurrentUser();
+        if (currentUser == null) {
+            throw new UnKnowUserException("无效用户！");
+        }
+        R result = resumeService.getResumeAsyncUploadResult(currentUser.getUserId(), taskId, resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -116,7 +109,32 @@ public class ResumeController {
             errorMessagePrefix = "简历预览失败")
     public ResponseEntity<R> getPreviewUrl(
             @PathVariable("resumeId") String resumeId) {
-        R result = resumeService.getResumePreviewUrl(resumeId);
+        R result = resumeService.resumePreview(resumeId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/analyze/{resumeId}")
+    @ResponseEntityExceptionHandler(
+            errResponseCode = ResponseCode.RESUME_PREVIEW_FAIL,
+            errorMessagePrefix = "简历分析失败")
+    public ResponseEntity<R> resumeAnalyze(
+            @PathVariable("resumeId") String resumeId) {
+        R result = resumeService.resumeAnalyze(resumeId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/queryResumeAsyncAnalyzeResult/{taskId}/{resumeId}")
+    @ResponseEntityExceptionHandler(
+            errResponseCode = ResponseCode.RESUME_SUMMARIZE_FAIL,
+            errorMessagePrefix = "异步获取简历分析结果失败")
+    public ResponseEntity<R> queryResumeAsyncAnalyzeResult(
+            @PathVariable("taskId") String taskId,
+            @PathVariable("resumeId") String resumeId) {
+        User currentUser = UserUtils.getCurrentUser();
+        if (currentUser == null) {
+            throw new UnKnowUserException("无效用户！");
+        }
+        R result = resumeService.getResumeAsyncAnalyzeResult(currentUser.getUserId(), taskId, resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

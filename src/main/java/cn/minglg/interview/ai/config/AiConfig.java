@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -33,7 +34,13 @@ public class AiConfig {
 
     @Bean
     public Map<TaskType, Resource> systemPrompt() {
-        String systemPromptForResumeSummarize = "/prompt/ResumeSummarize.txt";
-        return Map.of(TaskType.RESUME_SUMMARIZE, new ClassPathResource(systemPromptForResumeSummarize));
+        Map<TaskType, Resource> map = new HashMap<>(16);
+        String systemPromptForResumeSummarize = "/prompt/简历关键信息提取.txt";
+        String systemPromptForResumeAnalyze = "/prompt/简历分析-求职者.txt";
+        String systemPromptForComprehensiveAssessment = "/prompt/综合评估-HR.txt";
+        map.put(TaskType.RESUME_SUMMARIZE, new ClassPathResource(systemPromptForResumeSummarize));
+        map.put(TaskType.RESUME_ANALYZE, new ClassPathResource(systemPromptForResumeAnalyze));
+        map.put(TaskType.COMPREHENSIVE_ASSESSMENT, new ClassPathResource(systemPromptForComprehensiveAssessment));
+        return map;
     }
 }

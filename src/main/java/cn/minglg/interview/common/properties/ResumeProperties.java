@@ -33,4 +33,14 @@ public class ResumeProperties {
      * 预览url有效时间（单位：秒）
      */
     private Integer previewExpired = 10;
+
+    /**
+     * 下载url有效时间（单位：秒）
+     */
+    private Integer downloadExpired = 10;
+
+    /**
+     * 简历分析结果保存在redis中的key前缀
+     */
+    private String redisKeyPrefixForAnalyze = "resume:analyze";
 }

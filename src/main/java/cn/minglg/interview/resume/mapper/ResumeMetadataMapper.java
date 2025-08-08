@@ -56,9 +56,10 @@ public interface ResumeMetadataMapper {
     /**
      * 更新简历元信息
      *
+     * @param userId         用户id
      * @param taskId         任务id
      * @param resumeMetadata 简历元信息
      */
     @TaskHandler(taskType = TaskType.RESUME_METADATA_UPDATE)
-    void updateResumeMetadata(String taskId, @Param("resumeMetadata") ResumeMetadata resumeMetadata);
+    void updateResumeMetadata(Long userId, String taskId, @Param("resumeMetadata") ResumeMetadata resumeMetadata);
 }

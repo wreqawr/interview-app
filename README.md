@@ -13,11 +13,12 @@
 - **🔐 安全认证**：基于JWT + RSA加密的现代化认证体系
 - **📄 智能简历解析**：支持PDF/Word/TXT格式，AI智能提取结构化数据
 - **☁️ 云存储集成**：基于MinIO的对象存储，支持分布式部署
-- **🤖 AI智能分析**：集成阿里云通义千问，智能解析简历内容
+- **🤖 AI智能分析**：集成阿里云通义千问，智能解析简历内容并提供专业优化建议
 - **⚡ 异步任务处理**：基于AOP的异步任务管理，支持任务状态跟踪
 - **🛡️ 权限控制**：基于RBAC模型的细粒度权限管理
 - **📊 统一异常处理**：自定义AOP切面，统一API响应格式
 - **🔄 异步简历处理**：简历上传后异步AI解析，提升用户体验
+- **📈 简历分析引擎**：面向求职者的专业简历分析，提供核心竞争力评估和优化建议
 
 ---
 
@@ -37,6 +38,7 @@
 - **文件存储**：集成MinIO对象存储，支持分布式部署
 - **下载管理**：文件下载、删除、权限控制
 - **简历元信息**：支持简历标题、查看次数、下载次数、综合评分等扩展字段
+- **简历预览**：支持文件预览功能，自动统计查看次数
 
 ### 2.3 AI智能分析引擎
 - **简历智能解析**：基于通义千问的简历内容分析
@@ -44,18 +46,26 @@
 - **智能纠错**：自动修正文本中的错别字和技术术语错误
 - **格式标准化**：统一日期、技能名称等字段格式
 - **异步处理**：支持长时间AI解析任务，避免接口超时
+- **专业分析报告**：面向求职者的简历分析，提供核心竞争力评估、短板识别、优化建议
+- **HTML格式输出**：生成精美的HTML分析报告，支持样式定制
 
 ### 2.4 异步任务管理
 - **任务状态跟踪**：PENDING、RUNNING、FINISHED、FAILED四种状态
 - **AOP切面管理**：基于`@TaskHandler`注解的异步任务处理
-- **任务类型支持**：简历解析、能力评估、岗位匹配度分析等
+- **任务类型支持**：简历解析、简历分析、能力评估、岗位匹配度分析等
 - **异常处理**：任务失败时的错误信息记录和重试机制
+- **查询切面**：基于`@AsyncTaskQuery`注解的异步任务结果查询
 
 ### 2.5 统一响应与异常处理
 - **标准化API响应**：统一的`R<T>`响应结构
 - **AOP异常处理**：基于`@ResponseEntityExceptionHandler`注解的异常处理
 - **全局异常处理器**：`@RestControllerAdvice`统一异常处理
 - **响应码管理**：标准化的业务响应码定义
+
+### 2.6 缓存策略
+- **三级缓存机制**：Redis-MongoDB-AI三级缓存，提升查询效率
+- **智能缓存更新**：支持缓存自动更新和失效机制
+- **分布式缓存**：基于Redis集群的分布式缓存支持
 
 ---
 
@@ -165,6 +175,7 @@ interview-app/
 - **文件存储**：MinIO对象存储，按用户分桶
 - **文件下载**：支持流式下载，权限验证
 - **文件删除**：级联删除元数据和存储文件
+- **文件预览**：支持文件预览功能，自动统计查看次数
 
 #### 5.2.2 智能解析
 - **文档解析**：基于Apache Tika的多格式文档解析
@@ -175,8 +186,10 @@ interview-app/
 - **ResumeMetadata**：简历元数据（MySQL存储）
   - 基本信息：resumeId、userId、bucketName、objectName等
   - 扩展信息：resumeTitle、viewCount、downloadCount、rate等
+  - 预览功能：previewEnabled、previewExpired等
 - **ResumeDetail**：简历详细信息（MongoDB存储）
-- **结构化数据**：基本信息、工作经历、教育背景、技能、项目经历
+  - 结构化数据：基本信息、工作经历、教育背景、技能、项目经历
+  - 分析报告：resumeAnalyzeHtmlContentForJobSeekers（面向求职者的HTML分析报告）
 
 #### 5.2.4 异步处理流程
 1. **文件上传**：用户上传简历文件
@@ -191,6 +204,7 @@ interview-app/
 #### 5.3.1 核心服务
 - **AiResumeCoreService**：简历分析核心服务
 - **异步处理**：基于`@Async`注解的异步任务执行
+- **多任务支持**：支持简历解析和简历分析两种任务类型
 
 #### 5.3.2 智能解析
 - **提示词工程**：专业的简历解析提示词模板
@@ -198,7 +212,13 @@ interview-app/
 - **智能纠错**：自动修正错别字和技术术语
 - **格式标准化**：统一日期、技能名称等格式
 
-#### 5.3.3 数据模型
+#### 5.3.3 简历分析
+- **专业分析**：面向求职者的简历分析，提供核心竞争力评估
+- **短板识别**：识别简历中的潜在问题和不足
+- **优化建议**：提供具体的改进建议和优化方向
+- **HTML输出**：生成精美的HTML格式分析报告
+
+#### 5.3.4 数据模型
 ```json
 {
   "basic_info": {
@@ -226,13 +246,17 @@ interview-app/
 
 #### 5.4.2 任务类型
 - **RESUME_SUMMARIZE**：简历解析
+- **RESUME_ANALYZE**：简历分析
 - **SKILL_EVALUATION**：能力评估
-- **JOB_MATCH_ANALYSIS**：岗位匹配度分析
+- **COMPREHENSIVE_ASSESSMENT**：综合评估
+- **RESUME_METADATA_UPDATE**：简历元数据更新
 
 #### 5.4.3 AOP切面
-- **AsyncTaskAspect**：异步任务状态管理切面
+- **TaskAspect**：异步任务状态管理切面
+  - `@TaskHandler`：异步任务执行切面
+  - `@AsyncTaskQuery`：异步任务查询切面
 - **ResponseEntityAspect**：统一响应处理切面
-- **注解驱动**：`@TaskHandler`、`@ResponseEntityExceptionHandler`
+- **注解驱动**：`@TaskHandler`、`@AsyncTaskQuery`、`@ResponseEntityExceptionHandler`
 
 ### 5.5 文件存储（minio）
 
@@ -241,11 +265,12 @@ interview-app/
 - **文件操作**：上传、下载、删除、URL生成
 - **权限控制**：基于用户的桶隔离
 - **元数据管理**：文件类型、大小、哈希值等
+- **预览支持**：生成预签名URL，支持文件预览
 
 #### 5.5.2 存储策略
 - **用户隔离**：每个用户独立的存储桶
 - **文件命名**：时间戳+随机字符串，避免冲突
-- **预签名URL**：支持临时访问链接
+- **预签名URL**：支持临时访问链接，可配置过期时间
 
 ### 5.6 通用与全局（common）
 
@@ -271,6 +296,7 @@ public class R<T> {
 - **CaptchaUtils**：验证码生成和验证
 - **UserUtils**：当前用户获取
 - **TaskUtils**：任务管理工具
+- **FileUtils**：文件处理工具
 
 ---
 
@@ -291,7 +317,7 @@ public class R<T> {
 
 ```bash
 # 1. 克隆项目
-git clone <repository-url>
+git clone git@github.com:wreqawr/interview-app.git
 cd interview-app
 
 # 2. 设置环境变量
@@ -441,7 +467,17 @@ global:
     redis-key-expire-minutes: 5
 ```
 
-#### 7.3.3 异步任务配置
+#### 7.3.3 简历配置
+```yaml
+global:
+  resume:
+    allow-file-types: [.pdf, .doc, .docx, .txt]
+    preview-expired: 3
+    download-expired: 60
+    redis-key-prefix-for-analyze: resume:analyze
+```
+
+#### 7.3.4 异步任务配置
 ```yaml
 global:
   async:
@@ -470,15 +506,17 @@ global:
 | 接口 | 方法 | 路径 | 说明 |
 |------|------|------|------|
 | 简历上传 | POST | `/api/resume/upload` | 上传简历文件（异步解析） |
-| 简历下载 | GET | `/api/resume/download/{resumeName}` | 下载简历文件 |
+| 简历下载 | GET | `/api/resume/download` | 下载简历文件 |
 | 简历删除 | DELETE | `/api/resume/delete` | 删除简历文件 |
 | 简历列表 | GET | `/api/resume/getMyResume` | 获取简历元信息列表 |
 | 异步解析结果 | GET | `/api/resume/queryResumeAsyncUploadResult/{taskId}/{resumeId}` | 查询简历异步解析结果 |
 | 简历预览 | GET | `/api/resume/preview/{resumeId}` | 获取简历预览URL |
+| 简历分析 | GET | `/api/resume/analyze/{resumeId}` | 触发简历分析（面向求职者） |
+| 异步分析结果 | GET | `/api/resume/queryResumeAsyncAnalyzeResult/{taskId}/{resumeId}` | 查询简历分析结果 |
 
 ### 8.3 权限说明
 
-- **JOB_SEEKER**：求职者角色，可以上传简历
+- **JOB_SEEKER**：求职者角色，可以上传简历、查看分析结果
 - **HR**：人力资源角色，可以查看和管理简历
 - **ADMIN**：管理员角色，拥有所有权限
 
@@ -490,7 +528,6 @@ global:
   "code": 200,
   "message": "操作成功",
   "data": {
-    "xxx": "yyy"
   }
 }
 ```
@@ -498,7 +535,7 @@ global:
 #### 8.4.2 错误响应
 ```json
 {
-  "code": 208,
+  "code": 210,
   "message": "简历分析失败，原因为：无效用户！"
 }
 ```
@@ -551,6 +588,14 @@ curl -X POST http://localhost:8081/api/resume/upload \
 # 5. 查询简历异步解析结果
 curl -X GET "http://localhost:8081/api/resume/queryResumeAsyncUploadResult/xxx/xxx" \
   -H "Authorization: your_jwt_token"
+
+# 6. 触发简历分析
+curl -X GET "http://localhost:8081/api/resume/analyze/xxx" \
+  -H "Authorization: your_jwt_token"
+
+# 7. 查询简历分析结果
+curl -X GET "http://localhost:8081/api/resume/queryResumeAsyncAnalyzeResult/xxx/xxx" \
+  -H "Authorization: your_jwt_token"
 ```
 
 ---
@@ -581,12 +626,14 @@ curl -X GET "http://localhost:8081/api/resume/queryResumeAsyncUploadResult/xxx/x
 - **阿里云API调用失败**：检查`ALIYUN_API_KEY`环境变量配置
 - **AI模型响应慢**：检查网络连接和API配额
 - **简历解析失败**：检查文件格式和内容质量
+- **简历分析失败**：检查AI提示词模板和模型配置
 
 ### 10.5 异步任务问题
 
 - **任务状态异常**：检查任务表数据完整性
 - **异步执行失败**：检查线程池配置和任务执行日志
-- **任务超时**：调整`@AsyncTaskHandler`的timeout配置
+- **任务超时**：调整`@TaskHandler`的timeout配置
+- **类型转换异常**：检查`@AsyncTaskQuery`切面与业务方法返回类型一致性
 
 ### 10.6 部署问题
 
@@ -616,20 +663,28 @@ curl -X GET "http://localhost:8081/api/resume/queryResumeAsyncUploadResult/xxx/x
 ### 11.3 AI功能扩展
 
 - **添加新的AI模型**：在`AiConfig`中配置新的ChatClient
-- **自定义提示词**：修改`RESUME_SUMMARIZE_PROMPT`常量
+- **自定义提示词**：修改AI提示词模板文件
 - **扩展AI服务**：在`ai.service`包下添加新的服务类
+- **新增任务类型**：在`TaskType`枚举中添加新类型
 
 ### 11.4 异步任务扩展
 
 - **添加新任务类型**：在`TaskType`枚举中添加新类型
-- **创建任务处理器**：使用`@AsyncTaskHandler`注解
+- **创建任务处理器**：使用`@TaskHandler`注解
 - **任务状态管理**：通过AOP切面自动管理任务状态
+- **查询切面**：使用`@AsyncTaskQuery`注解实现异步查询
 
 ### 11.5 异常处理扩展
 
 - **添加自定义异常**：继承`RuntimeException`
 - **配置异常处理**：使用`@ResponseEntityExceptionHandler`注解
 - **全局异常处理**：在`GlobalExceptionHandler`中添加处理方法
+
+### 11.6 缓存策略优化
+
+- **Redis缓存**：合理使用Redis缓存热点数据
+- **MongoDB存储**：存储结构化文档数据
+- **AI缓存**：缓存AI分析结果，避免重复计算
 
 ---
 

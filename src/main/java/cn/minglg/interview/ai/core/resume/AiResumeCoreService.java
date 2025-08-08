@@ -1,10 +1,9 @@
 package cn.minglg.interview.ai.core.resume;
 
 import cn.hutool.json.JSONUtil;
-import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.annotation.TaskHandler;
 import cn.minglg.interview.common.constant.TaskType;
-import cn.minglg.interview.common.utils.UserUtils;
+import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
@@ -12,6 +11,7 @@ import cn.minglg.interview.resume.repository.ResumeDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.core.io.Resource;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +29,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 public class AiResumeCoreService {
+    private final GlobalProperties globalProperties;
     private final ChatClient chatClient;
     private final ResumeMetadataMapper resumeMetadataMapper;
     private final ResumeDetailRepository resumeDetailRepository;
+    private final StringRedisTemplate redisTemplate;
     private final Map<TaskType, Resource> systemPrompts;
 
     /**
@@ -41,7 +43,7 @@ public class AiResumeCoreService {
      */
     @Async
     @TaskHandler(taskType = TaskType.RESUME_SUMMARIZE)
-    public void resumeSummarizeAndSave(String taskId, String resumeId, String content, ResumeMetadata resumeMetadata) {
+    public void resumeSummarizeAndSave(Long userId, String taskId, String resumeId, String content, ResumeMetadata resumeMetadata) {
         // 第一步：获取ai解析结果
         String chatResult = chatClient
                 .prompt()
@@ -52,18 +54,36 @@ public class AiResumeCoreService {
                 .content();
         ResumeDetail resumeDetail = JSONUtil.toBean(chatResult, ResumeDetail.class);
         // 第二步：mongodb保存解析结果
-        User currentUser = UserUtils.getCurrentUser();
-        if (currentUser != null) {
-            Long userId = currentUser.getUserId();
-            resumeDetail.setUserId(userId);
-            resumeDetail.setResumeId(resumeId);
-            resumeDetail.setRawText(content);
-            resumeDetailRepository.save(resumeDetail);
-            // 第三步：mysql保存简历元信息
-            String resumeTitle = resumeDetail.getBasicInfo().getTargetTitle();
-            resumeMetadata.setResumeTitle(resumeTitle);
-            resumeMetadataMapper.addResumeMetadata(resumeMetadata);
-        }
+        resumeDetail.setUserId(userId);
+        resumeDetail.setResumeId(resumeId);
+        resumeDetail.setRawText(content);
+        resumeDetailRepository.save(resumeDetail);
+        // 第三步：mysql保存简历元信息
+        String resumeTitle = resumeDetail.getBasicInfo().getTargetTitle();
+        resumeMetadata.setResumeTitle(resumeTitle);
+        resumeMetadataMapper.addResumeMetadata(resumeMetadata);
 
     }
+
+    @Async
+    @TaskHandler(taskType = TaskType.RESUME_ANALYZE)
+    public void resumeAnalyzeAndSave(Long userId, String taskId, String resumeId) {
+        ResumeDetail resumeDetail = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId);
+        String analyzeResult = chatClient
+                .prompt()
+                // 本次对话的系统提示词
+                .system(systemPrompts.get(TaskType.RESUME_ANALYZE))
+                .user(resumeDetail.getRawText())
+                .call()
+                .content();
+        if (analyzeResult != null) {
+            String redisKey = globalProperties.getResume().getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
+            String hashKey = "analyzeHtmlContent";
+            redisTemplate.opsForHash().put(redisKey, hashKey, analyzeResult);
+            resumeDetail.setResumeAnalyzeHtmlContentForJobSeekers(analyzeResult);
+            resumeDetailRepository.updateResumeAnalyzeHtmlContentForJobSeekersByUserIdAndResumeId(userId, resumeId, analyzeResult);
+        }
+    }
+
+
 }

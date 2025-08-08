@@ -2,8 +2,9 @@ package cn.minglg.interview.resume.repository;
 
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import org.springframework.data.mongodb.repository.MongoRepository;
-
-import java.util.List;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.mongodb.repository.Update;
+import org.springframework.data.repository.query.Param;
 
 /**
  * ClassName:ResumeDetailRepository
@@ -33,18 +34,24 @@ public interface ResumeDetailRepository extends MongoRepository<ResumeDetail, St
     ResumeDetail findByUserIdAndResumeId(Long userId, String resumeId);
 
     /**
-     * g根据用户id查询简历信息
-     *
-     * @param userId 用户id
-     * @return 简历列表
-     */
-    List<ResumeDetail> findByUserId(Long userId);
-
-    /**
      * 根据用户id和简历id删除简历详细信息
      *
-     * @param userId 用户id
+     * @param userId   用户id
      * @param resumeId 简历id
      */
     void deleteResumeDetailByUserIdAndResumeId(Long userId, String resumeId);
+
+    /**
+     * 根据userId和resumeId更新resumeAnalyzeHtmlContentForJobSeekers字段
+     *
+     * @param userId             用户id
+     * @param resumeId           简历id
+     * @param analyzeHtmlContent 字段值
+     */
+    @Query("{ 'userId': ?0, 'resumeId': ?1 }")
+    @Update("{ '$set' : { 'resumeAnalyzeHtmlContentForJobSeekers' : ?2 } }")
+    void updateResumeAnalyzeHtmlContentForJobSeekersByUserIdAndResumeId(
+            @Param("userId") Long userId,
+            @Param("resumeId") String resumeId,
+            @Param("analyzeHtmlContent") String analyzeHtmlContent);
 }

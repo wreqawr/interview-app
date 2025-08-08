@@ -43,6 +43,11 @@ public class ResumeDetail {
     private String rawText;
 
     /**
+     * ai总结的简历分析报告（面向求职者）
+     */
+    private String resumeAnalyzeHtmlContentForJobSeekers;
+
+    /**
      * 基本信息
      */
     private BasicInfo basicInfo;

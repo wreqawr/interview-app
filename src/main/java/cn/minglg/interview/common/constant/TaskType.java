@@ -18,10 +18,13 @@ public enum TaskType {
     /**
      * 任务类型枚举
      */
-    RESUME_SUMMARIZE("简历解析"),
+    RESUME_SUMMARIZE("简历结构化"),
+    RESUME_ANALYZE("简历分析"),
     SKILL_EVALUATION("能力评估"),
-    JOB_MATCH_ANALYSIS("岗位匹配度分析"),
+    COMPREHENSIVE_ASSESSMENT("综合评估"),
     RESUME_METADATA_UPDATE("简历元数据更新"),
+
+    TASK_RESULT_QUERY("任务执行结果查询"),
 
     OTHER("其它任务类型");
 

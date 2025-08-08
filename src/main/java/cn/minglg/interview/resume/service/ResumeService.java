@@ -4,7 +4,6 @@ import cn.minglg.interview.common.response.R;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * ClassName:ResumeService
@@ -28,10 +27,10 @@ public interface ResumeService {
     /**
      * 简历下载接口
      *
-     * @param fileName 文件名
-     * @return 文件流
+     * @param resumeIds 文件id列表
+     * @return 统一响应结构
      */
-    Map<String, Object> resumeDownload(String fileName);
+    R resumeDownload(String[] resumeIds);
 
     /**
      * 简历删除接口
@@ -51,11 +50,12 @@ public interface ResumeService {
     /**
      * 简历信息提取结果查询接口
      *
+     * @param userId   用户id
      * @param taskId   任务id
      * @param resumeId 简历id
      * @return 查询结果
      */
-    R getResumeAsyncUploadResult(String taskId, String resumeId);
+    R getResumeAsyncUploadResult(Long userId, String taskId, String resumeId);
 
     /**
      * 获取简历预览url
@@ -64,7 +64,26 @@ public interface ResumeService {
      * @return 简历预览url
      */
 
-    R getResumePreviewUrl(String resumeId);
+    R resumePreview(String resumeId);
+
+    /**
+     * 简历分析（面向求职者）
+     *
+     * @param resumeId 简历id
+     * @return 同步查询直接返回查询结果，异步查询则返回taskId
+     */
+    R resumeAnalyze(String resumeId);
+
+    /**
+     * 获取简历分析异步结果
+     *
+     * @param userId   用户id
+     * @param taskId   任务id
+     * @param resumeId 简历id
+     * @return 结果信息
+     */
+    R getResumeAsyncAnalyzeResult(Long userId, String taskId, String resumeId);
+
 
     /**
      * 获取文件扩展名
@@ -99,5 +118,6 @@ public interface ResumeService {
     default boolean isPreviewEnabled(String filename, List<String> previewEnabledTypes) {
         return previewEnabledTypes.contains(getFileExtension(filename).toLowerCase());
     }
+
 
 }

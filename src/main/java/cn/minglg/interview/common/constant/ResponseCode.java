@@ -37,6 +37,8 @@ public enum ResponseCode {
     RESUME_SUMMARIZE_FAIL(208, "简历信息提取失败"),
     // 简历信息预览失败
     RESUME_PREVIEW_FAIL(209, "简历信息预览失败"),
+    // 简历信息分析失败
+    RESUME_ANALYZE_FAIL(210, "简历信息分析失败"),
 
 
     // 登录认证失败
