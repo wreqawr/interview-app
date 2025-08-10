@@ -40,7 +40,6 @@ public class AiResumeCoreServiceTest {
     @Autowired
     private AiResumeCoreService aiResumeCoreService;
 
-
     String getFileContent() {
         String bucketName = "resume-upload-4";
         String fileName = "1754140081897.pdf";
@@ -60,7 +59,7 @@ public class AiResumeCoreServiceTest {
         ResumeDetail resumeDetail = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId);
         if (resumeDetail != null && StringUtils.hasText(resumeDetail.getRawText())) {
             System.out.println("==========================");
-            aiResumeCoreService.resumeSummarizeAndSave(userId, taskId, resumeId, resumeDetail.getRawText(),null);
+            aiResumeCoreService.resumeSummarizeAndSave(userId, taskId, resumeId, resumeDetail.getRawText(), null);
             System.out.println("==========================");
         }
     }

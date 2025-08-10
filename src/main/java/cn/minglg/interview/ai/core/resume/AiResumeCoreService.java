@@ -13,7 +13,6 @@ import cn.minglg.interview.resume.repository.ResumeDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.core.io.Resource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,6 @@ public class AiResumeCoreService {
     private final ResumeMetadataMapper resumeMetadataMapper;
     private final ResumeDetailRepository resumeDetailRepository;
     private final StringRedisTemplate redisTemplate;
-    private final Map<TaskType, Resource> systemPromptStaticTemplate;
     private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
 
     /**
@@ -51,11 +49,7 @@ public class AiResumeCoreService {
         // 第一步：获取ai解析结果
         String chatResult = chatClient
                 .prompt()
-                // 本次对话的系统提示词
-                // 由于简历提取提示词模板中有{}，但实际上它是静态模板，
-                // 不需要被替换，因此不能使用动态模板，否则会报错
-                // 48:6: '"work_experience"' came as a complete surprise to me
-                .system(systemPromptStaticTemplate.get(TaskType.RESUME_SUMMARIZE))
+                .system(systemPromptDynamicTemplate.get(TaskType.RESUME_SUMMARIZE).render())
                 .user(content)
                 .call()
                 .content();

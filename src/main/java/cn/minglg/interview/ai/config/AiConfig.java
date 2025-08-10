@@ -1,10 +1,14 @@
 package cn.minglg.interview.ai.config;
 
+import cn.minglg.interview.ai.render.CustomMultiCharTemplateRenderer;
 import cn.minglg.interview.common.constant.TaskType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.template.TemplateRenderer;
+import org.springframework.ai.template.st.StTemplateRenderer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -39,12 +43,42 @@ public class AiConfig {
     }
 
     /**
-     * 静态系统提示词（当前对话有效）
+     * 自定义模板渲染器的占位符为<>（默认是{}）
+     *
+     * @return 模板渲染器对象
+     */
+    @Bean("stTemplateRenderer")
+    public TemplateRenderer templateRenderer() {
+        char startDelimiterToken = '<';
+        char endDelimiterToken = '>';
+        return StTemplateRenderer.builder()
+                .startDelimiterToken(startDelimiterToken)
+                .endDelimiterToken(endDelimiterToken)
+                .build();
+    }
+
+    /**
+     * 功能更强大的自定义模板渲染器，支持任意字符串占位符
+     *
+     * @return 模板渲染器对象
+     */
+    @Bean("customTemplateRenderer")
+    public TemplateRenderer customTemplateRenderer() {
+        String startDelimiter = "$#{";
+        String endDelimiter = "}";
+        return CustomMultiCharTemplateRenderer.builder()
+                .startDelimiter(startDelimiter)
+                .endDelimiter(endDelimiter)
+                .build();
+    }
+
+    /**
+     * 系统提示词资源（当前对话有效）
      *
      * @return 提示词集合
      */
     @Bean
-    public Map<TaskType, Resource> systemPromptStaticTemplate() {
+    public Map<TaskType, Resource> resourceMap() {
         Map<TaskType, Resource> map = new HashMap<>(16);
         String systemPromptForResumeSummarize = "/prompt/resume/简历关键信息提取.st";
         String systemPromptForResumeAnalyze = "/prompt/resume/简历分析-求职者.st";
@@ -58,15 +92,18 @@ public class AiConfig {
     /**
      * 提示词模板（动态提示词，支持占位符）
      *
-     * @param systemPrompt 资源对象
+     * @param resourceMap 资源对象集合
      * @return 动态提示词集合
      */
     @Bean
-    public Map<TaskType, PromptTemplate> systemPromptDynamicTemplate(Map<TaskType, Resource> systemPrompt) {
+    public Map<TaskType, PromptTemplate> systemPromptDynamicTemplate(Map<TaskType, Resource> resourceMap, @Qualifier("stTemplateRenderer") TemplateRenderer templateRenderer) {
         Map<TaskType, PromptTemplate> map = new HashMap<>(16);
-        for (TaskType taskType : systemPrompt.keySet()) {
-            Resource resource = systemPrompt.get(taskType);
-            PromptTemplate promptTemplate = new PromptTemplate(resource);
+        for (TaskType taskType : resourceMap.keySet()) {
+            Resource resource = resourceMap.get(taskType);
+            PromptTemplate promptTemplate = PromptTemplate.builder()
+                    .resource(resource)
+                    .renderer(templateRenderer)
+                    .build();
             map.put(taskType, promptTemplate);
         }
         return map;

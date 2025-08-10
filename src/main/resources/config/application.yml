@@ -165,7 +165,7 @@ global:
     #    allow-preview-types:
     #      - .pdf
     # 预览url有效时间（单位：秒，不配置默认10）
-    preview-expired: 3
+    preview-expired: 5
     # 下载url有效时间（单位：秒，不配置默认10）
     download-expired: 60
     # 简历分析结果保存在redis中的key前缀
