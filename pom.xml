@@ -163,9 +163,16 @@
             <artifactId>pdfbox</artifactId>
             <version>${apache.pdfbox.version}</version>
         </dependency>
+
+        <!--mongodb依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter-memory-redis</artifactId>
         </dependency>
 
     </dependencies>

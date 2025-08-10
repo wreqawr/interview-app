@@ -10,9 +10,9 @@ import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import cn.minglg.interview.resume.repository.ResumeDetailRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ import java.util.Map;
  * @Create 2025/7/31
  * @Version 1.0
  */
-@RequiredArgsConstructor
+
 @Service
 public class AiResumeCoreService {
     private final GlobalProperties globalProperties;
@@ -37,6 +37,21 @@ public class AiResumeCoreService {
     private final ResumeDetailRepository resumeDetailRepository;
     private final StringRedisTemplate redisTemplate;
     private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
+
+    public AiResumeCoreService(GlobalProperties globalProperties,
+                               @Qualifier("chatWithoutMemory")
+                               ChatClient chatClient,
+                               ResumeMetadataMapper resumeMetadataMapper,
+                               ResumeDetailRepository resumeDetailRepository,
+                               StringRedisTemplate redisTemplate,
+                               Map<TaskType, PromptTemplate> systemPromptDynamicTemplate) {
+        this.globalProperties = globalProperties;
+        this.chatClient = chatClient;
+        this.resumeMetadataMapper = resumeMetadataMapper;
+        this.resumeDetailRepository = resumeDetailRepository;
+        this.redisTemplate = redisTemplate;
+        this.systemPromptDynamicTemplate = systemPromptDynamicTemplate;
+    }
 
     /**
      * 提取并结构化简历内容

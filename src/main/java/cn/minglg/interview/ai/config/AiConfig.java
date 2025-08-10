@@ -2,15 +2,21 @@ package cn.minglg.interview.ai.config;
 
 import cn.minglg.interview.ai.render.CustomMultiCharTemplateRenderer;
 import cn.minglg.interview.common.constant.TaskType;
+import cn.minglg.interview.common.properties.GlobalProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.ai.template.st.StTemplateRenderer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -29,14 +35,33 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Configuration
 public class AiConfig {
+
+    private final GlobalProperties globalProperties;
+
     /**
-     * 定制chatClient对象
+     * 定制chatClient对象（带上下文记忆）
+     *
+     * @param builder ChatClient.Builder
+     * @param advisor 上下文记忆拦截器
+     * @return chatClient对象
+     */
+    @Bean("chatWithMemory")
+    @Primary
+    public ChatClient chatClientWithMemory(ChatClient.Builder builder, MessageChatMemoryAdvisor advisor) {
+        return builder
+                .defaultAdvisors(new SimpleLoggerAdvisor())
+                .defaultAdvisors(advisor)
+                .build();
+    }
+
+    /**
+     * 定制chatClient对象（不带上下文记忆）
      *
      * @param builder ChatClient.Builder
      * @return chatClient对象
      */
-    @Bean("chat")
-    public ChatClient chatClient(ChatClient.Builder builder) {
+    @Bean("chatWithoutMemory")
+    public ChatClient chatClientWithoutMemory(ChatClient.Builder builder) {
         return builder
                 .defaultAdvisors(new SimpleLoggerAdvisor())
                 .build();
@@ -83,9 +108,11 @@ public class AiConfig {
         String systemPromptForResumeSummarize = "/prompt/resume/简历关键信息提取.st";
         String systemPromptForResumeAnalyze = "/prompt/resume/简历分析-求职者.st";
         String systemPromptForComprehensiveAssessment = "/prompt/resume/综合评估-HR.st";
+        String systemPromptForMockInterview = "/prompt/interview/基于简历内容的模拟面试问答.st";
         map.put(TaskType.RESUME_SUMMARIZE, new ClassPathResource(systemPromptForResumeSummarize));
         map.put(TaskType.RESUME_ANALYZE, new ClassPathResource(systemPromptForResumeAnalyze));
         map.put(TaskType.COMPREHENSIVE_ASSESSMENT, new ClassPathResource(systemPromptForComprehensiveAssessment));
+        map.put(TaskType.MOCK_INTERVIEW, new ClassPathResource(systemPromptForMockInterview));
         return map;
     }
 
@@ -107,5 +134,18 @@ public class AiConfig {
             map.put(taskType, promptTemplate);
         }
         return map;
+    }
+
+    @Bean
+    public ChatMemory chatMemory(ChatMemoryRepository chatMemoryRepository) {
+        return MessageWindowChatMemory.builder()
+                .chatMemoryRepository(chatMemoryRepository)
+                .maxMessages(globalProperties.getAi().getMaxChatMessages())
+                .build();
+    }
+
+    @Bean
+    public MessageChatMemoryAdvisor chatMemoryAdvisor(ChatMemory chatMemory) {
+        return MessageChatMemoryAdvisor.builder(chatMemory).build();
     }
 }
