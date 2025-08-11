@@ -25,9 +25,9 @@ public class AiInterviewCoreService {
     private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
 
 
-    public String interviewOnline(String conversationId, String question, Map<String, Object> variables) {
+    public String interviewOnline(String conversationId, String question) {
         return chatClient.prompt()
-                .system(systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW).render(variables))
+                .system("你是一位资深技术面试官，负责基于候选人的简历进行结构化一问一答式技术面试。")
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .user(question)
                 .call()

@@ -26,10 +26,12 @@ public enum TaskType {
 
     TASK_RESULT_QUERY("任务执行结果查询"),
 
-    MOCK_INTERVIEW("模拟面试"),
+    MOCK_INTERVIEW_START("模拟面试开始"),
+    MOCK_INTERVIEW_STOP("模拟面试结束"),
+
 
     OTHER("其它任务类型");
 
 
     private final String description;
-    }
+}

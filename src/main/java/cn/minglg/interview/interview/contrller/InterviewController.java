@@ -31,6 +31,6 @@ public class InterviewController {
         String userInput = paramMap.get("userInput");
         System.out.println(conversationId);
         System.out.println(userInput);
-        return aiInterviewCoreService.interviewOnline(conversationId, userInput, null);
+        return aiInterviewCoreService.interviewOnline(conversationId, userInput);
     }
 }

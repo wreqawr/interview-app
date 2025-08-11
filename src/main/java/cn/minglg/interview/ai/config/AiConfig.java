@@ -10,7 +10,6 @@ import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
-import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.ai.template.st.StTemplateRenderer;
@@ -63,11 +62,7 @@ public class AiConfig {
      */
     @Bean("chatWithoutMemory")
     public ChatClient chatClientWithoutMemory(ChatClient.Builder builder) {
-        ChatOptions options = ChatOptions.builder()
-                .temperature(1.2)
-                .build();
         return builder
-                //.defaultOptions(options)
                 .defaultSystem("你是面试官，负责进行技术面试。每次对话都要记住这是同一场面试的延续。")
                 .defaultAdvisors(new SimpleLoggerAdvisor())
                 .build();
@@ -114,11 +109,13 @@ public class AiConfig {
         String systemPromptForResumeSummarize = "/prompt/resume/简历关键信息提取.st";
         String systemPromptForResumeAnalyze = "/prompt/resume/简历分析-求职者.st";
         String systemPromptForComprehensiveAssessment = "/prompt/resume/综合评估-HR.st";
-        String systemPromptForMockInterview = "/prompt/interview/基于简历内容的模拟面试问答.st";
+        String systemPromptForMockInterviewStart = "/prompt/interview/基于简历内容的模拟面试问答（开始）.st";
+        String systemPromptForMockInterviewStop = "/prompt/interview/基于简历内容的模拟面试问答（结束）.st";
         map.put(TaskType.RESUME_SUMMARIZE, new ClassPathResource(systemPromptForResumeSummarize));
         map.put(TaskType.RESUME_ANALYZE, new ClassPathResource(systemPromptForResumeAnalyze));
         map.put(TaskType.COMPREHENSIVE_ASSESSMENT, new ClassPathResource(systemPromptForComprehensiveAssessment));
-        map.put(TaskType.MOCK_INTERVIEW, new ClassPathResource(systemPromptForMockInterview));
+        map.put(TaskType.MOCK_INTERVIEW_START, new ClassPathResource(systemPromptForMockInterviewStart));
+        map.put(TaskType.MOCK_INTERVIEW_STOP, new ClassPathResource(systemPromptForMockInterviewStop));
         return map;
     }
 

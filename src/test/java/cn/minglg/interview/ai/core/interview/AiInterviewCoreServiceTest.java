@@ -1,9 +1,11 @@
 package cn.minglg.interview.ai.core.interview;
 
+import cn.minglg.interview.common.constant.TaskType;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.repository.ResumeDetailRepository;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -27,6 +29,9 @@ public class AiInterviewCoreServiceTest {
     private AiInterviewCoreService aiInterviewCoreService;
     @Autowired
     private ResumeDetailRepository resumeDetailRepository;
+    @Autowired
+    private Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
+
 
     @Test
     public void testMemory() {
@@ -36,7 +41,7 @@ public class AiInterviewCoreServiceTest {
             System.out.print("Q:");
             String question = scanner.nextLine();
             System.out.println("========================");
-            String answer = aiInterviewCoreService.interviewOnline(conversationId, question, null);
+            String answer = aiInterviewCoreService.interviewOnline(conversationId, question);
             System.out.print("A:");
             System.out.println(answer);
             System.out.println("======================");
@@ -51,21 +56,28 @@ public class AiInterviewCoreServiceTest {
 
     @Test
     public void testInterview() {
-        String resumeId = "17547449770114283fff50dff40d";
+        String resumeId = "1754907901498844a54e68bfa434";
         String conversationId = "88888888";
         ResumeDetail resumeDetail = resumeDetailRepository.findByResumeId(resumeId);
         Map<String, Object> variables = getVariables(resumeDetail);
         int currentRound = 1;
-        while (true) {
-            variables.put("currentRound", currentRound++);
+        String firstRoundQuestion = systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW_START).render(variables);
+        String answer = aiInterviewCoreService.interviewOnline(conversationId, firstRoundQuestion);
+        System.out.println(answer);
+        int totalRound = (int) variables.get("totalRounds");
+        while (currentRound++ <= totalRound) {
+            System.out.println("========================");
             Scanner scanner = new Scanner(System.in);
             String question = scanner.nextLine();
             System.out.println("========================");
-            String answer = aiInterviewCoreService.interviewOnline(conversationId, question, variables);
+            if (currentRound == totalRound + 1) {
+                String lastRoundQuestion = systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW_STOP).render(variables);
+                answer = aiInterviewCoreService.interviewOnline(conversationId, lastRoundQuestion);
+            } else {
+                answer = aiInterviewCoreService.interviewOnline(conversationId, question);
+            }
             System.out.println(answer);
-            System.out.println("======================");
         }
-
     }
 
     @NotNull
