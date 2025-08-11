@@ -1,6 +1,8 @@
 package cn.minglg.interview.ai.repository;
 
+import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.properties.GlobalProperties;
+import cn.minglg.interview.common.utils.UserUtils;
 import com.alibaba.cloud.ai.memory.redis.serializer.MessageDeserializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,7 +12,6 @@ import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +55,9 @@ public class CustomRedisChatMemoryRepository implements ChatMemoryRepository {
     @NotNull
     @Override
     public List<String> findConversationIds() {
-        Set<String> keySet = redisTemplate.keys(CHAT_MEMORY_REDIS_KEY_PREFIX + "*");
-        return keySet.stream().map(key -> key.substring(CHAT_MEMORY_REDIS_KEY_PREFIX.length())).toList();
+        String redisKeyPrefix = getRedisKeyPrefix();
+        Set<String> keySet = redisTemplate.keys(redisKeyPrefix + "*");
+        return keySet.stream().map(key -> key.substring(redisKeyPrefix.length())).toList();
     }
 
     /**
@@ -67,7 +69,7 @@ public class CustomRedisChatMemoryRepository implements ChatMemoryRepository {
     @NotNull
     @Override
     public List<Message> findByConversationId(@NotNull String conversationId) {
-        String redisKey = CHAT_MEMORY_REDIS_KEY_PREFIX + conversationId;
+        String redisKey = getRedisKeyPrefix() + conversationId;
         List<String> messageStringList = redisTemplate.opsForList().range(redisKey, 0, -1);
         List<Message> messages = new ArrayList<>();
         if (messageStringList != null) {
@@ -93,7 +95,7 @@ public class CustomRedisChatMemoryRepository implements ChatMemoryRepository {
     @Override
     public void saveAll(@NotNull String conversationId, @NotNull List<Message> messages) {
         deleteByConversationId(conversationId);
-        String redisKey = CHAT_MEMORY_REDIS_KEY_PREFIX + conversationId;
+        String redisKey = getRedisKeyPrefix() + conversationId;
         for (Message message : messages) {
             try {
                 String messageString = objectMapper.writeValueAsString(message);
@@ -107,20 +109,19 @@ public class CustomRedisChatMemoryRepository implements ChatMemoryRepository {
 
     @Override
     public void deleteByConversationId(@NotNull String conversationId) {
-        String redisKey = CHAT_MEMORY_REDIS_KEY_PREFIX + conversationId;
+        String redisKey = getRedisKeyPrefix() + conversationId;
         redisTemplate.delete(redisKey);
     }
 
     /**
-     * 清除超过最大限制的历史会话，保留最新的会话记录
+     * 清除超过最大限制的历史会话，保留最新会话记录
      *
      * @param conversationId 会话id
      * @param maxLimit       最大的条数限制
      * @param deleteSize     要删除的条数
      */
-    public void clearOverLimit(String conversationId, int maxLimit, int deleteSize) {
-        Assert.hasText(conversationId, "conversationId cannot be null or empty");
-        String redisKey = CHAT_MEMORY_REDIS_KEY_PREFIX + conversationId;
+    public void clearOverLimit(@NotNull String conversationId, int maxLimit, int deleteSize) {
+        String redisKey = getRedisKeyPrefix() + conversationId;
         List<String> allMessage = redisTemplate.opsForList().range(redisKey, 0, -1);
         if (allMessage != null && allMessage.size() >= maxLimit) {
             allMessage = allMessage.stream().skip(Math.max(0, deleteSize)).toList();
@@ -130,5 +131,22 @@ public class CustomRedisChatMemoryRepository implements ChatMemoryRepository {
             }
             redisTemplate.expire(redisKey, CHAT_MEMORY_REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
         }
+    }
+
+    /**
+     * 获取当前用户所有对话的redisKey前缀
+     *
+     * @return redisKey前缀
+     */
+    private String getRedisKeyPrefix() {
+        Long userId;
+        try {
+            User currentUser = UserUtils.getCurrentUser();
+            userId = currentUser.getUserId();
+        } catch (Exception e) {
+            userId = 0L;
+        }
+
+        return CHAT_MEMORY_REDIS_KEY_PREFIX + userId + ":";
     }
 }

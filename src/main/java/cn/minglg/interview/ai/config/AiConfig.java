@@ -10,6 +10,7 @@ import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.ai.template.st.StTemplateRenderer;
@@ -62,7 +63,12 @@ public class AiConfig {
      */
     @Bean("chatWithoutMemory")
     public ChatClient chatClientWithoutMemory(ChatClient.Builder builder) {
+        ChatOptions options = ChatOptions.builder()
+                .temperature(1.2)
+                .build();
         return builder
+                //.defaultOptions(options)
+                .defaultSystem("你是面试官，负责进行技术面试。每次对话都要记住这是同一场面试的延续。")
                 .defaultAdvisors(new SimpleLoggerAdvisor())
                 .build();
     }

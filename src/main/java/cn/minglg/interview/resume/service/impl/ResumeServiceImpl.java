@@ -9,7 +9,6 @@ import cn.minglg.interview.common.constant.ResponseCode;
 import cn.minglg.interview.common.constant.ResumeStatus;
 import cn.minglg.interview.common.constant.TaskStatus;
 import cn.minglg.interview.common.exception.NoSuchResumeException;
-import cn.minglg.interview.common.exception.UnKnowUserException;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.common.utils.FileUtils;
@@ -69,9 +68,6 @@ public class ResumeServiceImpl implements ResumeService {
     public R resumeUpload(MultipartFile file) {
         List<String> allowFileTypes = globalProperties.getResume().getAllowFileTypes();
         User currentUser = UserUtils.getCurrentUser();
-        if (currentUser == null) {
-            throw new UnKnowUserException("无效请求用户！");
-        }
 
         // 第一步：基础校验
         if (file.isEmpty()) {
@@ -147,9 +143,6 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public R resumeDownload(String[] resumeIds) {
         User currentUser = UserUtils.getCurrentUser();
-        if (currentUser == null) {
-            throw new UnKnowUserException("无效用户！");
-        }
         List<String> resumeIdList = Arrays.stream(resumeIds).toList();
         List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeIdList(currentUser.getUserId(), resumeIdList);
         if (resumeMetadataList == null) {
@@ -191,9 +184,6 @@ public class ResumeServiceImpl implements ResumeService {
     public R resumeDelete(String[] resumeIds) {
         R result;
         User currentUser = UserUtils.getCurrentUser();
-        if (currentUser == null) {
-            throw new UnKnowUserException("无效用户！");
-        }
         if (resumeIds == null || resumeIds.length == 0) {
             throw new ResumeDeleteException("简历信息不能为空！");
         }
@@ -238,9 +228,6 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public R resumeMetadataDisplay() {
         User currentUser = UserUtils.getCurrentUser();
-        if (currentUser == null) {
-            throw new UnKnowUserException("无效用户！");
-        }
         List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserId(currentUser.getUserId());
         String message = resumeMetadataList == null ? "未查询到当前用户的简历信息！" : "简历信息获取成功！";
         return R.builder()
@@ -278,9 +265,6 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public R resumePreview(String resumeId) {
         User currentUser = UserUtils.getCurrentUser();
-        if (currentUser == null) {
-            throw new UnKnowUserException("无效用户！");
-        }
         ResumeMetadata resumeMetadata = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(currentUser.getUserId(), resumeId);
         if (resumeMetadata == null) {
             throw new ResumePreviewException("简历不存在！");
@@ -315,9 +299,6 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public R resumeAnalyze(String resumeId) {
         User currentUser = UserUtils.getCurrentUser();
-        if (currentUser == null) {
-            throw new UnKnowUserException("无效用户！");
-        }
         Long userId = currentUser.getUserId();
         String redisKey = globalProperties.getResume().getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
         String hashKeyForAnalyze = "analyzeHtmlContent";

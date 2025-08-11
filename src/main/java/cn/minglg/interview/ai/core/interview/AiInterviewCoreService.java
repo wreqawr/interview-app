@@ -27,7 +27,7 @@ public class AiInterviewCoreService {
 
     public String interviewOnline(String conversationId, String question, Map<String, Object> variables) {
         return chatClient.prompt()
-                //.system(systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW).render(variables))
+                .system(systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW).render(variables))
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .user(question)
                 .call()

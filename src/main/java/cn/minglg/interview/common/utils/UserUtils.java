@@ -1,6 +1,7 @@
 package cn.minglg.interview.common.utils;
 
 import cn.minglg.interview.auth.pojo.User;
+import cn.minglg.interview.common.exception.UnKnowUserException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -22,6 +23,6 @@ public class UserUtils {
         if (authentication != null && authentication.getPrincipal() instanceof User user) {
             return user;
         }
-        return null;
+        throw new UnKnowUserException("未知用户！");
     }
 }

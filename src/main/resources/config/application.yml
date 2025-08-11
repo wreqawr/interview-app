@@ -190,7 +190,7 @@ global:
     # 会话保存时间（天）;
     chat-memory-redis-expire-days: 30
     # 单次对话上下文最长消息条数
-    max-chat-messages: 10
+    max-chat-messages: 20
 
   # 线程池相关
   async:

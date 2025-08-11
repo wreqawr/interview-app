@@ -3,7 +3,6 @@ package cn.minglg.interview.resume.controller;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
 import cn.minglg.interview.common.constant.ResponseCode;
-import cn.minglg.interview.common.exception.UnKnowUserException;
 import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.common.utils.UserUtils;
 import cn.minglg.interview.resume.service.ResumeService;
@@ -103,9 +102,6 @@ public class ResumeController {
             @PathVariable("taskId") String taskId,
             @PathVariable("resumeId") String resumeId) {
         User currentUser = UserUtils.getCurrentUser();
-        if (currentUser == null) {
-            throw new UnKnowUserException("无效用户！");
-        }
         R result = resumeService.getResumeAsyncUploadResult(currentUser.getUserId(), taskId, resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -157,9 +153,6 @@ public class ResumeController {
             @PathVariable("taskId") String taskId,
             @PathVariable("resumeId") String resumeId) {
         User currentUser = UserUtils.getCurrentUser();
-        if (currentUser == null) {
-            throw new UnKnowUserException("无效用户！");
-        }
         R result = resumeService.getResumeAsyncAnalyzeResult(currentUser.getUserId(), taskId, resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
