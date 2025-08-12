@@ -6,7 +6,7 @@ import cn.minglg.interview.auth.pojo.Company;
 import cn.minglg.interview.auth.pojo.Role;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.auth.service.UserService;
-import cn.minglg.interview.common.constant.ResponseCode;
+import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.common.utils.RsaUtils;

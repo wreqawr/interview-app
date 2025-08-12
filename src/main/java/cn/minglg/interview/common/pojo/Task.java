@@ -1,7 +1,7 @@
 package cn.minglg.interview.common.pojo;
 
-import cn.minglg.interview.common.constant.TaskStatus;
-import cn.minglg.interview.common.constant.TaskType;
+import cn.minglg.interview.common.constant.task.TaskStatus;
+import cn.minglg.interview.common.constant.task.TaskType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

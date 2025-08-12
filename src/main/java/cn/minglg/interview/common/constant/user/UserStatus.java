@@ -1,4 +1,4 @@
-package cn.minglg.interview.common.constant;
+package cn.minglg.interview.common.constant.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

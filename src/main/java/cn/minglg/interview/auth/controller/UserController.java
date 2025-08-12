@@ -3,7 +3,7 @@ package cn.minglg.interview.auth.controller;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.auth.service.UserService;
 import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
-import cn.minglg.interview.common.constant.ResponseCode;
+import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.response.R;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

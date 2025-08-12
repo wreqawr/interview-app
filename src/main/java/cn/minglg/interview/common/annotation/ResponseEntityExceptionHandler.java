@@ -1,6 +1,6 @@
 package cn.minglg.interview.common.annotation;
 
-import cn.minglg.interview.common.constant.ResponseCode;
+import cn.minglg.interview.common.constant.response.ResponseCode;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.http.HttpStatus;
 

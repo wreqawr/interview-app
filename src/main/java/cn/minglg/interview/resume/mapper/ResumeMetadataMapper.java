@@ -1,7 +1,7 @@
 package cn.minglg.interview.resume.mapper;
 
 import cn.minglg.interview.common.annotation.TaskHandler;
-import cn.minglg.interview.common.constant.TaskType;
+import cn.minglg.interview.common.constant.task.TaskType;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import org.apache.ibatis.annotations.Param;
 

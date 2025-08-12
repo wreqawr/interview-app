@@ -1,5 +1,6 @@
 package cn.minglg.interview.utils;
 
+import cn.minglg.interview.auth.mapper.UserMapper;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.utils.JwtUtils;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,8 @@ public class JWTUtilsTest {
     User user = User.builder().userId(111L).username("张三").password("123456").build();
     @Autowired
     private KeyPair keyPair;
+    @Autowired
+    private UserMapper userMapper;
 
     @Test
     public void test1() {
@@ -36,7 +39,13 @@ public class JWTUtilsTest {
 
     @Test
     public void test2() {
-        String token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIyODIwOTk2MDYzQHFxLmNvbSIsImlhdCI6MTc1MjgwOTIxNywiZXhwIjoxNzU4ODA5MjE3LCJjbGFpbXMiOiJ7XCJ1c2VySWRcIjoxMTEsXCJ1c2VybmFtZVwiOlwi5byg5LiJXCJ9In0.fQl_BFJh7ee6N3kIopbl2XbS3pGdVbZAimtqq7mLGgPBS7Pi9h6cHmPiwYOHpbidhVUI_91yPb5uFoO4qgxOni2kTNylDsLeLX0H5XXInoleM-ET7TnfsXUbUwZiC7JetNNLuXRMgJ67yZxEJBnHlk0bSl5hRdj37C6oA36YJENWSPDBmaxAKm8vlq71EHl5g-yuvFZUDqOs2ZGUozp8PoOU3EoRh6GU1bhyIzCxUHn4n_OtqtuJkCemOZM28Pcy_fmuahBJhiMc4aifOwJiJUXJqZA-bR90KoK0LoPXggVGGQFaQe0LDIuEUWbir4di9TFhPfes0htZmrA4WEUSSA";
+        User silence = userMapper.getUserWithDetailsByUserName("silence");
+        System.out.println("=========================");
+        System.out.println(silence);
+        String token = JwtUtils.createJwt(silence, 100, keyPair);
+        System.out.println("=========================");
+        System.out.println(token);
+        System.out.println("=========================");
         System.out.println(JwtUtils.verifyJwt(token, keyPair));
     }
 }

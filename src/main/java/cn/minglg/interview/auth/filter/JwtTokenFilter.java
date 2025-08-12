@@ -2,7 +2,7 @@ package cn.minglg.interview.auth.filter;
 
 import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.auth.pojo.User;
-import cn.minglg.interview.common.constant.ResponseCode;
+import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.common.utils.JwtUtils;

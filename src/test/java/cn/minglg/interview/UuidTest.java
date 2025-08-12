@@ -1,6 +1,6 @@
 package cn.minglg.interview;
 
-import cn.minglg.interview.common.constant.UserRole;
+import cn.minglg.interview.common.constant.user.UserRole;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;

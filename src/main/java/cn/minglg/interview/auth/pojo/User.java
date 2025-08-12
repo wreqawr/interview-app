@@ -1,7 +1,7 @@
 package cn.minglg.interview.auth.pojo;
 
 import cn.hutool.core.annotation.PropIgnore;
-import cn.minglg.interview.common.constant.UserStatus;
+import cn.minglg.interview.common.constant.user.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -59,7 +59,6 @@ public class User implements UserDetails, Serializable {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         this.getRoles().forEach(role -> {
             authorities.add(new SimpleGrantedAuthority(role.getRoleName().toString()));
-//            role.getPermissions().forEach(permission -> authorities.add(new SimpleGrantedAuthority(permission.getPermissionCode())));
         });
         return authorities;
     }

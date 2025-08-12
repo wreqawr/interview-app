@@ -1,9 +1,9 @@
 package cn.minglg.interview.common.aspects;
 
 import cn.minglg.interview.common.annotation.TaskHandler;
-import cn.minglg.interview.common.constant.ResponseCode;
-import cn.minglg.interview.common.constant.TaskStatus;
-import cn.minglg.interview.common.constant.TaskType;
+import cn.minglg.interview.common.constant.response.ResponseCode;
+import cn.minglg.interview.common.constant.task.TaskStatus;
+import cn.minglg.interview.common.constant.task.TaskType;
 import cn.minglg.interview.common.exception.NoSuchTaskException;
 import cn.minglg.interview.common.mapper.TaskMapper;
 import cn.minglg.interview.common.pojo.Task;

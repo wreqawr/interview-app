@@ -1,7 +1,7 @@
 package cn.minglg.interview.auth.pojo;
 
 import cn.hutool.core.annotation.PropIgnore;
-import cn.minglg.interview.common.constant.UserRole;
+import cn.minglg.interview.common.constant.user.UserRole;
 import lombok.Data;
 
 import java.util.List;

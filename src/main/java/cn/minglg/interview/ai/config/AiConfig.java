@@ -1,7 +1,7 @@
 package cn.minglg.interview.ai.config;
 
 import cn.minglg.interview.ai.render.CustomMultiCharTemplateRenderer;
-import cn.minglg.interview.common.constant.TaskType;
+import cn.minglg.interview.common.constant.task.TaskType;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
