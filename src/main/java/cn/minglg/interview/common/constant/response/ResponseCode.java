@@ -39,6 +39,8 @@ public enum ResponseCode {
     RESUME_PREVIEW_FAIL(209, "简历信息预览失败"),
     // 简历信息分析失败
     RESUME_ANALYZE_FAIL(210, "简历信息分析失败"),
+    // AI服务异常
+    AI_SERVICE_ERROR(300, "AI服务异常"),
 
 
     // 登录认证失败
@@ -50,7 +52,6 @@ public enum ResponseCode {
     ASYNC_TASK_RUNNING(900, "异步任务执行中"),
     // 异步任务执行失败
     ASYNC_TASK_FAIL(901, "异步任务执行失败"),
-
     // 其它未知错误
     OTHER_EXCEPTION(1000, "其它未知错误");
 

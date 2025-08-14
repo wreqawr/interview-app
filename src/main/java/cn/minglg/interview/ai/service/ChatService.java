@@ -2,12 +2,12 @@ package cn.minglg.interview.ai.service;
 
 import cn.minglg.interview.common.constant.ai.ChatClientType;
 import cn.minglg.interview.common.constant.task.TaskType;
+import cn.minglg.interview.common.response.R;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 
 import java.util.Map;
 
@@ -34,18 +34,23 @@ public class ChatService {
      * @param userMessage    用户发送的聊天消息内容
      * @return 聊天机器人返回的响应内容
      */
-    public Flux<String> generalChat(String conversationId, String userMessage) {
+    public R generalChat(String conversationId, String userMessage) {
         // 获取通用带记忆功能的聊天客户端
         ChatClient chatClient = chatClientMap.get(ChatClientType.GENERAL_WITH_MEMORY);
 
         // 构建并执行聊天请求
-        return chatClient.prompt()
+        String data = chatClient.prompt()
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .tools(toolService)
                 .system(systemPromptDynamicTemplate.get(TaskType.GENERAL_CHAT).render())
                 .user(userMessage)
-                .stream()
+                .call()
                 .content();
+        return R.builder()
+                .code(200)
+                .data(data)
+                .message("请求成功！")
+                .build();
     }
 
 }

@@ -1,13 +1,18 @@
 package cn.minglg.interview.ai.controller;
 
 import cn.minglg.interview.ai.service.ChatService;
+import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
+import cn.minglg.interview.common.constant.response.ResponseCode;
+import cn.minglg.interview.common.response.R;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
+
+import java.util.Map;
 
 /**
  * ClassName:ChatController
@@ -24,8 +29,14 @@ import reactor.core.publisher.Flux;
 public class ChatController {
     private final ChatService chatService;
 
-    @GetMapping(path = "/chat/{conversationId}/{userMessage}", produces = MediaType.TEXT_HTML_VALUE)
-    public Flux<String> chatOnline(@PathVariable("conversationId") String conversationId, @PathVariable("userMessage") String userMessage) {
-        return chatService.generalChat(conversationId, userMessage);
+    @PostMapping(path = "/chat")
+    @ResponseEntityExceptionHandler(
+            errResponseCode = ResponseCode.AI_SERVICE_ERROR,
+            errorMessagePrefix = "AI服务异常")
+    public ResponseEntity<R> chatOnline(@RequestBody Map<String, String> paramMap) {
+        String conversationId = paramMap.get("conversationId");
+        String userMessage = paramMap.get("userMessage");
+        R result = chatService.generalChat(conversationId, userMessage);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
