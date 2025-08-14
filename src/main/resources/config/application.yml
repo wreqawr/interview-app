@@ -42,12 +42,12 @@ spring:
     redis:
       cluster:
         nodes:
-          - ${REDIS-NODE-1}
-          - ${REDIS-NODE-2}
-          - ${REDIS-NODE-3}
-          - ${REDIS-NODE-4}
-          - ${REDIS-NODE-5}
-          - ${REDIS-NODE-6}
+          - ${REDIS_NODE_1}
+          - ${REDIS_NODE_2}
+          - ${REDIS_NODE_3}
+          - ${REDIS_NODE_4}
+          - ${REDIS_NODE_5}
+          - ${REDIS_NODE_6}
         max-redirects: 3
       #      超时时间（毫秒）
       connect-timeout: 5000
@@ -206,13 +206,3 @@ global:
 logging:
   level:
     org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: debug
-
-
-
-
-
-
-
-
-
-

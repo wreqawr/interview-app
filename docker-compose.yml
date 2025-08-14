@@ -18,12 +18,12 @@ services:
       - MYSQL_USERNAME=minglg
       - MYSQL_PASSWORD=kfzx-minglg@
       # Redis配置
-      - REDIS-NODE-1=redis-1:6379
-      - REDIS-NODE-2=redis-2:6379
-      - REDIS-NODE-3=redis-3:6379
-      - REDIS-NODE-4=redis-4:6379
-      - REDIS-NODE-5=redis-5:6379
-      - REDIS-NODE-6=redis-6:6379
+      - REDIS_NODE_1=redis-1:6379
+      - REDIS_NODE_2=redis-2:6379
+      - REDIS_NODE_3=redis-3:6379
+      - REDIS_NODE_4=redis-4:6379
+      - REDIS_NODE_5=redis-5:6379
+      - REDIS_NODE_6=redis-6:6379
       - REDIS_PASSWORD=kfzx-minglg@
       # 其他如MinIO、AI服务等可按需添加
       - MINIO_ENDPOINT=#{MINIO_ENDPOINT}
