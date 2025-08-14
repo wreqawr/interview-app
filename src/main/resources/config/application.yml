@@ -42,12 +42,12 @@ spring:
     redis:
       cluster:
         nodes:
-          - ${REDIS_HOST}:8376
-          - ${REDIS_HOST}:8377
-          - ${REDIS_HOST}:8378
-          - ${REDIS_HOST}:8379
-          - ${REDIS_HOST}:8380
-          - ${REDIS_HOST}:8381
+          - ${REDIS-NODE-1}
+          - ${REDIS-NODE-2}
+          - ${REDIS-NODE-3}
+          - ${REDIS-NODE-4}
+          - ${REDIS-NODE-5}
+          - ${REDIS-NODE-6}
         max-redirects: 3
       #      超时时间（毫秒）
       connect-timeout: 5000
@@ -142,7 +142,7 @@ global:
     redis-key-expire-minutes: 5
     # 需要使用验证码的请求路径
     effective-patterns:
-      #      - /api/auth/login
+      - /api/auth/login
       - /api/auth/register
 
   # 注册相关
