@@ -3,6 +3,7 @@ package cn.minglg.interview.ai.core.resume;
 import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.ai.exception.AiResumeAnalyzeAndSaveException;
 import cn.minglg.interview.common.annotation.TaskHandler;
+import cn.minglg.interview.common.constant.ai.ChatClientType;
 import cn.minglg.interview.common.constant.task.TaskStatus;
 import cn.minglg.interview.common.constant.task.TaskType;
 import cn.minglg.interview.common.properties.GlobalProperties;
@@ -10,9 +11,9 @@ import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import cn.minglg.interview.resume.repository.ResumeDetailRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -28,30 +29,16 @@ import java.util.Map;
  * @Create 2025/7/31
  * @Version 1.0
  */
-
+@RequiredArgsConstructor
 @Service
 public class AiResumeCoreService {
     private final GlobalProperties globalProperties;
-    private final ChatClient chatClient;
+    private final Map<ChatClientType, ChatClient> chatClientMap;
     private final ResumeMetadataMapper resumeMetadataMapper;
     private final ResumeDetailRepository resumeDetailRepository;
     private final StringRedisTemplate redisTemplate;
     private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
 
-    public AiResumeCoreService(GlobalProperties globalProperties,
-                               @Qualifier("chatWithoutMemory")
-                               ChatClient chatClient,
-                               ResumeMetadataMapper resumeMetadataMapper,
-                               ResumeDetailRepository resumeDetailRepository,
-                               StringRedisTemplate redisTemplate,
-                               Map<TaskType, PromptTemplate> systemPromptDynamicTemplate) {
-        this.globalProperties = globalProperties;
-        this.chatClient = chatClient;
-        this.resumeMetadataMapper = resumeMetadataMapper;
-        this.resumeDetailRepository = resumeDetailRepository;
-        this.redisTemplate = redisTemplate;
-        this.systemPromptDynamicTemplate = systemPromptDynamicTemplate;
-    }
 
     /**
      * 提取并结构化简历内容
@@ -62,6 +49,7 @@ public class AiResumeCoreService {
     @TaskHandler(taskType = TaskType.RESUME_SUMMARIZE)
     public void resumeSummarizeAndSave(Long userId, String taskId, String resumeId, String content, ResumeMetadata resumeMetadata) {
         // 第一步：获取ai解析结果
+        ChatClient chatClient = chatClientMap.get(ChatClientType.GENERAL_WITHOUT_MEMORY);
         String chatResult = chatClient
                 .prompt()
                 .system(systemPromptDynamicTemplate.get(TaskType.RESUME_SUMMARIZE).render())
@@ -92,6 +80,7 @@ public class AiResumeCoreService {
     @TaskHandler(taskType = TaskType.RESUME_ANALYZE)
     public void resumeAnalyzeAndSave(Long userId, String taskId, String resumeId) {
 
+        ChatClient chatClient = chatClientMap.get(ChatClientType.GENERAL_WITHOUT_MEMORY);
         ResumeDetail resumeDetail = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId);
         String redisKey = globalProperties.getResume().getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
         String hashKeyForAnalyze = "analyzeHtmlContent";

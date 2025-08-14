@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.minglg.interview.common.mapper.SkillMapper">
+
+    <select id="getSkillByRoleId" resultType="cn.minglg.interview.common.pojo.Skill">
+        select skill_id, role_id, skill_description from t_skill where role_id in
+        <foreach item="role" collection="roleList" separator="," open="(" close=")">
+            #{role.roleId}
+        </foreach>
+    </select>
+</mapper>

@@ -88,7 +88,7 @@ spring:
       api-key: ${ALIYUN_API_KEY}
       chat:
         options:
-          model: qwen-turbo
+          model: qwen-plus
 
 
 #mybatis配置
@@ -106,7 +106,7 @@ global:
   # 认证信息相关
   auth:
     # 登录请求超时时间（秒）
-    request-timeout-seconds: 5
+    request-timeout-seconds: 3600
     # jwt/redis过期时间（分）
     jwt-expiration-minutes: 30
     # 登录认证信息存储在redis中的key前缀
@@ -122,6 +122,7 @@ global:
     - /api/auth/publicKey     # 获取公钥
     - /api/auth/captcha       # 验证码
     - /actuator/**            # 可观测性监控
+    #- /api/ai/chat/**
   # 验证码信息
   captcha:
     # 验证码宽度
@@ -202,6 +203,11 @@ global:
     queue-capacity: 100
     # 线程名前缀：线程名称的前缀，方便日志追踪（如：AsyncTask-1, AsyncTask-2...）
     thread-name-prefix: AsyncTask-
+
+logging:
+  level:
+    org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: debug
+
 
 
 

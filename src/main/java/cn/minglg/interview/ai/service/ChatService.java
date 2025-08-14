@@ -1,4 +1,4 @@
-package cn.minglg.interview.ai.core.interview;
+package cn.minglg.interview.ai.service;
 
 import cn.minglg.interview.common.constant.ai.ChatClientType;
 import cn.minglg.interview.common.constant.task.TaskType;
@@ -12,29 +12,40 @@ import reactor.core.publisher.Flux;
 import java.util.Map;
 
 /**
- * ClassName:AiInterviewCoreService
- * Package:cn.minglg.interview.ai.core.appointment
+ * ClassName:ChatService
+ * Package:cn.minglg.interview.ai.service
  * Description:
  *
  * @Author kfzx-minglg
- * @Create 2025/8/9
+ * @Create 2025/8/13
  * @Version 1.0
  */
 @RequiredArgsConstructor
 @Service
-public class AiInterviewCoreService {
+public class ChatService {
     private final Map<ChatClientType, ChatClient> chatClientMap;
     private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
+    private final ToolService toolService;
 
-
-    public Flux<String> interviewOnline(String conversationId, String question) {
+    /**
+     * 执行通用聊天对话
+     *
+     * @param conversationId 对话ID，用于标识和管理对话历史
+     * @param userMessage    用户发送的聊天消息内容
+     * @return 聊天机器人返回的响应内容
+     */
+    public Flux<String> generalChat(String conversationId, String userMessage) {
+        // 获取通用带记忆功能的聊天客户端
         ChatClient chatClient = chatClientMap.get(ChatClientType.GENERAL_WITH_MEMORY);
+
+        // 构建并执行聊天请求
         return chatClient.prompt()
-                .system("你是一位资深技术面试官，负责基于候选人的简历进行结构化一问一答式技术面试。")
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-                .user(question)
+                .tools(toolService)
+                .system(systemPromptDynamicTemplate.get(TaskType.GENERAL_CHAT).render())
+                .user(userMessage)
                 .stream()
                 .content();
-
     }
+
 }

@@ -29,6 +29,8 @@ public enum TaskType {
     MOCK_INTERVIEW_START("模拟面试开始"),
     MOCK_INTERVIEW_STOP("模拟面试结束"),
 
+    GENERAL_CHAT("查询能力地图"),
+
 
     OTHER("其它任务类型");
 

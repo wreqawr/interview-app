@@ -41,7 +41,7 @@ public class AiInterviewCoreServiceTest {
             System.out.print("Q:");
             String question = scanner.nextLine();
             System.out.println("========================");
-            //String answer = aiInterviewCoreService.interviewOnline(conversationId, question);
+            //String answer = aiInterviewCoreService.chatOnline(conversationId, question);
             System.out.print("A:");
             //System.out.println(answer);
             System.out.println("======================");
@@ -62,7 +62,7 @@ public class AiInterviewCoreServiceTest {
         Map<String, Object> variables = getVariables(resumeDetail);
         int currentRound = 1;
         String firstRoundQuestion = systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW_START).render(variables);
-        //String answer = aiInterviewCoreService.interviewOnline(conversationId, firstRoundQuestion);
+        //String answer = aiInterviewCoreService.chatOnline(conversationId, firstRoundQuestion);
         //System.out.println(answer);
         int totalRound = (int) variables.get("totalRounds");
         while (currentRound++ <= totalRound) {
@@ -72,9 +72,9 @@ public class AiInterviewCoreServiceTest {
             System.out.println("========================");
             if (currentRound == totalRound + 1) {
                 String lastRoundQuestion = systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW_STOP).render(variables);
-                //answer = aiInterviewCoreService.interviewOnline(conversationId, lastRoundQuestion);
+                //answer = aiInterviewCoreService.chatOnline(conversationId, lastRoundQuestion);
             } //else {
-                //answer = aiInterviewCoreService.interviewOnline(conversationId, question);
+                //answer = aiInterviewCoreService.chatOnline(conversationId, question);
             //}
             //System.out.println(answer);
         }
