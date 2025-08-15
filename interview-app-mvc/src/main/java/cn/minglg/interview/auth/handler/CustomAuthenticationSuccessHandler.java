@@ -1,10 +1,10 @@
 package cn.minglg.interview.auth.handler;
 
-import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
+import cn.minglg.interview.common.utils.JsonUtils;
 import cn.minglg.interview.common.utils.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,6 +55,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         redisTemplate.opsForValue().set(authKey, token, expiration, TimeUnit.MINUTES);
         R result = R.builder().code(ResponseCode.OK.getCode()).message("登录成功，欢迎：" + user.getUsername()).build();
         response.setHeader("Authorization", token);
-        response.getWriter().write(JSONUtil.toJsonStr(result));
+        response.getWriter().write(JsonUtils.toJsonStr(result));
     }
 }

@@ -1,6 +1,5 @@
 package cn.minglg.interview.auth.service.impl;
 
-import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.auth.mapper.*;
 import cn.minglg.interview.auth.pojo.Company;
 import cn.minglg.interview.auth.pojo.Role;
@@ -9,6 +8,7 @@ import cn.minglg.interview.auth.service.UserService;
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
+import cn.minglg.interview.common.utils.JsonUtils;
 import cn.minglg.interview.common.utils.RsaUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
             roleMapper.getAllRoleList()
                     .forEach(role -> {
                         String roleKey = globalProperties.getRegister().getRoleRedisKeyPrefix() + ":" + role.getRoleName();
-                        String roleValue = JSONUtil.toJsonStr(role);
+                        String roleValue = JsonUtils.toJsonStr(role);
                         redisTemplate.opsForValue().set(roleKey, roleValue);
                     });
         }
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
         String encryptMessage = user.getPassword();
         try {
             String decryptPassword = RsaUtils.decrypt(encryptMessage, keyPair.getPrivate(), timeoutSeconds);
-            Integer roleId = JSONUtil.toBean(roleStr, Role.class).getRoleId();
+            Integer roleId = JsonUtils.toBean(roleStr, Role.class).getRoleId();
             String encryptPassword = passwordEncoder.encode(decryptPassword);
             user.setPassword(encryptPassword);
             // 第一步：添加用户基本信息，并返回用户id

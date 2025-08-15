@@ -1,9 +1,8 @@
 package cn.minglg.interview.auth.handler;
 
-import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.response.R;
-import jakarta.servlet.ServletException;
+import cn.minglg.interview.common.utils.JsonUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
@@ -31,9 +30,9 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
      * @param exception 为拒绝身份验证而引发的异常请求。
      */
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         R result = R.builder().code(ResponseCode.AUTH_FAIL.getCode()).message("登录失败：" + exception.getMessage()).build();
-        response.getWriter().write(JSONUtil.toJsonStr(result));
+        response.getWriter().write(JsonUtils.toJsonStr(result));
     }
 }

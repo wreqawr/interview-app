@@ -1,6 +1,6 @@
 package cn.minglg.interview.auth.pojo;
 
-import cn.hutool.core.annotation.PropIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /**
@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @Data
 public class Company {
-    @PropIgnore
+    @JsonIgnore
     private Long companyId;
     private String companyName;
 }

@@ -85,12 +85,19 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- hutool-all -->
+        <!-- hutool验证码 -->
         <dependency>
             <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
+            <artifactId>hutool-captcha</artifactId>
             <version>${hutool.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-crypto</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+
 
         <!--jwt相关依赖-->
         <dependency>

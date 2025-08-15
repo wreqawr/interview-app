@@ -1,5 +1,6 @@
 package cn.minglg.interview.resume.service.impl;
 
+
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
 import cn.minglg.interview.ai.core.resume.AiResumeCoreService;

@@ -1,7 +1,7 @@
 package cn.minglg.interview.auth.pojo;
 
-import cn.hutool.core.annotation.PropIgnore;
 import cn.minglg.interview.common.constant.user.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +26,6 @@ public class Role {
     private Integer roleId;
     private UserRole roleName;
     private String description;
-    @PropIgnore
+    @JsonIgnore
     private List<Permission> permissions;
 }

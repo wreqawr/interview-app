@@ -1,12 +1,12 @@
 package cn.minglg.interview.ai.core.resume;
 
-import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.ai.exception.AiResumeAnalyzeAndSaveException;
 import cn.minglg.interview.common.annotation.TaskHandler;
 import cn.minglg.interview.common.constant.ai.ChatClientType;
 import cn.minglg.interview.common.constant.task.TaskStatus;
 import cn.minglg.interview.common.constant.task.TaskType;
 import cn.minglg.interview.common.properties.GlobalProperties;
+import cn.minglg.interview.common.utils.JsonUtils;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
@@ -56,7 +56,7 @@ public class AiResumeCoreService {
                 .user(content)
                 .call()
                 .content();
-        ResumeDetail resumeDetail = JSONUtil.toBean(chatResult, ResumeDetail.class);
+        ResumeDetail resumeDetail = JsonUtils.toBean(chatResult, ResumeDetail.class);
         // 第二步：mongodb保存解析结果
         resumeDetail.setUserId(userId);
         resumeDetail.setResumeId(resumeId);

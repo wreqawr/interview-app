@@ -1,16 +1,17 @@
 package cn.minglg.interview.auth.filter;
 
-import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
+import cn.minglg.interview.common.utils.JsonUtils;
 import cn.minglg.interview.common.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,19 +37,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final StringRedisTemplate redisTemplate;
     private final GlobalProperties globalProperties;
 
+
     /**
-     * Same contract as for {@code doFilter}, but guaranteed to be
-     * just invoked once per request within a single request thread.
-     * See {@link #shouldNotFilterAsyncDispatch()} for details.
-     * <p>Provides HttpServletRequest and HttpServletResponse arguments instead of the
-     * default ServletRequest and ServletResponse ones.
+     * 执行过滤器的内部逻辑，用于JWT token验证和用户认证
      *
-     * @param request
-     * @param response
-     * @param filterChain
+     * @param request     HTTP请求对象
+     * @param response    HTTP响应对象
+     * @param filterChain 过滤器链对象
+     * @throws ServletException Servlet异常
+     * @throws IOException      IO异常
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NotNull HttpServletRequest request, HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
         R checkResult = R.builder().code(ResponseCode.JWT_VERIFY_FAIL.getCode()).message("请先登录！").build();
         // 绿色通道或者预检请求直接放行
@@ -73,10 +73,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 filterChain.doFilter(request, response);
             } else {
-                response.getWriter().write(JSONUtil.toJsonStr(checkResult));
+                response.getWriter().write(JsonUtils.toJsonStr(checkResult));
             }
         } catch (Exception e) {
-            response.getWriter().write(JSONUtil.toJsonStr(checkResult));
+            response.getWriter().write(JsonUtils.toJsonStr(checkResult));
         }
     }
+
 }

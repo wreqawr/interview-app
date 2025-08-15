@@ -1,7 +1,5 @@
 package cn.minglg.interview.common.utils;
 
-import cn.hutool.json.JSONConfig;
-import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.auth.pojo.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -25,12 +23,6 @@ import java.util.Date;
  * @Version 1.0
  */
 public class JwtUtils {
-    private static final JSONConfig JSON_CONFIG = new JSONConfig();
-
-    static {
-        JSON_CONFIG.setDateFormat("yyyy-MM-dd HH:mm:ss");
-    }
-
     /**
      * 生成JWT令牌
      *
@@ -40,7 +32,7 @@ public class JwtUtils {
      * @return 加密后的access token
      */
     public static String createJwt(User user, long expiration, KeyPair keyPair) {
-        String userJson = JSONUtil.toJsonStr(user, JSON_CONFIG);
+        String userJson = JsonUtils.toJsonStr(user);
         try {
             Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) keyPair.getPublic(), (RSAPrivateKey) keyPair.getPrivate());
             return JWT.create()
@@ -68,6 +60,6 @@ public class JwtUtils {
         } catch (JWTVerificationException e) {
             throw new JWTVerificationException("JWT认证失败：" + e.getMessage(), e);
         }
-        return JSONUtil.toBean(claims, JSON_CONFIG, User.class);
+        return JsonUtils.toBean(claims, User.class);
     }
 }

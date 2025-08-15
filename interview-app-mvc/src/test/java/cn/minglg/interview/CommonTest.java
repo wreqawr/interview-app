@@ -1,6 +1,6 @@
 package cn.minglg.interview;
 
-import cn.hutool.json.JSONUtil;
+import cn.minglg.interview.common.utils.JsonUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 /**
@@ -45,9 +44,9 @@ public class CommonTest {
     public void test3() {
         Map<String, ? extends Serializable> message = Map.of("原始文件名", "123",
                 "存储文件名", "456",
-                "文件类型", Objects.requireNonNull("AAA"),
+                "文件类型", "AAA",
                 "文件大小", 999);
-        System.out.println(JSONUtil.toJsonStr(message));
+        System.out.println(JsonUtils.toJsonStr(message));
     }
 
     @SneakyThrows

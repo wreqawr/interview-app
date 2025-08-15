@@ -1,9 +1,8 @@
 package cn.minglg.interview.auth.handler;
 
-import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.response.R;
-import jakarta.servlet.ServletException;
+import cn.minglg.interview.common.utils.JsonUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
@@ -31,12 +30,11 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
      * @param response，以便将失败通知用户代理
      * @param accessDeniedException accessDeniedException
      * @throws IOException      IOException 的情况下
-     * @throws ServletException ServletException
      */
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         R result = R.builder().code(ResponseCode.PERMISSION_DENY.getCode()).message("权限不足！").build();
-        response.getWriter().write(JSONUtil.toJsonStr(result));
+        response.getWriter().write(JsonUtils.toJsonStr(result));
     }
 }

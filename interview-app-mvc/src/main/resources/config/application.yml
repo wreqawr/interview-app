@@ -20,6 +20,11 @@ spring:
   banner:
     location: classpath:banner/banner.txt
 
+  #jackson进行json转换时使用指定的时区和格式进行转换
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+
   #   数据源配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

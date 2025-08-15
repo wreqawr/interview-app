@@ -1,16 +1,16 @@
 package cn.minglg.interview.auth.filter;
 
-import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.common.utils.CaptchaUtils;
+import cn.minglg.interview.common.utils.JsonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
@@ -39,7 +39,7 @@ public class CaptchaFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NotNull HttpServletRequest request, HttpServletResponse response, @NotNull FilterChain filterChain) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         R checkResult = R.builder().code(ResponseCode.CAPTCHA_VERIFY_FAIL.getCode()).message("验证码认证失败！").build();
         RequestMatcher requestMatcher = this.globalProperties.getCaptcha().getEffectivePatternsAsRequestMatcher();
@@ -57,7 +57,7 @@ public class CaptchaFilter extends OncePerRequestFilter {
                 if (verifyResult) {
                     filterChain.doFilter(request, response);
                 } else {
-                    response.getWriter().write(JSONUtil.toJsonStr(checkResult));
+                    response.getWriter().write(JsonUtils.toJsonStr(checkResult));
                 }
 
             } else {
@@ -65,7 +65,7 @@ public class CaptchaFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             checkResult.setMessage(e.getMessage());
-            response.getWriter().write(JSONUtil.toJsonStr(checkResult));
+            response.getWriter().write(JsonUtils.toJsonStr(checkResult));
         } finally {
             // 无论验证成功与否，redis中的验证码信息都要失效
             if (captchaRedisKey != null) {

@@ -1,10 +1,10 @@
 package cn.minglg.interview.auth.handler;
 
-import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.properties.GlobalProperties;
 import cn.minglg.interview.common.response.R;
+import cn.minglg.interview.common.utils.JsonUtils;
 import cn.minglg.interview.common.utils.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -50,7 +50,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         } catch (Exception e) {
             result = R.builder().code(ResponseCode.LOGOUT_FAIL.getCode()).message("账号退出失败，原因为：" + e.getMessage()).build();
         } finally {
-            response.getWriter().write(JSONUtil.toJsonStr(result));
+            response.getWriter().write(JsonUtils.toJsonStr(result));
         }
     }
 }

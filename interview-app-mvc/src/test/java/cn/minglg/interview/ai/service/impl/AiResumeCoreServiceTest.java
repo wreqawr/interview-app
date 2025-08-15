@@ -1,8 +1,8 @@
 package cn.minglg.interview.ai.service.impl;
 
-import cn.hutool.json.JSONUtil;
 import cn.minglg.interview.ai.core.resume.AiResumeCoreService;
 import cn.minglg.interview.common.utils.FileUtils;
+import cn.minglg.interview.common.utils.JsonUtils;
 import cn.minglg.interview.common.utils.TaskUtils;
 import cn.minglg.interview.minio.service.MinioService;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
@@ -55,11 +55,11 @@ public class AiResumeCoreServiceTest {
     public void testResumeSummarizeAndSave() {
         Long userId = 4L;
         String resumeId = "1754549458608345c1dca75764ea";
-        String taskId = TaskUtils.generateTaskId();
+        //String taskId = TaskUtils.generateTaskId();
         ResumeDetail resumeDetail = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId);
         if (resumeDetail != null && StringUtils.hasText(resumeDetail.getRawText())) {
             System.out.println("==========================");
-            aiResumeCoreService.resumeSummarizeAndSave(userId, taskId, resumeId, resumeDetail.getRawText(), null);
+            //aiResumeCoreService.resumeSummarizeAndSave(userId, taskId, resumeId, resumeDetail.getRawText(), null);
             System.out.println("==========================");
         }
     }
@@ -76,7 +76,7 @@ public class AiResumeCoreServiceTest {
         long userId = 4L;
         String resumeId = "1754288236657261b0c7b827c4bf";
         ResumeMetadata metadata = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(userId, resumeId);
-        System.out.println(JSONUtil.toJsonStr(metadata));
+        System.out.println(JsonUtils.toJsonStr(metadata));
     }
 
     @Test

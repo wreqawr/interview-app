@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <!-- 父项目信息 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -10,7 +10,7 @@
         <version>3.4.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    
+
     <!-- 父项目坐标 -->
     <groupId>cn.minglg.interview</groupId>
     <artifactId>interview-app</artifactId>
@@ -18,12 +18,12 @@
     <packaging>pom</packaging>
     <name>interview-app</name>
     <description>AI模拟面试系统 - 父项目</description>
-    
+
     <!-- 子模块 -->
     <modules>
         <module>interview-app-mvc</module>
     </modules>
-    
+
     <!-- 项目信息 -->
     <url/>
     <licenses>
@@ -38,7 +38,7 @@
         <tag/>
         <url/>
     </scm>
-    
+
     <!-- 全局属性 -->
     <properties>
         <java.version>17</java.version>
@@ -46,7 +46,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        
+
         <!-- 依赖版本管理 -->
         <ai.alibaba.version>1.0.0.2</ai.alibaba.version>
         <mybatis.starter.version>3.0.4</mybatis.starter.version>
@@ -69,12 +69,22 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            
+
             <!-- 子模块依赖管理 -->
             <dependency>
                 <groupId>cn.minglg.interview</groupId>
                 <artifactId>interview-app-mvc</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <!--hutool工具包管理-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-bom</artifactId>
+                <version>${hutool.version}</version>
+                <type>pom</type>
+                <!-- 注意这里是import -->
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -92,7 +102,7 @@
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
@@ -100,7 +110,7 @@
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
