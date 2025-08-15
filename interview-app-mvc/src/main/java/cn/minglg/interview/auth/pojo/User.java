@@ -1,7 +1,8 @@
 package cn.minglg.interview.auth.pojo;
 
-import cn.hutool.core.annotation.PropIgnore;
 import cn.minglg.interview.common.constant.user.UserStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,18 +30,19 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"handler"})
 public class User implements UserDetails, Serializable {
     /**
      * 核心字段
      */
     private Long userId;
     private String username;
-    @PropIgnore
+    @JsonIgnore
     private String password;
     private String nickname;
     private String email;
     private UserStatus status;
-    @PropIgnore
+    @JsonIgnore
     private LocalDateTime createdAt;
 
     /**
