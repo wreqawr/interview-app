@@ -6,7 +6,30 @@
 
 ## 一、项目简介
 
-本项目为"AI模拟面试系统"后端，基于Spring Boot 3.4.6，集成Spring Security、JWT、Mybatis、MinIO、Apache Tika、阿里云AI等，提供认证授权、简历解析、文件存储、AI智能分析、RBAC权限、数据存储等核心服务。支持Docker容器化部署，敏感信息通过环境变量注入，适合企业级生产环境。
+本项目为"AI模拟面试系统"后端，采用Maven父子项目管理架构，基于Spring Boot 3.4.6，集成Spring Security、JWT、Mybatis、MinIO、Apache Tika、阿里云AI等，提供认证授权、简历解析、文件存储、AI智能分析、RBAC权限、数据存储等核心服务。支持Docker容器化部署，敏感信息通过环境变量注入，适合企业级生产环境。
+
+### 项目架构
+
+```
+interview-app/                           # 父项目
+├── pom.xml                             # 父POM文件
+├── build.sh                            # 父项目构建脚本
+├── docker-compose.yml                  # 父项目Docker编排
+├── Dockerfile                          # 父项目Docker构建
+├── README.md                           # 项目说明文档
+└── interview-app-mvc/                  # MVC架构子模块
+    ├── pom.xml                        # MVC模块POM
+    ├── src/                           # 源代码
+    │   ├── main/
+    │   │   ├── java/                  # Java源码
+    │   │   └── resources/             # 配置文件
+    │   └── test/                      # 测试代码
+    ├── target/                        # 编译输出
+    ├── BUILD_GUIDE.md                 # 构建说明文档
+    └── 其他配置文件...
+```
+
+> 📖 **构建说明**：详细的构建和部署说明请参考 [BUILD_GUIDE.md](BUILD_GUIDE.md)
 
 ### 核心特性
 
@@ -56,13 +79,13 @@
 
 ## 三、主要功能
 
-### 2.1 用户认证与权限管理
+### 3.1 用户认证与权限管理
 - **用户注册/登录**：支持RSA加密密码、验证码校验、JWT令牌签发
 - **权限控制**：基于RBAC模型，支持用户-角色-权限-公司多维绑定
 - **安全过滤器**：JWT验证、验证码校验、请求体缓存等
 - **异常处理**：登录失败、权限不足、JWT过期等异常处理
 
-### 2.2 简历管理与智能解析
+### 3.2 简历管理与智能解析
 - **文件上传**：支持PDF、Word、TXT格式，文件大小限制5MB
 - **异步AI解析**：简历上传后立即返回taskId，后台异步进行AI解析
 - **智能解析**：基于Apache Tika的文档内容提取
@@ -72,7 +95,7 @@
 - **简历元信息**：支持简历标题、查看次数、下载次数、综合评分等扩展字段
 - **简历预览**：支持文件预览功能，自动统计查看次数
 
-### 2.3 AI智能分析引擎
+### 3.3 AI智能分析引擎
 - **简历智能解析**：基于通义千问的简历内容分析
 - **结构化数据提取**：自动提取个人信息、教育背景、工作经验、项目经历等
 - **智能纠错**：自动修正错别字和技术术语错误
@@ -81,7 +104,7 @@
 - **专业分析报告**：面向求职者的简历分析，提供核心竞争力评估、短板识别、优化建议
 - **HTML格式输出**：生成精美的HTML分析报告，支持样式定制
 
-### 2.4 AI智能对话系统
+### 3.4 AI智能对话系统
 - **智能客服**：支持上下文记忆的通用对话服务
 - **模拟面试官**：基于简历内容的专业技术面试问答
 - **角色扮演**：可配置的AI角色和对话风格
@@ -89,27 +112,27 @@
 - **流式响应**：支持实时流式对话输出
 - **多轮对话**：智能上下文理解和连续对话支持
 
-### 2.4 异步任务管理
+### 3.5 异步任务管理
 - **任务状态跟踪**：PENDING、RUNNING、FINISHED、FAILED四种状态
 - **AOP切面管理**：基于`@TaskHandler`注解的异步任务处理
 - **任务类型支持**：简历解析、简历分析、能力评估、岗位匹配度分析等
 - **异常处理**：任务失败时的错误信息记录和重试机制
 - **查询切面**：基于`@AsyncTaskQuery`注解的异步任务结果查询
 
-### 2.5 统一响应与异常处理
+### 3.6 统一响应与异常处理
 - **标准化API响应**：统一的`R<T>`响应结构
 - **AOP异常处理**：基于`@ResponseEntityExceptionHandler`注解的异常处理
 - **全局异常处理器**：`@RestControllerAdvice`统一异常处理
 - **响应码管理**：标准化的业务响应码定义
 
-### 2.6 缓存策略
+### 3.7 缓存策略
 - **三级缓存机制**：Redis-MongoDB-AI三级缓存，提升查询效率
 - **智能缓存更新**：支持缓存自动更新和失效机制
 - **分布式缓存**：基于Redis集群的分布式缓存支持
 
 ---
 
-## 三、技术栈
+## 四、技术栈
 
 | 模块 | 技术实现 | 版本 | 说明 |
 |------|----------|------|------|
@@ -129,236 +152,73 @@
 
 ---
 
-## 四、目录结构与模块剖析
+## 五、目录结构与模块剖析
 
 ```
-interview-app/
-├── src/
-│   ├── main/
-│   │   ├── java/cn/minglg/interview/
-│   │   │   ├── Application.java                    # 启动类
-│   │   │   ├── auth/                               # 认证与权限模块
-│   │   │   │   ├── controller/                     # 登录、验证码等接口
-│   │   │   │   ├── handler/                        # 认证、鉴权、登出等处理器
-│   │   │   │   ├── filter/                         # JWT、验证码等安全过滤器
-│   │   │   │   ├── service/                        # 用户、验证码等服务接口与实现
-│   │   │   │   ├── mapper/                         # MyBatis数据访问层
-│   │   │   │   ├── pojo/                           # 用户、角色、权限等实体
-│   │   │   │   ├── config/                         # Spring Security、验证码等配置
-│   │   │   │   ├── event/                          # 登录成功等事件发布
-│   │   │   │   ├── exception/                      # 自定义异常
-│   │   │   │   └── wrapper/                        # 请求体缓存包装器
-│   │   │   ├── common/                             # 通用工具与全局配置
-│   │   │   │   ├── annotation/                     # 自定义注解
-│   │   │   │   ├── aspects/                        # AOP切面类
-│   │   │   │   ├── config/                         # 异步配置
-│   │   │   │   ├── constant/                       # 常量定义
-│   │   │   │   ├── exception/                      # 全局异常
-│   │   │   │   ├── listener/                       # 应用监听器
-│   │   │   │   ├── mapper/                         # 任务管理Mapper
-│   │   │   │   ├── pojo/                           # 任务实体
-│   │   │   │   ├── properties/                     # 全局配置属性
-│   │   │   │   ├── response/                       # 统一响应结构
-│   │   │   │   └── utils/                          # 工具类（JWT、RSA、验证码等）
-│   │   │   ├── resume/                             # 简历模块
-│   │   │   │   ├── controller/                     # 简历相关接口
-│   │   │   │   ├── service/                        # 简历服务接口与实现
-│   │   │   │   ├── config/                         # 简历解析器配置
-│   │   │   │   ├── exception/                      # 简历相关异常
-│   │   │   │   ├── mapper/                         # 简历元数据Mapper
-│   │   │   │   ├── pojo/                           # 简历实体类
-│   │   │   │   └── repository/                     # MongoDB数据访问
-│   │   │   ├── minio/                              # 文件存储模块
-│   │   │   │   ├── service/                        # MinIO服务接口与实现
-│   │   │   │   └── config/                         # MinIO配置
-│   │   │   └── ai/                                 # AI模块
-│   │   │       ├── config/                         # AI配置（通义千问）
-│   │   │       └── core/                           # AI核心服务
-│   │   ├── resources/
-│   │   │   ├── config/application.yml              # 配置文件，端口8081，敏感信息用环境变量
-│   │   │   ├── mapper/                             # MyBatis XML映射
-│   │   │   ├── prompt/                             # AI提示词模板
-│   │   │   └── banner/                             # 启动Banner
-│   ├── test/java/cn/minglg/interview/              # 单元测试
-│   │   ├── CommonTest.java, UuidTest.java, utils/
-├── Dockerfile                                       # 多阶段构建，JDK17，8081端口
-├── docker-compose.yml                               # 一键部署示例，环境变量注入
-├── build.sh                                         # 构建脚本
-├── pom.xml                                          # Maven依赖
-└── README.md                                        # 项目说明
+interview-app/                           # 父项目
+├── pom.xml                             # 父POM文件
+├── interview-app-mvc/                  # MVC架构子模块
+│   ├── pom.xml                        # MVC模块POM
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/cn/minglg/interview/
+│   │   │   │   ├── Application.java                    # 启动类
+│   │   │   │   ├── auth/                               # 认证与权限模块
+│   │   │   │   │   ├── controller/                     # 登录、验证码等接口
+│   │   │   │   │   ├── handler/                        # 认证、鉴权、登出等处理器
+│   │   │   │   │   ├── filter/                         # JWT、验证码等安全过滤器
+│   │   │   │   │   ├── service/                        # 用户、验证码等服务接口与实现
+│   │   │   │   │   ├── mapper/                         # MyBatis数据访问层
+│   │   │   │   │   ├── pojo/                           # 用户、角色、权限等实体
+│   │   │   │   │   ├── config/                         # Spring Security、验证码等配置
+│   │   │   │   │   ├── event/                          # 登录成功等事件发布
+│   │   │   │   │   ├── exception/                      # 自定义异常
+│   │   │   │   │   └── wrapper/                        # 请求体缓存包装器
+│   │   │   │   ├── common/                             # 通用工具与全局配置
+│   │   │   │   │   ├── annotation/                     # 自定义注解
+│   │   │   │   │   ├── aspects/                        # AOP切面类
+│   │   │   │   │   ├── config/                         # 异步配置
+│   │   │   │   │   ├── constant/                       # 常量定义
+│   │   │   │   │   ├── exception/                      # 全局异常
+│   │   │   │   │   ├── listener/                       # 应用监听器
+│   │   │   │   │   ├── mapper/                         # 任务管理Mapper
+│   │   │   │   │   ├── pojo/                           # 任务实体
+│   │   │   │   │   ├── properties/                     # 全局配置属性
+│   │   │   │   │   ├── response/                       # 统一响应结构
+│   │   │   │   │   └── utils/                          # 工具类（JWT、RSA、验证码等）
+│   │   │   │   ├── resume/                             # 简历模块
+│   │   │   │   │   ├── controller/                     # 简历相关接口
+│   │   │   │   │   ├── service/                        # 简历服务接口与实现
+│   │   │   │   │   ├── config/                         # 简历解析器配置
+│   │   │   │   │   ├── exception/                      # 简历相关异常
+│   │   │   │   │   ├── mapper/                         # 简历元数据Mapper
+│   │   │   │   │   ├── pojo/                           # 简历实体类
+│   │   │   │   │   └── repository/                     # MongoDB数据访问
+│   │   │   │   ├── minio/                              # 文件存储模块
+│   │   │   │   │   ├── service/                        # MinIO服务接口与实现
+│   │   │   │   │   └── config/                         # MinIO配置
+│   │   │   │   └── ai/                                 # AI模块
+│   │   │   │       ├── config/                         # AI配置（通义千问）
+│   │   │   │       └── core/                           # AI核心服务
+│   │   │   └── resources/
+│   │   │       ├── config/application.yml              # 配置文件，端口8081，敏感信息用环境变量
+│   │   │       ├── mapper/                             # MyBatis XML映射
+│   │   │       ├── prompt/                             # AI提示词模板
+│   │   │       └── banner/                             # 启动Banner
+│   │   └── test/java/cn/minglg/interview/              # 单元测试
+│   │       ├── CommonTest.java, UuidTest.java, utils/
+│   └── target/                                         # 编译输出
+├── Dockerfile                                           # 多阶段构建，JDK17，8081端口
+├── docker-compose.yml                                   # 一键部署示例，环境变量注入
+├── build.sh                                             # 构建脚本
+└── README.md                                            # 项目说明
 ```
-
----
-
-## 五、核心功能模块详细说明
-
-### 5.1 认证与权限（auth）
-
-#### 5.1.1 用户管理
-- **用户注册**：支持RSA加密密码、角色分配、公司关联
-- **用户登录**：JWT令牌签发、Redis会话管理
-- **用户登出**：令牌失效、Redis清理
-
-#### 5.1.2 安全机制
-- **JWT认证**：基于RSA256算法的JWT令牌
-- **RSA加密**：前端密码RSA加密传输
-- **验证码校验**：支持数学运算和随机字符验证码
-- **请求体缓存**：支持多次读取请求体内容
-
-#### 5.1.3 权限控制
-- **RBAC模型**：用户-角色-权限-公司四维关联
-- **角色定义**：ROLE_ADMIN（管理员）、ROLE_JOB_SEEKER（求职者）、ROLE_HR（企业招聘方）
-- **权限细粒度**：基于注解的方法级权限控制
-
-### 5.2 简历管理（resume）
-
-#### 5.2.1 文件处理
-- **文件上传**：支持PDF、Word、TXT格式，最大5MB
-- **文件存储**：MinIO对象存储，按用户分桶
-- **文件下载**：支持流式下载，权限验证
-- **文件删除**：级联删除元数据和存储文件
-- **文件预览**：支持文件预览功能，自动统计查看次数
-
-#### 5.2.2 智能解析
-- **文档解析**：基于Apache Tika的多格式文档解析
-- **内容清理**：自动清理格式、空白行、重复空格
-- **元数据提取**：文件大小、类型、哈希值等
-
-#### 5.2.3 数据结构
-- **ResumeMetadata**：简历元数据（MySQL存储）
-  - 基本信息：resumeId、userId、bucketName、objectName等
-  - 扩展信息：resumeTitle、viewCount、downloadCount、rate等
-  - 预览功能：previewEnabled、previewExpired等
-- **ResumeDetail**：简历详细信息（MongoDB存储）
-  - 结构化数据：基本信息、工作经历、教育背景、技能、项目经历
-  - 分析报告：resumeAnalyzeHtmlContentForJobSeekers（面向求职者的HTML分析报告）
-
-#### 5.2.4 异步处理流程
-1. **文件上传**：用户上传简历文件
-2. **立即响应**：返回taskId和resumeId，提示用户等待后台解析
-3. **异步解析**：后台使用Tika提取文本内容
-4. **AI分析**：调用通义千问进行智能解析
-5. **数据持久化**：保存解析结果到MongoDB和MySQL
-6. **状态查询**：用户可通过taskId查询解析进度
-
-### 5.3 AI智能分析（ai）
-
-#### 5.3.1 核心服务
-- **AiResumeCoreService**：简历分析核心服务
-- **AiInterviewCoreService**：AI面试官核心服务
-- **ChatService**：通用AI对话服务
-- **异步处理**：基于`@Async`注解的异步任务执行
-- **多任务支持**：支持简历解析、简历分析、面试问答等任务类型
-
-#### 5.3.2 智能解析
-- **提示词工程**：专业的简历解析提示词模板
-- **结构化输出**：JSON格式的结构化数据输出
-- **智能纠错**：自动修正错别字和技术术语
-- **格式标准化**：统一日期、技能名称等格式
-
-#### 5.3.3 简历分析
-- **专业分析**：面向求职者的简历分析，提供核心竞争力评估
-- **短板识别**：识别简历中的潜在问题和不足
-- **优化建议**：提供具体的改进建议和优化方向
-- **HTML输出**：生成精美的HTML格式分析报告
-
-#### 5.3.4 AI对话系统
-- **智能客服**：支持上下文记忆的通用对话服务
-- **模拟面试官**：基于简历内容的专业技术面试问答
-- **角色配置**：可配置的AI角色和对话风格
-- **记忆管理**：基于Redis的分布式对话历史记忆
-- **流式响应**：支持实时流式对话输出
-- **多轮对话**：智能上下文理解和连续对话支持
-
-#### 5.3.5 提示词模板
-- **简历解析**：专业的简历信息提取和分析提示词
-- **面试问答**：基于简历内容的结构化面试问题生成
-- **智能客服**：通用对话和问题解答提示词
-- **模板渲染**：支持动态占位符的提示词模板系统
-
-#### 5.3.6 数据模型
-```json
-{
-  "basic_info": {
-    "name": "张三",
-    "phone": "13800138000",
-    "email": "zhangsan@example.com",
-    "location": "北京",
-    "years_exp": 5.5,
-    "target_title": "高级Java开发工程师"
-  },
-  "work_experience": [],
-  "education": [],
-  "skills": {},
-  "projects": []
-}
-```
-
-### 5.4 异步任务管理（common）
-
-#### 5.4.1 任务状态
-- **PENDING**：等待执行
-- **RUNNING**：执行中
-- **FINISHED**：执行结束
-- **FAILED**：执行失败
-
-#### 5.4.2 任务类型
-- **RESUME_SUMMARIZE**：简历解析
-- **RESUME_ANALYZE**：简历分析
-- **SKILL_EVALUATION**：能力评估
-- **COMPREHENSIVE_ASSESSMENT**：综合评估
-- **RESUME_METADATA_UPDATE**：简历元数据更新
-
-#### 5.4.3 AOP切面
-- **TaskAspect**：异步任务状态管理切面
-  - `@TaskHandler`：异步任务执行切面
-  - `@AsyncTaskQuery`：异步任务查询切面
-- **ResponseEntityAspect**：统一响应处理切面
-- **注解驱动**：`@TaskHandler`、`@AsyncTaskQuery`、`@ResponseEntityExceptionHandler`
-
-### 5.5 文件存储（minio）
-
-#### 5.5.1 核心功能
-- **桶管理**：自动创建、删除存储桶
-- **文件操作**：上传、下载、删除、URL生成
-- **权限控制**：基于用户的桶隔离
-- **元数据管理**：文件类型、大小、哈希值等
-- **预览支持**：生成预签名URL，支持文件预览
-
-#### 5.5.2 存储策略
-- **用户隔离**：每个用户独立的存储桶
-- **文件命名**：时间戳+随机字符串，避免冲突
-- **预签名URL**：支持临时访问链接，可配置过期时间
-
-### 5.6 通用与全局（common）
-
-#### 5.6.1 统一响应
-```java
-@Data
-@Builder
-public class R<T> {
-    private Integer code;    // 响应码
-    private String message;  // 响应消息
-    private T data;         // 响应数据
-}
-```
-
-#### 5.6.2 异常处理
-- **全局异常处理器**：`@RestControllerAdvice`
-- **自定义异常**：业务异常、认证异常、文件异常等
-- **AOP切面**：基于注解的异常处理
-
-#### 5.6.3 工具类
-- **JwtUtils**：JWT令牌生成和验证
-- **RsaUtils**：RSA加密解密
-- **CaptchaUtils**：验证码生成和验证
-- **UserUtils**：当前用户获取
-- **TaskUtils**：任务管理工具
-- **FileUtils**：文件处理工具
 
 ---
 
 ## 六、构建与部署
+
+> 📖 **详细说明**：完整的构建和部署说明请参考 [BUILD_GUIDE.md](BUILD_GUIDE.md)
 
 ### 6.1 环境要求
 
@@ -393,14 +253,19 @@ export MINIO_ACCESS_KEY=admin
 export MINIO_SECRET_KEY=your_minio_password
 export ALIYUN_API_KEY=your_aliyun_api_key
 
-# 3. 构建jar包
+# 3. 构建整个项目
+mvn clean install
+
+# 4. 构建MVC模块
+cd interview-app-mvc
 mvn clean package -DskipTests
 ```
 
 ### 6.3 Docker镜像构建与运行
 
 ```bash
-# 1. 构建镜像
+# 1. 构建镜像（在MVC模块目录下）
+cd interview-app-mvc
 ./build.sh
 
 # 2. 运行容器
@@ -419,7 +284,7 @@ docker run -d \
   -e MINIO_ACCESS_KEY=admin \
   -e MINIO_SECRET_KEY=your_minio_password \
   -e ALIYUN_API_KEY=your_aliyun_api_key \
-  --name interview-app interview-app:latest
+  --name interview-app-mvc interview-app-mvc:latest
 ```
 
 ### 6.4 docker-compose一键部署
@@ -428,9 +293,9 @@ docker run -d \
 # docker-compose.yml
 version: '3.8'
 services:
-  interview-app:
-    image: interview-app:latest
-    container_name: interview-app
+  interview-app-mvc:
+    image: interview-app-mvc:latest
+    container_name: interview-app-mvc
     ports:
       - "8081:8081"
     environment:
@@ -463,10 +328,10 @@ networks:
 CREATE DATABASE interview_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 # 2. 执行DDL脚本
-mysql -u root -p interview_db < src/main/resources/init/ddl/*.sql
+mysql -u root -p interview_db < interview-app-mvc/src/main/resources/init/ddl/*.sql
 
 # 3. 执行DML脚本
-mysql -u root -p interview_db < src/main/resources/init/dml/*.sql
+mysql -u root -p interview_db < interview-app-mvc/src/main/resources/init/dml/*.sql
 ```
 
 ---
@@ -475,7 +340,7 @@ mysql -u root -p interview_db < src/main/resources/init/dml/*.sql
 
 ### 7.1 核心配置
 
-- **端口**：默认8081（见`application.yml`）
+- **端口**：默认8081（见`interview-app-mvc/src/main/resources/config/application.yml`）
 - **敏感信息**：数据库、Redis、MongoDB、MinIO、阿里云API等均通过环境变量注入
 - **文件上传**：单文件最大5MB，总请求最大20MB
 - **JWT过期时间**：默认30分钟，可配置
@@ -498,52 +363,6 @@ mysql -u root -p interview_db < src/main/resources/init/dml/*.sql
 | `MINIO_ACCESS_KEY` | MinIO访问密钥 | `admin` |
 | `MINIO_SECRET_KEY` | MinIO秘密密钥 | `minio_password` |
 | `ALIYUN_API_KEY` | 阿里云API密钥 | `your_aliyun_api_key` |
-
-### 7.3 全局配置
-
-#### 7.3.1 认证配置
-```yaml
-global:
-  auth:
-    request-timeout-seconds: 5
-    jwt-expiration-minutes: 30
-    auth-key-prefix: user:security:login
-    login-uri: /api/auth/login
-    logout-uri: /api/auth/logout
-```
-
-#### 7.3.2 验证码配置
-```yaml
-global:
-  captcha:
-    width: 120
-    height: 40
-    code-count: 4
-    thickness: 10
-    code-generator: cn.hutool.captcha.generator.MathGenerator
-    redis-key-prefix: user:captcha
-    redis-key-expire-minutes: 5
-```
-
-#### 7.3.3 简历配置
-```yaml
-global:
-  resume:
-    allow-file-types: [.pdf, .doc, .docx, .txt]
-    preview-expired: 3
-    download-expired: 60
-    redis-key-prefix-for-analyze: resume:analyze
-```
-
-#### 7.3.4 异步任务配置
-```yaml
-global:
-  async:
-    core-pool-size: 5
-    max-pool-size: 10
-    queue-capacity: 100
-    thread-name-prefix: AsyncTask-
-```
 
 ---
 
@@ -584,9 +403,9 @@ global:
 - **HR**：人力资源角色，可以查看和管理简历、使用AI客服
 - **ADMIN**：管理员角色，拥有所有权限
 
-### 8.4 响应格式
+### 8.5 响应格式
 
-#### 8.4.1 成功响应
+#### 8.5.1 成功响应
 ```json
 {
   "code": 200,
@@ -596,7 +415,7 @@ global:
 }
 ```
 
-#### 8.4.2 错误响应
+#### 8.5.2 错误响应
 ```json
 {
   "code": 210,
@@ -604,7 +423,7 @@ global:
 }
 ```
 
-#### 8.4.3 异步任务响应
+#### 8.5.3 异步任务响应
 ```json
 {
   "code": 900,
@@ -674,7 +493,7 @@ curl -X POST http://localhost:8081/api/ai/chat \
 
 ### 10.1 启动问题
 
-- **端口冲突**：修改`application.yml`中的`server.port`
+- **端口冲突**：修改`interview-app-mvc/src/main/resources/config/application.yml`中的`server.port`
 - **数据库连接失败**：检查环境变量`MYSQL_JDBC_URL`等配置
 - **Redis连接失败**：检查Redis集群配置和环境变量
 - **MongoDB连接失败**：检查MongoDB服务状态和环境变量
@@ -712,7 +531,7 @@ curl -X POST http://localhost:8081/api/ai/chat \
 ### 10.6 部署问题
 
 - **环境变量未配置**：确保所有必需的环境变量都已设置
-- **容器启动失败**：查看Docker日志`docker logs interview-app`
+- **容器启动失败**：查看Docker日志`docker logs interview-app-mvc`
 - **网络连接问题**：检查容器网络配置和端口映射
 
 ---
@@ -766,7 +585,30 @@ curl -X POST http://localhost:8081/api/ai/chat \
 
 ---
 
-## 十二、贡献指南
+## 十二、项目扩展计划
+
+### 12.1 实时通信模块
+
+计划新增`interview-app-realtime`子模块，用于处理实时通信功能：
+
+- **WebSocket支持**：实时双向通信
+- **Server-Sent Events**：服务器推送事件
+- **响应式编程**：基于WebFlux的非阻塞架构
+- **消息队列集成**：与MVC模块通过消息队列通信
+
+### 12.2 微服务架构
+
+未来可考虑将项目拆分为独立的微服务：
+
+- **用户服务**：认证授权、用户管理
+- **简历服务**：简历解析、分析、存储
+- **AI服务**：智能分析、对话系统
+- **文件服务**：文件存储、管理
+- **通知服务**：消息推送、邮件通知
+
+---
+
+## 十三、贡献指南
 
 1. **Fork项目**
 2. **创建功能分支**：`git checkout -b feature/new-feature`
@@ -776,13 +618,13 @@ curl -X POST http://localhost:8081/api/ai/chat \
 
 ---
 
-## 十三、许可证
+## 十四、许可证
 
 本项目采用 [GNU GPL v3.0](LICENSE) 开源协议。
 
 ---
 
-## 十四、联系方式
+## 十五、联系方式
 
 - **作者**：kfzx-minglg
 - **邮箱**：2820996063@qq.com

@@ -19,17 +19,18 @@ RUN mkdir -p /root/.m2 && \
     echo '    </mirrors>' >> /root/.m2/settings.xml && \
     echo '</settings>' >> /root/.m2/settings.xml
 
-# 复制整个项目
-COPY . .
+# 复制源代码和POM文件
+COPY src ./src
+COPY pom.xml ./pom.xml
 
-# 构建整个项目
-RUN mvn clean install -DskipTests
+# 直接构建当前模块（不依赖父项目）
+RUN mvn clean package -DskipTests
 
 # ----------- 运行阶段 -----------
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 # 只复制最终jar包，避免源码、测试等无关内容进入镜像
-COPY --from=builder /app/interview-app-mvc/target/*.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 
 # 可选：暴露端口（如8081）
 EXPOSE 8081
