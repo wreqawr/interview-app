@@ -15,7 +15,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.security.KeyPair;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,8 +29,6 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-
-    private final KeyPair keyPair;
     private final StringRedisTemplate redisTemplate;
     private final GlobalProperties globalProperties;
 
@@ -50,7 +47,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         // 生成JWT令牌
         long expiration = globalProperties.getAuth().getJwtExpirationMinutes();
         String authKey = globalProperties.getAuth().getAuthKeyPrefix() + ":" + user.getUserId();
-        String token = JwtUtils.createJwt(user, expiration, keyPair);
+        String securityKey = globalProperties.getAuth().getJwtSecretKey();
+        String token = JwtUtils.createJwt(user, expiration, securityKey);
         // 登录信息保存至redis，并设置过期时间
         redisTemplate.opsForValue().set(authKey, token, expiration, TimeUnit.MINUTES);
         R result = R.builder().code(ResponseCode.OK.getCode()).message("登录成功，欢迎：" + user.getUsername()).build();

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.security.KeyPair;
 
 /**
  * ClassName:JwtTokenFilter
@@ -33,7 +32,6 @@ import java.security.KeyPair;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
-    private final KeyPair keyPair;
     private final StringRedisTemplate redisTemplate;
     private final GlobalProperties globalProperties;
 
@@ -61,7 +59,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = request.getHeader("Authorization");
         try {
             // 解析token，获取userId，和redis比较
-            User user = JwtUtils.verifyJwt(token, keyPair);
+            String secretKey = globalProperties.getAuth().getJwtSecretKey();
+            User user = JwtUtils.verifyJwt(token, secretKey);
             String authKey = globalProperties.getAuth().getAuthKeyPrefix() + ":" + user.getUserId();
             String redisToken = redisTemplate.opsForValue().get(authKey);
             // 验证通过放行

@@ -114,6 +114,8 @@ global:
     request-timeout-seconds: 5
     # jwt/redis过期时间（分）
     jwt-expiration-minutes: 30
+    # jwt密钥
+    jwt-secret-key: ${JWT_SECRET}
     # 登录认证信息存储在redis中的key前缀
     auth-key-prefix: user:security:login
     # 登录页

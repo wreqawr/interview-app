@@ -121,27 +121,29 @@ public class SecurityConfig {
 
 
     /**
-     * 配置 Spring Security 放行所有请求，前后端分离防止302重定向
+     * 配置Spring Security的安全过滤器链
      *
-     * @param http
-     * @return
+     * @param http                       HttpSecurity对象，用于配置安全策略
+     * @param customAuthenticationFilter 自定义认证过滤器，用于替换默认的UsernamePasswordAuthenticationFilter
+     * @param configurationSource        CORS配置源，用于处理跨域请求
+     * @return 配置完成的SecurityFilterChain对象
+     * @throws Exception 配置过程中可能抛出的异常
      */
     @Bean("securityFilterChain")
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAuthenticationFilter customAuthenticationFilter, CorsConfigurationSource configurationSource) throws Exception {
         return http
-                // 关闭CSRF
+                // 关闭CSRF防护
                 .csrf(AbstractHttpConfigurer::disable)
-                // 允许跨域（后续使用nginx反向代理无需配置跨域）
+                // 配置跨域资源共享(CORS)
                 .cors(cors ->
                         cors.configurationSource(configurationSource))
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()// 显式放行所有OPTIONS
-//                                .anyRequest().permitAll()
-                                .requestMatchers(globalProperties.getWhiteListPatterns().toArray(new String[0])).permitAll()  // 白名单内请求，无需认证
-                                .anyRequest().authenticated() // 其他所有请求走认证
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()// 显式放行所有OPTIONS
+                        .requestMatchers(globalProperties.getWhiteListPatterns().toArray(new String[0])).permitAll()  // 白名单内请求，无需认证
+                        .anyRequest().authenticated() // 其他所有请求走认证
                 )
 
-                // 前后端分离，无需session
+                // 配置无状态会话管理，适用于前后端分离架构
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 自定义认证过滤器，替换框架默认的UsernamePasswordAuthenticationFilter
                 .addFilterAt(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -152,13 +154,14 @@ public class SecurityConfig {
                 // 关键位置：在 CustomAuthenticationFilter之前添加jwtTokenFilter
                 .addFilterBefore(jwtTokenFilter, CustomAuthenticationFilter.class)
 
-                // 权限不足时执行customAccessDeniedHandler
+                // 配置权限不足时的处理逻辑
                 .exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedHandler(customAccessDeniedHandler))
                 .logout(logout -> logout
                         .logoutUrl(globalProperties.getAuth().getLogoutUri())
                         .logoutSuccessHandler(customLogoutSuccessHandler))
                 .build();
     }
+
 
     /**
      * 创建BCrypt密码编码器

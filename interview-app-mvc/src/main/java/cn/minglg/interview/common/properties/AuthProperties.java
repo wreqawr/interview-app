@@ -38,4 +38,9 @@ public class AuthProperties {
      * jwt/redis过期时间（分）
      */
     private long jwtExpirationMinutes;
+
+    /**
+     * jwt密钥
+     */
+    private String jwtSecretKey;
 }

@@ -30,7 +30,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"handler"})
+@JsonIgnoreProperties({"handler", "authorities"})
 public class User implements UserDetails, Serializable {
     /**
      * 核心字段
@@ -59,9 +59,7 @@ public class User implements UserDetails, Serializable {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        this.getRoles().forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority(role.getRoleName().toString()));
-        });
+        this.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getRoleName().toString())));
         return authorities;
     }
 

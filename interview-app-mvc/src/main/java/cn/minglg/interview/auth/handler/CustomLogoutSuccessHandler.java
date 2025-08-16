@@ -15,7 +15,6 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.security.KeyPair;
 
 /**
  * ClassName:CustomLogoutSuccessHandler
@@ -33,7 +32,6 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 
     private final StringRedisTemplate redisTemplate;
     private final GlobalProperties globalProperties;
-    private final KeyPair keyPair;
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -41,7 +39,8 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         String authorization = request.getHeader("Authorization");
         R result = null;
         try {
-            User user = JwtUtils.verifyJwt(authorization, keyPair);
+            String secretKey = globalProperties.getAuth().getJwtSecretKey();
+            User user = JwtUtils.verifyJwt(authorization, secretKey);
             String authKey = globalProperties.getAuth().getAuthKeyPrefix() + ":" + user.getUserId();
             // 删除redis中的登录信息
             redisTemplate.delete(authKey);

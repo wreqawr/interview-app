@@ -8,9 +8,6 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 
-import java.security.KeyPair;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 
 /**
@@ -23,34 +20,45 @@ import java.util.Date;
  * @Version 1.0
  */
 public class JwtUtils {
+
     /**
-     * 生成JWT令牌
+     * 创建JWT令牌
      *
-     * @param user       用户必要信息（不含敏感信息，减少后续数据库查询）
-     * @param expiration 超时时间（单位：分）
-     * @param keyPair    密钥对
-     * @return 加密后的access token
+     * @param user       用户对象，将被序列化并存储在令牌的claims中
+     * @param expiration 令牌有效期，单位为分钟
+     * @param secret     用于签名的密钥
+     * @return 生成的JWT令牌字符串
+     * @throws JWTCreationException 当JWT令牌创建失败时抛出此异常
      */
-    public static String createJwt(User user, long expiration, KeyPair keyPair) {
+    public static String createJwt(User user, long expiration, String secret) {
+        // 将用户对象转换为JSON字符串
         String userJson = JsonUtils.toJsonStr(user);
         try {
-            Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) keyPair.getPublic(), (RSAPrivateKey) keyPair.getPrivate());
+            // 使用HMAC256算法和密钥创建签名算法
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            // 构建并返回JWT令牌
             return JWT.create()
+                    // 设置签发者
                     .withIssuer("2820996063@qq.com")
+                    // 设置签发时间
                     .withIssuedAt(new Date())
+                    // 设置过期时间
                     .withExpiresAt(new Date(System.currentTimeMillis() + expiration * 60 * 1000))
+                    // 添加用户信息声明
                     .withClaim("claims", userJson)
+                    // 使用算法签名并生成令牌
                     .sign(algorithm);
         } catch (Exception e) {
             throw new JWTCreationException("JWT令牌创建失败！" + e.getMessage(), e);
         }
     }
 
-    public static User verifyJwt(String token, KeyPair keyPair) {
+
+    public static User verifyJwt(String token, String secret) {
         DecodedJWT decoder;
         String claims;
         try {
-            Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) keyPair.getPublic(), (RSAPrivateKey) keyPair.getPrivate());
+            Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer("2820996063@qq.com")
                     .build();
