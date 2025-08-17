@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.minglg.interview.user.mapper.UserMapper">
+
+    <!-- 基本用户结果映射 -->
+    <resultMap id="baseUserMap" type="cn.minglg.authentication.pojo.User">
+        <id property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="nickname" column="nickname"/>
+        <result property="email" column="email"/>
+        <result property="status" column="status"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <!-- 完整用户结果映射（使用嵌套查询） -->
+    <resultMap id="fullUserMap" type="cn.minglg.authentication.pojo.User" extends="baseUserMap">
+        <!-- 关联公司信息 -->
+        <association property="company" column="user_id"
+                     select="cn.minglg.interview.user.mapper.CompanyMapper.getCompanyByUserId"/>
+
+        <!-- 关联角色信息 -->
+        <collection property="roles" column="user_id"
+                    select="cn.minglg.interview.user.mapper.RoleMapper.getRoleListByUserId"/>
+    </resultMap>
+
+    <!-- 获取基础用户信息 -->
+    <select id="getBasicUserByUserName" resultMap="baseUserMap">
+        SELECT *
+        FROM t_user
+        WHERE username = #{userName}
+    </select>
+
+    <!-- 获取完整用户信息（触发嵌套查询） -->
+    <select id="getUserWithDetailsByUserName" resultMap="fullUserMap">
+        SELECT *
+        FROM t_user
+        WHERE username = #{userName}
+    </select>
+
+    <!-- 添加用户 -->
+    <insert id="addUser" parameterType="cn.minglg.authentication.pojo.User">
+        INSERT INTO t_user (
+        username,
+        password,
+        nickname,
+        email,
+        status,
+        created_at
+        ) VALUES (
+        #{user.username},
+        #{user.password},
+        #{user.nickname},
+        #{user.email},
+        'NORMAL',
+        NOW()
+        )
+
+        <!-- 获取自增主键 -->
+        <selectKey keyProperty="user.userId" resultType="java.lang.Long" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+</mapper>

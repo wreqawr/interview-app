@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * @Create 2025/8/11
  * @Version 1.0
  */
-@ConfigurationProperties(prefix = "global.ai")
+@ConfigurationProperties(prefix = "interview.webmvc.ai")
 @Component
 @Data
 public class AiProperties {

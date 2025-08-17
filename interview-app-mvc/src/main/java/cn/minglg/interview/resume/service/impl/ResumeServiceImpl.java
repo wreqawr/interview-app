@@ -3,18 +3,19 @@ package cn.minglg.interview.resume.service.impl;
 
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
+import cn.minglg.authentication.pojo.User;
+import cn.minglg.authentication.utils.UserUtils;
 import cn.minglg.interview.ai.core.resume.AiResumeCoreService;
-import cn.minglg.interview.auth.pojo.User;
 import cn.minglg.interview.common.annotation.AsyncTaskQuery;
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.constant.resume.ResumeStatus;
 import cn.minglg.interview.common.constant.task.TaskStatus;
 import cn.minglg.interview.common.exception.NoSuchResumeException;
-import cn.minglg.interview.common.properties.GlobalProperties;
+import cn.minglg.interview.common.properties.MinioProperties;
+import cn.minglg.interview.common.properties.ResumeProperties;
 import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.common.utils.FileUtils;
 import cn.minglg.interview.common.utils.TaskUtils;
-import cn.minglg.interview.common.utils.UserUtils;
 import cn.minglg.interview.minio.service.MinioService;
 import cn.minglg.interview.resume.exception.ResumeDeleteException;
 import cn.minglg.interview.resume.exception.ResumeDownloadException;
@@ -50,7 +51,8 @@ import java.util.*;
 @RequiredArgsConstructor
 @Service
 public class ResumeServiceImpl implements ResumeService {
-    private final GlobalProperties globalProperties;
+    private final ResumeProperties resumeProperties;
+    private final MinioProperties minioProperties;
     private final MinioService minioService;
     private final AutoDetectParser autoDetectParser;
     private final ResumeMetadataMapper resumeMetadataMapper;
@@ -67,7 +69,7 @@ public class ResumeServiceImpl implements ResumeService {
      */
     @Override
     public R resumeUpload(MultipartFile file) {
-        List<String> allowFileTypes = globalProperties.getResume().getAllowFileTypes();
+        List<String> allowFileTypes = resumeProperties.getAllowFileTypes();
         User currentUser = UserUtils.getCurrentUser();
 
         // 第一步：基础校验
@@ -89,12 +91,12 @@ public class ResumeServiceImpl implements ResumeService {
             // 第四步：文件保存至Minio
             String resumeId = System.currentTimeMillis() + UUID.randomUUID().toString().replace("-", "").substring(0, 15);
             Long userId = currentUser.getUserId();
-            String bucketName = globalProperties.getMinio().getBucketNamePrefix().get("resumeUpload") + userId;
+            String bucketName = minioProperties.getBucketNamePrefix().get("resumeUpload") + userId;
             String objectName = System.currentTimeMillis() + getFileExtension(originalName);
             String sha256 = new Digester(DigestAlgorithm.SHA256).digestHex(is1);
             Long fileSize = file.getSize();
             String mimeType = Objects.requireNonNull(file.getContentType());
-            boolean previewEnabled = isPreviewEnabled(originalName, globalProperties.getResume().getAllowPreviewTypes());
+            boolean previewEnabled = isPreviewEnabled(originalName, resumeProperties.getAllowPreviewTypes());
             minioService.uploadFile(bucketName, file, objectName);
 
             // 第五步：封装简历元信息
@@ -155,7 +157,7 @@ public class ResumeServiceImpl implements ResumeService {
             String objectName = resumeMetadata.getObjectName();
             String sha256 = resumeMetadata.getSha256();
             String downloadFileName = resumeMetadata.getOriginalName();
-            Integer downloadExpired = globalProperties.getResume().getDownloadExpired();
+            Integer downloadExpired = resumeProperties.getDownloadExpired();
             try {
                 String downloadUrl = minioService.getFileUrl(bucketName, objectName, downloadExpired);
                 data.add(Map.of("downloadUrl", downloadUrl,
@@ -206,7 +208,7 @@ public class ResumeServiceImpl implements ResumeService {
                 minioService.deleteFile(bucketName, objectName);
             }
             // 第四步：删除redis中存储的简历信息
-            List<String> redisKeyList = resumeIdList.stream().map(resumeId -> globalProperties.getResume().getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId).toList();
+            List<String> redisKeyList = resumeIdList.stream().map(resumeId -> resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId).toList();
             redisTemplate.delete(redisKeyList);
             // 第五步：构建响应
             result = R.builder()
@@ -276,7 +278,7 @@ public class ResumeServiceImpl implements ResumeService {
         }
         String bucketName = resumeMetadata.getBucketName();
         String objectName = resumeMetadata.getObjectName();
-        Integer expired = globalProperties.getResume().getPreviewExpired();
+        Integer expired = resumeProperties.getPreviewExpired();
         try {
             String fileUrl = minioService.getFileUrl(bucketName, objectName, expired);
             String taskId = TaskUtils.generateTaskId();
@@ -301,7 +303,7 @@ public class ResumeServiceImpl implements ResumeService {
     public R resumeAnalyze(String resumeId) {
         User currentUser = UserUtils.getCurrentUser();
         Long userId = currentUser.getUserId();
-        String redisKey = globalProperties.getResume().getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
+        String redisKey = resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
         String hashKeyForAnalyze = "analyzeHtmlContent";
         String hashKeyForAnalyzeStatus = "analyzeStatus";
         String hashKeyForAnalyzeTaskId = "analyzeTaskId";
@@ -361,7 +363,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     @AsyncTaskQuery
     public R getResumeAsyncAnalyzeResult(Long userId, String taskId, String resumeId) {
-        String redisKey = globalProperties.getResume().getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
+        String redisKey = resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
         String hashKey = "analyzeHtmlContent";
         String analyzeResult = ((String) redisTemplate.opsForHash().get(redisKey, hashKey));
         if (StringUtils.hasText(analyzeResult)) {

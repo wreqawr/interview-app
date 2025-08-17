@@ -1,6 +1,6 @@
 package cn.minglg.interview.minio.config;
 
-import cn.minglg.interview.common.properties.GlobalProperties;
+import cn.minglg.interview.common.properties.MinioProperties;
 import io.minio.MinioClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,13 +18,13 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 @Configuration
 public class MinioConfig {
-    private final GlobalProperties globalProperties;
+    private final MinioProperties minioProperties;
 
     @Bean
     public MinioClient minioClient() {
-        String endpoint = globalProperties.getMinio().getEndpoint();
-        String accessKey = globalProperties.getMinio().getAccessKey();
-        String secretKey = globalProperties.getMinio().getSecretKey();
+        String endpoint = minioProperties.getEndpoint();
+        String accessKey = minioProperties.getAccessKey();
+        String secretKey = minioProperties.getSecretKey();
         return MinioClient.builder()
                 .endpoint(endpoint)
                 .credentials(accessKey, secretKey)

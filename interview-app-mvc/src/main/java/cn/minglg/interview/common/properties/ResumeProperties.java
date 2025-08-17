@@ -16,7 +16,7 @@ import java.util.List;
  * @Version 1.0
  */
 @Component
-@ConfigurationProperties(prefix = "global.resume")
+@ConfigurationProperties(prefix = "interview.webmvc.resume")
 @Data
 public class ResumeProperties {
     /**

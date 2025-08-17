@@ -3,7 +3,7 @@ package cn.minglg.interview.ai.config;
 import cn.minglg.interview.ai.render.CustomMultiCharTemplateRenderer;
 import cn.minglg.interview.common.constant.ai.ChatClientType;
 import cn.minglg.interview.common.constant.task.TaskType;
-import cn.minglg.interview.common.properties.GlobalProperties;
+import cn.minglg.interview.common.properties.AiProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -36,7 +36,7 @@ import java.util.Map;
 @Configuration
 public class AiConfig {
 
-    private final GlobalProperties globalProperties;
+    private final AiProperties aiProperties;
 
     /**
      * 初始化chatClient集合
@@ -158,7 +158,7 @@ public class AiConfig {
         // 构建消息窗口聊天记忆实例，设置存储库和最大消息数量限制
         return MessageWindowChatMemory.builder()
                 .chatMemoryRepository(chatMemoryRepository)
-                .maxMessages(globalProperties.getAi().getMaxChatMessages())
+                .maxMessages(aiProperties.getMaxChatMessages())
                 .build();
     }
 

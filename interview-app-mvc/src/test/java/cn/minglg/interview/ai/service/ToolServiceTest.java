@@ -26,7 +26,7 @@ public class ToolServiceTest {
             String userMessage = scanner.nextLine();
             System.out.println("==================");
             //String skillMap = chatService.generalChat(conversationId, userMessage);
-           // System.out.println(skillMap);
+            // System.out.println(skillMap);
             System.out.println("==================");
         }
     }

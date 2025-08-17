@@ -1,7 +1,8 @@
 package cn.minglg.interview.common.utils;
 
-import cn.minglg.interview.auth.mapper.UserMapper;
-import cn.minglg.interview.auth.pojo.User;
+import cn.minglg.authentication.pojo.User;
+import cn.minglg.authentication.utils.JwtUtils;
+import cn.minglg.interview.user.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

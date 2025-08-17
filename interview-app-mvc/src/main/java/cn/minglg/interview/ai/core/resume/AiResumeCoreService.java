@@ -1,12 +1,12 @@
 package cn.minglg.interview.ai.core.resume;
 
+import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.interview.ai.exception.AiResumeAnalyzeAndSaveException;
 import cn.minglg.interview.common.annotation.TaskHandler;
 import cn.minglg.interview.common.constant.ai.ChatClientType;
 import cn.minglg.interview.common.constant.task.TaskStatus;
 import cn.minglg.interview.common.constant.task.TaskType;
-import cn.minglg.interview.common.properties.GlobalProperties;
-import cn.minglg.interview.common.utils.JsonUtils;
+import cn.minglg.interview.common.properties.ResumeProperties;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
@@ -32,7 +32,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 public class AiResumeCoreService {
-    private final GlobalProperties globalProperties;
+    private final ResumeProperties resumeProperties;
     private final Map<ChatClientType, ChatClient> chatClientMap;
     private final ResumeMetadataMapper resumeMetadataMapper;
     private final ResumeDetailRepository resumeDetailRepository;
@@ -82,7 +82,7 @@ public class AiResumeCoreService {
 
         ChatClient chatClient = chatClientMap.get(ChatClientType.GENERAL_WITHOUT_MEMORY);
         ResumeDetail resumeDetail = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId);
-        String redisKey = globalProperties.getResume().getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
+        String redisKey = resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
         String hashKeyForAnalyze = "analyzeHtmlContent";
         String hashKeyForAnalyzeStatus = "analyzeStatus";
         String hashKeyForAnalyzeTaskId = "analyzeTaskId";

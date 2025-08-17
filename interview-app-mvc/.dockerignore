@@ -1,0 +1,68 @@
+# Maven 相关
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE 相关
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+*.swp
+*.swo
+*~
+
+# 操作系统相关
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git 相关
+.git/
+.gitignore
+.gitattributes
+
+# 日志文件
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# 测试相关
+src/test/
+**/test/
+**/tests/
+
+# 文档
+README.md
+*.md
+docs/
+
+# Docker 相关
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# 其他
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar 

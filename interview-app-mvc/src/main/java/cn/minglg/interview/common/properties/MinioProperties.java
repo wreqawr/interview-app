@@ -16,7 +16,7 @@ import java.util.Map;
  * @Version 1.0
  */
 @Component
-@ConfigurationProperties(prefix = "global.minio")
+@ConfigurationProperties(prefix = "interview.webmvc.minio")
 @Data
 public class MinioProperties {
     private String endpoint;

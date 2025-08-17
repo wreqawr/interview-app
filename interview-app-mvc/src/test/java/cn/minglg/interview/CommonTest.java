@@ -1,6 +1,6 @@
 package cn.minglg.interview;
 
-import cn.minglg.interview.common.utils.JsonUtils;
+import cn.minglg.authentication.utils.JsonUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;

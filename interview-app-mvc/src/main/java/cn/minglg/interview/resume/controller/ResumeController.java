@@ -1,10 +1,10 @@
 package cn.minglg.interview.resume.controller;
 
-import cn.minglg.interview.auth.pojo.User;
+import cn.minglg.authentication.pojo.User;
+import cn.minglg.authentication.utils.UserUtils;
 import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.response.R;
-import cn.minglg.interview.common.utils.UserUtils;
 import cn.minglg.interview.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

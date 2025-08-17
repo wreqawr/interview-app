@@ -22,6 +22,7 @@
     <!-- 子模块 -->
     <modules>
         <module>interview-app-mvc</module>
+        <module>interview-app-starter</module>
     </modules>
 
     <!-- 项目信息 -->
@@ -74,6 +75,12 @@
             <dependency>
                 <groupId>cn.minglg.interview</groupId>
                 <artifactId>interview-app-mvc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.minglg.interview</groupId>
+                <artifactId>authentication-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

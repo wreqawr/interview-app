@@ -18,7 +18,7 @@ public class ResumeParserConfig {
 
 
     @Bean
-    public AutoDetectParser autoDetectParser(){
+    public AutoDetectParser autoDetectParser() {
         return new AutoDetectParser();
     }
 

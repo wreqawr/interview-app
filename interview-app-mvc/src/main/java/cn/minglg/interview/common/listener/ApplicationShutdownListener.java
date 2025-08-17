@@ -1,7 +1,10 @@
 package cn.minglg.interview.common.listener;
 
-import cn.minglg.interview.common.properties.GlobalProperties;
+import cn.minglg.authentication.properties.WebMvcSecurityProperties;
+import cn.minglg.interview.common.properties.AiProperties;
+import cn.minglg.interview.common.properties.RegisterProperties;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.data.redis.core.Cursor;
@@ -22,7 +25,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationShutdownListener implements ApplicationListener<ContextClosedEvent> {
     private final StringRedisTemplate redisTemplate;
-    private final GlobalProperties globalProperties;
+    private final WebMvcSecurityProperties securityProperties;
+    private final RegisterProperties registerProperties;
+    private final AiProperties aiProperties;
 
 
     /**
@@ -32,11 +37,11 @@ public class ApplicationShutdownListener implements ApplicationListener<ContextC
      * @param event 要响应的事件
      */
     @Override
-    public void onApplicationEvent(ContextClosedEvent event) {
-        String authKeyPrefix = globalProperties.getAuth().getAuthKeyPrefix();
-        String captchaKeyPrefix = globalProperties.getCaptcha().getRedisKeyPrefix();
-        String roleRedisKeyPrefix = globalProperties.getRegister().getRoleRedisKeyPrefix();
-        String chatMemoryRedisKeyPrefix = globalProperties.getAi().getChatMemoryRedisKeyPrefix();
+    public void onApplicationEvent(@NotNull ContextClosedEvent event) {
+        String authKeyPrefix = securityProperties.getAuthKeyPrefix();
+        String captchaKeyPrefix = securityProperties.getCaptcha().getRedisKeyPrefix();
+        String roleRedisKeyPrefix = registerProperties.getRoleRedisKeyPrefix();
+        String chatMemoryRedisKeyPrefix = aiProperties.getChatMemoryRedisKeyPrefix();
         this.deleteKeysByPrefix(authKeyPrefix);
         this.deleteKeysByPrefix(captchaKeyPrefix);
         this.deleteKeysByPrefix(roleRedisKeyPrefix);

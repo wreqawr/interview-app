@@ -2,7 +2,6 @@ package cn.minglg.interview.common.annotation;
 
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.http.HttpStatus;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,14 +21,5 @@ public @interface ResponseEntityExceptionHandler {
     ResponseCode errResponseCode() default ResponseCode.OTHER_EXCEPTION;
 
     String errorMessagePrefix() default "";
-    
-    /**
-     * HTTP状态码，默认200
-     */
-    HttpStatus httpStatus() default HttpStatus.OK;
-    
-    /**
-     * 是否记录异常日志，默认true
-     */
-    boolean logError() default true;
+
 }

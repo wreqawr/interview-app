@@ -19,8 +19,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class MainTest {
     @Autowired
     private AsyncTest asyncTest;
+
     @Test
-    public void test1(){
+    public void test1() {
         System.out.println("*****开始执行其他逻辑代码");
         asyncTest.asyncMethod();
         System.out.println("*****其他逻辑代码执行结束");

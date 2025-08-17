@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * @Create 2025/8/1
  * @Version 1.0
  */
-@ConfigurationProperties(prefix = "global.async")
+@ConfigurationProperties(prefix = "interview.webmvc.async")
 @Component
 @Data
 public class AsyncProperties {

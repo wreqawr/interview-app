@@ -1,9 +1,9 @@
 package cn.minglg.interview.ai.service;
 
-import cn.minglg.interview.auth.pojo.Role;
+import cn.minglg.authentication.pojo.Role;
+import cn.minglg.authentication.utils.UserUtils;
 import cn.minglg.interview.common.mapper.SkillMapper;
 import cn.minglg.interview.common.pojo.Skill;
-import cn.minglg.interview.common.utils.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;

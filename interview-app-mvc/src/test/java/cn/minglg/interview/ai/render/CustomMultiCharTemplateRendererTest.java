@@ -17,6 +17,7 @@ import java.util.Map;
  * ClassName:CustomMultiCharTemplateRendererTest
  * Package:cn.minglg.interview.ai.render
  * Description:
+ *
  * @Author kfzx-minglg
  * @Create 2025/8/10
  * @Version 1.0
@@ -42,6 +43,7 @@ public class CustomMultiCharTemplateRendererTest {
                     .build();
         }
     }
+
     @Test
     public void testPromptTemplate() {
         Map<String, Object> variables = new HashMap<>();

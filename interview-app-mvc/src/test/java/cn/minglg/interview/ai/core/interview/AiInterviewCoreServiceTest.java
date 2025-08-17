@@ -26,8 +26,6 @@ import java.util.Scanner;
 public class AiInterviewCoreServiceTest {
 
     @Autowired
-    private AiInterviewCoreService aiInterviewCoreService;
-    @Autowired
     private ResumeDetailRepository resumeDetailRepository;
     @Autowired
     private Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
@@ -74,7 +72,7 @@ public class AiInterviewCoreServiceTest {
                 String lastRoundQuestion = systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW_STOP).render(variables);
                 //answer = aiInterviewCoreService.chatOnline(conversationId, lastRoundQuestion);
             } //else {
-                //answer = aiInterviewCoreService.chatOnline(conversationId, question);
+            //answer = aiInterviewCoreService.chatOnline(conversationId, question);
             //}
             //System.out.println(answer);
         }

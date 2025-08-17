@@ -1,6 +1,6 @@
 package cn.minglg.interview.common.config;
 
-import cn.minglg.interview.common.properties.GlobalProperties;
+import cn.minglg.interview.common.properties.AsyncProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,14 +20,14 @@ import java.util.concurrent.Executor;
 @RequiredArgsConstructor
 @Configuration
 public class AsyncConfig {
-    private final GlobalProperties globalProperties;
+    private final AsyncProperties asyncProperties;
 
     @Bean(name = "taskExecutor")
     public Executor taskExecutor() {
-        int corePoolSize = globalProperties.getAsync().getCorePoolSize();
-        int maxPoolSize = globalProperties.getAsync().getMaxPoolSize();
-        int queueCapacity = globalProperties.getAsync().getQueueCapacity();
-        String threadNamePrefix = globalProperties.getAsync().getThreadNamePrefix();
+        int corePoolSize = asyncProperties.getCorePoolSize();
+        int maxPoolSize = asyncProperties.getMaxPoolSize();
+        int queueCapacity = asyncProperties.getQueueCapacity();
+        String threadNamePrefix = asyncProperties.getThreadNamePrefix();
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(maxPoolSize);

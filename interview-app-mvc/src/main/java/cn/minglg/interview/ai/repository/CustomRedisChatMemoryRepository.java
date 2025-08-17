@@ -1,8 +1,8 @@
 package cn.minglg.interview.ai.repository;
 
-import cn.minglg.interview.auth.pojo.User;
-import cn.minglg.interview.common.properties.GlobalProperties;
-import cn.minglg.interview.common.utils.UserUtils;
+import cn.minglg.authentication.pojo.User;
+import cn.minglg.authentication.utils.UserUtils;
+import cn.minglg.interview.common.properties.AiProperties;
 import com.alibaba.cloud.ai.memory.redis.serializer.MessageDeserializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,13 +38,13 @@ public class CustomRedisChatMemoryRepository implements ChatMemoryRepository {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public CustomRedisChatMemoryRepository(StringRedisTemplate redisTemplate,
-                                           GlobalProperties globalProperties) {
+                                           AiProperties aiProperties) {
         this.redisTemplate = redisTemplate;
         SimpleModule module = new SimpleModule();
         module.addDeserializer(Message.class, new MessageDeserializer());
         this.objectMapper.registerModule(module);
-        this.CHAT_MEMORY_REDIS_KEY_PREFIX = globalProperties.getAi().getChatMemoryRedisKeyPrefix() + ":";
-        this.CHAT_MEMORY_REDIS_EXPIRE_DAYS = globalProperties.getAi().getChatMemoryRedisExpireDays();
+        this.CHAT_MEMORY_REDIS_KEY_PREFIX = aiProperties.getChatMemoryRedisKeyPrefix() + ":";
+        this.CHAT_MEMORY_REDIS_EXPIRE_DAYS = aiProperties.getChatMemoryRedisExpireDays();
     }
 
     /**

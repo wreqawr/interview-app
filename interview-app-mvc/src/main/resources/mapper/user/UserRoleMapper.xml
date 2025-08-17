@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.minglg.interview.user.mapper.UserRoleMapper">
+
+
+    <insert id="addUserRole">
+        INSERT INTO t_user_role (user_id, role_id)
+        SELECT #{userId}, #{roleId}
+        FROM t_user tu,
+             t_role tr
+        WHERE tu.user_id = #{userId}
+          AND tr.role_id = #{roleId}
+        LIMIT 1
+    </insert>
+</mapper>

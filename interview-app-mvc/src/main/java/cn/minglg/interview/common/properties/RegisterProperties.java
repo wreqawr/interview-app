@@ -16,7 +16,7 @@ import java.util.List;
  * @Version 1.0
  */
 @Component
-@ConfigurationProperties(prefix = "global.register")
+@ConfigurationProperties(prefix = "interview.webmvc.register")
 @Data
 public class RegisterProperties {
     private String roleRedisKeyPrefix;

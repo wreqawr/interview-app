@@ -14,14 +14,14 @@
                 #{resumeMetadata.sha256}, #{resumeMetadata.status}, #{resumeMetadata.createdAt},
                 #{resumeMetadata.updatedAt})
     </insert>
-        <update id="updateResumeMetadata">
-            update t_resume_metadata
-            set view_count=#{resumeMetadata.viewCount},
-                download_count=#{resumeMetadata.downloadCount}
-            where user_id = #{resumeMetadata.userId}
-              and resume_id = #{resumeMetadata.resumeId}
+    <update id="updateResumeMetadata">
+        update t_resume_metadata
+        set view_count=#{resumeMetadata.viewCount},
+            download_count=#{resumeMetadata.downloadCount}
+        where user_id = #{resumeMetadata.userId}
+          and resume_id = #{resumeMetadata.resumeId}
 
-        </update>
+    </update>
 
     <delete id="deleteResumeMetadataByUserIdAndResumeId">
         delete
