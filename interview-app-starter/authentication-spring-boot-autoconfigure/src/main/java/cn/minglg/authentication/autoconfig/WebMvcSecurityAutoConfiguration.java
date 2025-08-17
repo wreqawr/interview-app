@@ -1,12 +1,12 @@
 package cn.minglg.authentication.autoconfig;
 
 import cn.minglg.authentication.config.webmvc.*;
-import cn.minglg.authentication.filter.CaptchaFilter;
-import cn.minglg.authentication.filter.CustomAuthenticationFilter;
-import cn.minglg.authentication.filter.JwtTokenFilter;
-import cn.minglg.authentication.filter.RequestBodyCacheFilter;
-import cn.minglg.authentication.handler.CustomAccessDeniedHandler;
-import cn.minglg.authentication.handler.CustomLogoutSuccessHandler;
+import cn.minglg.authentication.filter.webmvc.WebMvcCaptchaFilter;
+import cn.minglg.authentication.filter.webmvc.WebMvcCustomAuthenticationFilter;
+import cn.minglg.authentication.filter.webmvc.WebMvcJwtTokenFilter;
+import cn.minglg.authentication.filter.webmvc.WebMvcRequestBodyCacheFilter;
+import cn.minglg.authentication.handler.webmvc.WebMvcCustomAccessDeniedHandler;
+import cn.minglg.authentication.handler.webmvc.WebMvcCustomLogoutSuccessHandler;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
 import jakarta.servlet.Servlet;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -46,6 +48,8 @@ import java.util.List;
 @EnableConfigurationProperties(WebMvcSecurityProperties.class)
 @ConditionalOnClass({Servlet.class, DispatcherServlet.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+@EnableMethodSecurity
+@EnableWebSecurity
 @Import({
         CaptchaGeneratorConfig.class,
         RsaKeyGeneratorConfig.class,
@@ -57,11 +61,11 @@ public class WebMvcSecurityAutoConfiguration {
     /**
      * 登录认证成功，但是对应controller无访问权限自定义处理器
      */
-    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final WebMvcCustomAccessDeniedHandler webMvcCustomAccessDeniedHandler;
     /**
      * 退出成功自定义处理器（前提是处于登录状态）
      */
-    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
+    private final WebMvcCustomLogoutSuccessHandler webMvcCustomLogoutSuccessHandler;
     /**
      * 全局配置信息
      */
@@ -69,15 +73,15 @@ public class WebMvcSecurityAutoConfiguration {
     /**
      * JWT登录认证过滤器
      */
-    private final JwtTokenFilter jwtTokenFilter;
+    private final WebMvcJwtTokenFilter jwtTokenFilter;
     /**
      * 验证码过滤器
      */
-    private final CaptchaFilter captchaFilter;
+    private final WebMvcCaptchaFilter captchaFilter;
     /**
      * 包装request的filter
      */
-    private final RequestBodyCacheFilter requestBodyCacheFilter;
+    private final WebMvcRequestBodyCacheFilter webMvcRequestBodyCacheFilter;
 
 
     @Bean
@@ -104,14 +108,14 @@ public class WebMvcSecurityAutoConfiguration {
      * 配置Spring Security的安全过滤器链
      *
      * @param http                       HttpSecurity对象，用于配置安全策略
-     * @param customAuthenticationFilter 自定义认证过滤器，用于替换默认的UsernamePasswordAuthenticationFilter
+     * @param webMvcCustomAuthenticationFilter 自定义认证过滤器，用于替换默认的UsernamePasswordAuthenticationFilter
      * @param configurationSource        CORS配置源，用于处理跨域请求
      * @return 配置完成的SecurityFilterChain对象
      * @throws Exception 配置过程中可能抛出的异常
      */
     @Bean("webMvcSecurityFilterChain")
     @ConditionalOnMissingBean
-    public SecurityFilterChain webMvcSecurityFilterChain(HttpSecurity http, CustomAuthenticationFilter customAuthenticationFilter, CorsConfigurationSource configurationSource) throws Exception {
+    public SecurityFilterChain webMvcSecurityFilterChain(HttpSecurity http, WebMvcCustomAuthenticationFilter webMvcCustomAuthenticationFilter, CorsConfigurationSource configurationSource) throws Exception {
         return http
                 // 关闭CSRF防护
                 .csrf(AbstractHttpConfigurer::disable)
@@ -127,19 +131,19 @@ public class WebMvcSecurityAutoConfiguration {
                 // 配置无状态会话管理，适用于前后端分离架构
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 自定义认证过滤器，替换框架默认的UsernamePasswordAuthenticationFilter
-                .addFilterAt(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(webMvcCustomAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 // 加入request包装过滤器
-                .addFilterBefore(requestBodyCacheFilter, CustomAuthenticationFilter.class)
+                .addFilterBefore(webMvcRequestBodyCacheFilter, WebMvcCustomAuthenticationFilter.class)
                 // 加入验证码过滤器
-                .addFilterBefore(captchaFilter, CustomAuthenticationFilter.class)
+                .addFilterBefore(captchaFilter, WebMvcCustomAuthenticationFilter.class)
                 // 关键位置：在 CustomAuthenticationFilter之前添加jwtTokenFilter
-                .addFilterBefore(jwtTokenFilter, CustomAuthenticationFilter.class)
+                .addFilterBefore(jwtTokenFilter, WebMvcCustomAuthenticationFilter.class)
 
                 // 配置权限不足时的处理逻辑
-                .exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedHandler(customAccessDeniedHandler))
+                .exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedHandler(webMvcCustomAccessDeniedHandler))
                 .logout(logout -> logout
                         .logoutUrl(securityProperties.getLogoutUri())
-                        .logoutSuccessHandler(customLogoutSuccessHandler))
+                        .logoutSuccessHandler(webMvcCustomLogoutSuccessHandler))
                 .build();
     }
 

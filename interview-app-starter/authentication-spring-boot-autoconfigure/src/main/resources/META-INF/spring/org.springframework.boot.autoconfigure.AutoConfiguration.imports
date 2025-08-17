@@ -1,1 +1,2 @@
 cn.minglg.authentication.autoconfig.WebMvcSecurityAutoConfiguration
+cn.minglg.authentication.autoconfig.WebFluxSecurityAutoConfiguration

@@ -1,11 +1,11 @@
 package cn.minglg.authentication.config.webmvc;
 
-import cn.minglg.authentication.filter.CaptchaFilter;
-import cn.minglg.authentication.filter.CustomAuthenticationFilter;
-import cn.minglg.authentication.filter.JwtTokenFilter;
-import cn.minglg.authentication.filter.RequestBodyCacheFilter;
-import cn.minglg.authentication.handler.CustomAuthenticationFailureHandler;
-import cn.minglg.authentication.handler.CustomAuthenticationSuccessHandler;
+import cn.minglg.authentication.filter.webmvc.WebMvcCaptchaFilter;
+import cn.minglg.authentication.filter.webmvc.WebMvcCustomAuthenticationFilter;
+import cn.minglg.authentication.filter.webmvc.WebMvcJwtTokenFilter;
+import cn.minglg.authentication.filter.webmvc.WebMvcRequestBodyCacheFilter;
+import cn.minglg.authentication.handler.webmvc.WebMvcCustomAuthenticationFailureHandler;
+import cn.minglg.authentication.handler.webmvc.WebMvcCustomAuthenticationSuccessHandler;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,18 +33,18 @@ public class WebMvcFilterConfig {
     private final WebMvcSecurityProperties securityProperties;
     private final StringRedisTemplate redisTemplate;
     private final KeyPair keyPair;
-    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final WebMvcCustomAuthenticationSuccessHandler webMvcCustomAuthenticationSuccessHandler;
+    private final WebMvcCustomAuthenticationFailureHandler webMvcCustomAuthenticationFailureHandler;
 
     /**
      * 创建验证码过滤器Bean
      *
-     * @return CaptchaFilter 验证码过滤器实例
+     * @return WebMvcCaptchaFilter 验证码过滤器实例
      */
     @Bean
     @ConditionalOnMissingBean
-    public CaptchaFilter getCaptchaFilter() {
-        return new CaptchaFilter(securityProperties, redisTemplate);
+    public WebMvcCaptchaFilter getCaptchaFilter() {
+        return new WebMvcCaptchaFilter(securityProperties, redisTemplate);
     }
 
 
@@ -71,13 +71,13 @@ public class WebMvcFilterConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public WebMvcCustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) {
         // 创建自定义认证过滤器实例
-        CustomAuthenticationFilter filter = new CustomAuthenticationFilter(securityProperties, keyPair, authenticationManager);
+        WebMvcCustomAuthenticationFilter filter = new WebMvcCustomAuthenticationFilter(securityProperties, keyPair, authenticationManager);
         // 设置认证成功处理器
-        filter.setAuthenticationSuccessHandler(customAuthenticationSuccessHandler);
+        filter.setAuthenticationSuccessHandler(webMvcCustomAuthenticationSuccessHandler);
         // 设置认证失败处理器
-        filter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
+        filter.setAuthenticationFailureHandler(webMvcCustomAuthenticationFailureHandler);
         return filter;
     }
 
@@ -85,15 +85,15 @@ public class WebMvcFilterConfig {
     /**
      * 创建JWT令牌过滤器Bean
      *
-     * @return JwtTokenFilter JWT令牌过滤器实例
+     * @return WebMvcJwtTokenFilter JWT令牌过滤器实例
      * 条件说明：
      * - 仅在容器中不存在JwtTokenFilter类型的Bean时才会创建
      * - 该过滤器用于处理JWT令牌的验证和解析
      */
     @Bean
     @ConditionalOnMissingBean
-    public JwtTokenFilter jwtTokenFilter() {
-        return new JwtTokenFilter(securityProperties, redisTemplate);
+    public WebMvcJwtTokenFilter jwtTokenFilter() {
+        return new WebMvcJwtTokenFilter(securityProperties, redisTemplate);
     }
 
 
@@ -103,12 +103,12 @@ public class WebMvcFilterConfig {
      * 通过@ConditionalOnMissingBean注解确保只有在容器中不存在该Bean时才会创建，
      * 避免重复注册导致的冲突。
      *
-     * @return RequestBodyCacheFilter 请求体缓存过滤器实例
+     * @return WebMvcRequestBodyCacheFilter 请求体缓存过滤器实例
      */
     @Bean
     @ConditionalOnMissingBean
-    public RequestBodyCacheFilter requestBodyCacheFilter() {
-        return new RequestBodyCacheFilter();
+    public WebMvcRequestBodyCacheFilter requestBodyCacheFilter() {
+        return new WebMvcRequestBodyCacheFilter();
     }
 
 }

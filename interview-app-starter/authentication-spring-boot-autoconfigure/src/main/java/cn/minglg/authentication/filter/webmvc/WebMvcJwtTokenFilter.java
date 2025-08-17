@@ -1,4 +1,4 @@
-package cn.minglg.authentication.filter;
+package cn.minglg.authentication.filter.webmvc;
 
 import cn.minglg.authentication.constant.response.ResponseCode;
 import cn.minglg.authentication.pojo.User;
@@ -19,7 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * ClassName:JwtTokenFilter
+ * ClassName:WebMvcJwtTokenFilter
  * Package:cn.minglg.authentication.filter
  * Description:JWT验证过滤器
  *
@@ -28,7 +28,7 @@ import java.io.IOException;
  * @Version 1.0
  */
 @AllArgsConstructor
-public class JwtTokenFilter extends OncePerRequestFilter {
+public class WebMvcJwtTokenFilter extends OncePerRequestFilter {
     private final WebMvcSecurityProperties securityProperties;
     private final StringRedisTemplate redisTemplate;
 

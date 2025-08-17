@@ -1,4 +1,4 @@
-package cn.minglg.authentication.filter;
+package cn.minglg.authentication.filter.webmvc;
 
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
 import cn.minglg.authentication.utils.RsaUtils;
@@ -17,7 +17,7 @@ import java.security.KeyPair;
 import java.util.Map;
 
 /**
- * ClassName:CustomAuthenticationFilter
+ * ClassName:WebMvcCustomAuthenticationFilter
  * Package:cn.minglg.authentication.filter
  * Description:自定义用户名密码过滤器
  *
@@ -26,13 +26,13 @@ import java.util.Map;
  * @Version 1.0
  */
 @AllArgsConstructor
-public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class WebMvcCustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private static final String REQUEST_METHOD = "POST";
     private final KeyPair keyPair;
     private final WebMvcSecurityProperties securityProperties;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public CustomAuthenticationFilter(WebMvcSecurityProperties securityProperties, KeyPair keyPair, AuthenticationManager authenticationManager) {
+    public WebMvcCustomAuthenticationFilter(WebMvcSecurityProperties securityProperties, KeyPair keyPair, AuthenticationManager authenticationManager) {
         this.keyPair = keyPair;
         this.securityProperties = securityProperties;
         setAuthenticationManager(authenticationManager);

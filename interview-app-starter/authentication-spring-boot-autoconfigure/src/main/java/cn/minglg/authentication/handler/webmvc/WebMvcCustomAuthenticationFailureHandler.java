@@ -1,4 +1,4 @@
-package cn.minglg.authentication.handler;
+package cn.minglg.authentication.handler.webmvc;
 
 import cn.minglg.authentication.constant.response.ResponseCode;
 import cn.minglg.authentication.response.R;
@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import java.io.IOException;
 
 /**
- * ClassName:CustomAuthenticationFailureHandler
+ * ClassName:WebMvcCustomAuthenticationFailureHandler
  * Package:cn.minglg.authentication.handler
  * Description:
  *
@@ -19,7 +19,7 @@ import java.io.IOException;
  * @Create 2025/7/11
  * @Version 1.0
  */
-public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
+public class WebMvcCustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
     /**
      * 身份验证尝试失败时调用。
      *

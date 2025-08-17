@@ -1,4 +1,4 @@
-package cn.minglg.authentication.filter;
+package cn.minglg.authentication.filter.webmvc;
 
 import cn.minglg.authentication.wrapper.CachedBodyHttpServletRequestWrapper;
 import jakarta.servlet.FilterChain;
@@ -10,7 +10,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * ClassName:RequestBodyCacheFilter
+ * ClassName:WebMvcRequestBodyCacheFilter
  * Package:cn.minglg.authentication.filter
  * Description:
  *
@@ -18,7 +18,7 @@ import java.io.IOException;
  * @Create 2025/7/20
  * @Version 1.0
  */
-public class RequestBodyCacheFilter extends OncePerRequestFilter {
+public class WebMvcRequestBodyCacheFilter extends OncePerRequestFilter {
 
 
     /**

@@ -1,4 +1,4 @@
-package cn.minglg.authentication.filter;
+package cn.minglg.authentication.filter.webmvc;
 
 import cn.minglg.authentication.constant.response.ResponseCode;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * ClassName:CaptchaFilter
+ * ClassName:WebMvcCaptchaFilter
  * Package:cn.minglg.authentication.filter
  * Description:验证码过滤器
  *
@@ -27,7 +27,7 @@ import java.util.Map;
  * @Version 1.0
  */
 @AllArgsConstructor
-public class CaptchaFilter extends OncePerRequestFilter {
+public class WebMvcCaptchaFilter extends OncePerRequestFilter {
 
     private final WebMvcSecurityProperties securityProperties;
     private final StringRedisTemplate redisTemplate;

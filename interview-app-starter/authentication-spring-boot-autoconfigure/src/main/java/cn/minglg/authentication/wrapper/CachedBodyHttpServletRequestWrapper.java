@@ -25,7 +25,7 @@ public class CachedBodyHttpServletRequestWrapper extends HttpServletRequestWrapp
      * 就会报错或拿不到数据。通过包装，把 body 先读出来缓存，后续每次调用 getInputStream()
      * 或 getReader() 都能重新读取同样的数据。
      * <p>
-     * 1.请求到达时，RequestBodyCacheFilter 用 CachedBodyHttpServletRequest 包装原始 request。
+     * 1.请求到达时，WebMvcRequestBodyCacheFilter 用 CachedBodyHttpServletRequest 包装原始 request。
      * 2.第一次读取 body 时，CachedBodyHttpServletRequest 把 body 全部读到 byte[]。
      * 3.后续每次调用 getInputStream() 或 getReader()，都能基于缓存的 byte[] 返回新的流或 reader，内容和原始 body 完全一致。
      * 4.所有 filter/controller 都能多次读取 body，不会再有“流被消费”问题。

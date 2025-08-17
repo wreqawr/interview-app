@@ -1,4 +1,4 @@
-package cn.minglg.authentication.handler;
+package cn.minglg.authentication.handler.webmvc;
 
 import cn.minglg.authentication.constant.response.ResponseCode;
 import cn.minglg.authentication.pojo.User;
@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import java.io.IOException;
 
 /**
- * ClassName:CustomLogoutSuccessHandler
+ * ClassName:WebMvcCustomLogoutSuccessHandler
  * Package:cn.minglg.authentication.handler
  * Description:退出成功执行这个handler
  *
@@ -26,7 +26,7 @@ import java.io.IOException;
  */
 
 @AllArgsConstructor
-public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
+public class WebMvcCustomLogoutSuccessHandler implements LogoutSuccessHandler {
     private final WebMvcSecurityProperties securityProperties;
     private final StringRedisTemplate redisTemplate;
 

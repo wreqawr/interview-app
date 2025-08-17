@@ -1,4 +1,4 @@
-package cn.minglg.authentication.handler;
+package cn.minglg.authentication.handler.webmvc;
 
 import cn.minglg.authentication.constant.response.ResponseCode;
 import cn.minglg.authentication.response.R;
@@ -11,7 +11,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import java.io.IOException;
 
 /**
- * ClassName:CustomAccessDeniedHandler
+ * ClassName:WebMvcCustomAccessDeniedHandler
  * Package:cn.minglg.authentication.handler
  * Description: 权限不足处理器
  *
@@ -19,7 +19,7 @@ import java.io.IOException;
  * @Create 2025/7/13
  * @Version 1.0
  */
-public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+public class WebMvcCustomAccessDeniedHandler implements AccessDeniedHandler {
 
     /**
      * 处理访问被拒绝失败。

@@ -1,4 +1,4 @@
-package cn.minglg.authentication.handler;
+package cn.minglg.authentication.handler.webmvc;
 
 import cn.minglg.authentication.constant.response.ResponseCode;
 import cn.minglg.authentication.pojo.User;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * ClassName:CustomAuthenticationSuccessHandler
+ * ClassName:WebMvcCustomAuthenticationSuccessHandler
  * Package:cn.minglg.authentication.handler
  * Description:
  *
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * @Version 1.0
  */
 @AllArgsConstructor
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class WebMvcCustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     private final WebMvcSecurityProperties securityProperties;
     private final StringRedisTemplate redisTemplate;
 
