@@ -124,24 +124,6 @@ public class MinioServiceImpl implements MinioService {
         return minioClient.getObject(objectArgs);
     }
 
-    /**
-     * 获取文件类型
-     *
-     * @param bucketName 桶名称
-     * @param fileName   文件名
-     * @return 文件类型
-     * @throws Exception 异常
-     */
-    @Override
-    public String getContentType(String bucketName, String fileName) throws Exception {
-        StatObjectResponse stat = minioClient.statObject(
-                StatObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(fileName)
-                        .build());
-        return stat.contentType();
-    }
-
     private void deleteAllFiles(String bucketName) throws Exception {
         // 列出所有对象
         Iterable<Result<Item>> results = minioClient.listObjects(

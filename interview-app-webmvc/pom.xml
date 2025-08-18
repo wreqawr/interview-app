@@ -12,8 +12,8 @@
     </parent>
 
     <!-- 子模块信息 -->
-    <artifactId>interview-app-mvc</artifactId>
-    <name>interview-app-mvc</name>
+    <artifactId>interview-app-webmvc</artifactId>
+    <name>interview-app-webmvc</name>
     <description>AI模拟面试系统 - MVC模块</description>
     <packaging>jar</packaging>
 
@@ -131,16 +131,6 @@
         <dependency>
             <groupId>cn.minglg.interview</groupId>
             <artifactId>authentication-spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-webflux</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 

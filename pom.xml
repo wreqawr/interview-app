@@ -21,8 +21,9 @@
 
     <!-- 子模块 -->
     <modules>
-        <module>interview-app-mvc</module>
+        <module>interview-app-webmvc</module>
         <module>interview-app-starter</module>
+        <module>interview-app-webflux</module>
     </modules>
 
     <!-- 项目信息 -->
@@ -74,7 +75,7 @@
             <!-- 子模块依赖管理 -->
             <dependency>
                 <groupId>cn.minglg.interview</groupId>
-                <artifactId>interview-app-mvc</artifactId>
+                <artifactId>interview-app-webmvc</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
