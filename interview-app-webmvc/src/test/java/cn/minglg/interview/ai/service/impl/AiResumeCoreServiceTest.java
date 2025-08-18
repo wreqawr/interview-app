@@ -2,21 +2,16 @@ package cn.minglg.interview.ai.service.impl;
 
 import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.interview.ai.core.resume.AiResumeCoreService;
-import cn.minglg.interview.common.utils.FileUtils;
 import cn.minglg.interview.common.utils.TaskUtils;
-import cn.minglg.interview.minio.service.MinioService;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import cn.minglg.interview.resume.repository.ResumeDetailRepository;
 import lombok.SneakyThrows;
-import org.apache.tika.parser.AutoDetectParser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.StringUtils;
-
-import java.io.InputStream;
 
 /**
  * ClassName:AiResumeCoreServiceTest
@@ -30,25 +25,11 @@ import java.io.InputStream;
 @SpringBootTest
 public class AiResumeCoreServiceTest {
     @Autowired
-    private MinioService minioService;
-    @Autowired
-    AutoDetectParser autoDetectParser;
-    @Autowired
     private ResumeDetailRepository resumeDetailRepository;
     @Autowired
     private ResumeMetadataMapper resumeMetadataMapper;
     @Autowired
     private AiResumeCoreService aiResumeCoreService;
-
-    String getFileContent() {
-        String bucketName = "resume-upload-4";
-        String fileName = "1754140081897.pdf";
-        try (InputStream is = minioService.downloadFile(bucketName, fileName)) {
-            return FileUtils.getContentFromFile(autoDetectParser, is);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @SneakyThrows
     @Test

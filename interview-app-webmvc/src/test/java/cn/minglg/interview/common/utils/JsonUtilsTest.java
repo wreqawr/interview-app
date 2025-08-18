@@ -1,5 +1,6 @@
 package cn.minglg.interview.common.utils;
 
+import cn.minglg.authentication.utils.JsonUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

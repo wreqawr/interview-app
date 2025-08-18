@@ -2,8 +2,6 @@ package cn.minglg.interview.minio.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
-
 /**
  * ClassName:MinioService
  * Package:cn.minglg.interview.minio.service
@@ -60,25 +58,5 @@ public interface MinioService {
      * @throws Exception 异常
      */
     void deleteFile(String bucketName, String fileName) throws Exception;
-
-    /**
-     * 文件下载
-     *
-     * @param bucketName 桶名称
-     * @param fileName   文件名
-     * @return 文件流
-     * @throws Exception 异常
-     */
-    InputStream downloadFile(String bucketName, String fileName) throws Exception;
-
-    /**
-     * 获取文件类型
-     *
-     * @param bucketName 桶名称
-     * @param fileName   文件名
-     * @return 文件类型
-     * @throws Exception 异常
-     */
-    String getContentType(String bucketName, String fileName) throws Exception;
 
 }

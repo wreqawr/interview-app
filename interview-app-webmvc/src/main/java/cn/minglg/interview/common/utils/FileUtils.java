@@ -6,13 +6,8 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.StreamUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -118,22 +113,5 @@ public class FileUtils {
         return EXCESS_SPACES_PATTERN
                 .matcher(content)
                 .replaceAll(" ");
-    }
-
-    /**
-     * 读取文件内容
-     *
-     * @param resourceLoader 资源加载器
-     * @param file           文件
-     * @return 文件内容
-     */
-    public static String readFileFromClassPath(ResourceLoader resourceLoader, String file) {
-        file = file.startsWith("classpath:") ? file : "classpath:" + file;
-        Resource resource = resourceLoader.getResource(file);
-        try (InputStream is = resource.getInputStream()) {
-            return StreamUtils.copyToString(is, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            return "";
-        }
     }
 }

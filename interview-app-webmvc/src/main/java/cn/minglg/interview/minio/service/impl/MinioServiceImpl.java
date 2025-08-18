@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
-
 /**
  * ClassName:MinioServiceImpl
  * Package:cn.minglg.interview.minio.service
@@ -105,23 +103,6 @@ public class MinioServiceImpl implements MinioService {
                 .object(fileName)
                 .build();
         minioClient.removeObject(objectArgs);
-    }
-
-    /**
-     * 文件下载
-     *
-     * @param bucketName 桶名称
-     * @param fileName   文件名
-     * @return 文件流
-     * @throws Exception 异常
-     */
-    @Override
-    public InputStream downloadFile(String bucketName, String fileName) throws Exception {
-        GetObjectArgs objectArgs = GetObjectArgs.builder()
-                .bucket(bucketName)
-                .object(fileName)
-                .build();
-        return minioClient.getObject(objectArgs);
     }
 
     private void deleteAllFiles(String bucketName) throws Exception {
