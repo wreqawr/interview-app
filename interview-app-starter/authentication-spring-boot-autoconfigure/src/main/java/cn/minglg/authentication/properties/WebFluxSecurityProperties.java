@@ -32,5 +32,5 @@ public class WebFluxSecurityProperties {
     /**
      * 不会被JWT拦截的请求路径（白名单，支持通配符表达式）
      */
-    private List<String> whiteListPatterns = List.of();
+    private List<String> whiteListPatterns = null;
 }

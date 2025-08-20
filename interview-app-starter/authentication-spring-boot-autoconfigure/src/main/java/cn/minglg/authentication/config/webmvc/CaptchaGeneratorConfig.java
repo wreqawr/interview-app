@@ -4,6 +4,7 @@ import cn.hutool.captcha.generator.CodeGenerator;
 import cn.hutool.captcha.generator.MathGenerator;
 import cn.hutool.captcha.generator.RandomGenerator;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,7 @@ public class CaptchaGeneratorConfig {
             havingValue = "cn.hutool.captcha.generator.RandomGenerator"
     )
     @ConditionalOnMissingBean
+    @ConditionalOnClass(RandomGenerator.class)
     public CodeGenerator randomCodeGenerator(WebMvcSecurityProperties securityProperties) {
         // 从安全配置属性中获取验证码基础字符集和验证码位数
         String baseStr = securityProperties.getCaptcha().getBaseStr();
@@ -56,6 +58,7 @@ public class CaptchaGeneratorConfig {
             matchIfMissing = true
     )
     @ConditionalOnMissingBean
+    @ConditionalOnClass(MathGenerator.class)
     public CodeGenerator mathGenerator() {
         return new MathGenerator();
     }

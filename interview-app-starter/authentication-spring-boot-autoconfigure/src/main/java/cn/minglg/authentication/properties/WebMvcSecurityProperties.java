@@ -116,18 +116,24 @@ public class WebMvcSecurityProperties {
 
     /**
      * 初始化白名单模式的请求匹配器
-     * 该方法将白名单模式列表转换为Spring Security的OrRequestMatcher对象，
-     * 用于匹配符合白名单规则的请求路径。如果白名单模式为空，则使用空列表。
+     * 该方法将白名单模式列表转换为Spring Security的AntPathRequestMatcher对象列表，
+     * 并将其包装为OrRequestMatcher，用于匹配符合任一白名单模式的请求路径。
+     * 如果白名单模式列表为null，则将白名单模式请求匹配器设置为null。
+     * 否则，将每个白名单模式字符串转换为AntPathRequestMatcher对象，
+     * 然后将这些匹配器收集到一个列表中，并使用OrRequestMatcher进行包装。
      */
     public void initWhiteListPatternsAsRequestMatcher() {
         // 确保白名单模式列表不为null，如果为null则初始化为空列表
-        whiteListPatterns = whiteListPatterns == null ? Collections.emptyList() : whiteListPatterns;
-        // 将白名单模式列表转换为AntPathRequestMatcher对象列表，并包装为OrRequestMatcher
-        this.whiteListPatternsAsRequestMatcher =
-                new OrRequestMatcher(this.getWhiteListPatterns()
-                        .stream()
-                        .map(AntPathRequestMatcher::new)
-                        .collect(Collectors.toList()));
+        if (whiteListPatterns == null) {
+            this.whiteListPatternsAsRequestMatcher = null;
+        } else {
+            // 将白名单模式列表转换为AntPathRequestMatcher对象列表，并包装为OrRequestMatcher
+            this.whiteListPatternsAsRequestMatcher =
+                    new OrRequestMatcher(this.getWhiteListPatterns()
+                            .stream()
+                            .map(AntPathRequestMatcher::new)
+                            .collect(Collectors.toList()));
+        }
     }
 
 

@@ -1,5 +1,8 @@
 package cn.minglg.authentication.autoconfig;
 
+import cn.minglg.authentication.config.webflux.WebFluxFilterConfig;
+import cn.minglg.authentication.config.webflux.WebFluxHandlerConfig;
+import cn.minglg.authentication.filter.webflux.WebFluxJwtTokenFilter;
 import cn.minglg.authentication.properties.WebFluxSecurityProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -8,10 +11,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
@@ -36,12 +45,21 @@ import java.util.List;
 @ConditionalOnClass({DispatcherHandler.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
+@Import({WebFluxFilterConfig.class, WebFluxHandlerConfig.class})
 public class WebFluxSecurityAutoConfiguration {
 
     /**
      * WebFlux安全配置属性
      */
     private final WebFluxSecurityProperties securityProperties;
+
+    /**
+     * WebFlux JWT过滤器
+     */
+    private final WebFluxJwtTokenFilter jwtTokenFilter;
+
+    private final ServerAccessDeniedHandler accessDeniedHandler;
 
     /**
      * 配置WebFlux跨域
@@ -84,16 +102,30 @@ public class WebFluxSecurityAutoConfiguration {
                 // 配置跨域
                 .cors(cors -> cors.configurationSource(webfluxCorsConfigurationSource()))
 
+                // 配置无状态会话管理，适用于前后端分离架构
+                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+                .requestCache(cache -> cache.requestCache(NoOpServerRequestCache.getInstance()))
+
                 // 配置请求授权
-                .authorizeExchange(auth -> auth
-                        // 显式放行所有OPTIONS请求
-                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // 白名单内请求，无需认证
-                        .matchers(ServerWebExchangeMatchers.pathMatchers(
-                                securityProperties.getWhiteListPatterns().toArray(new String[0])
-                        )).permitAll()
-                        // 其他所有请求需要认证
-                        .anyExchange().authenticated()
+                .authorizeExchange(auth -> {
+                            // 显式放行所有OPTIONS请求
+                            auth.pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                            // 白名单内请求，无需认证
+                            List<String> whiteListPatterns = securityProperties.getWhiteListPatterns();
+                            if (whiteListPatterns != null && !whiteListPatterns.isEmpty()) {
+                                auth.matchers(ServerWebExchangeMatchers.pathMatchers(
+                                        whiteListPatterns.toArray(new String[0])
+                                )).permitAll();
+                            }
+                            // 其他所有请求需要认证
+                            auth.anyExchange().authenticated();
+                        }
+                )
+                // 添加自定义JWT过滤器
+                .addFilterAt(jwtTokenFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                // 添加权限不足处理逻辑
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.accessDeniedHandler(accessDeniedHandler)
                 )
 
                 .build();

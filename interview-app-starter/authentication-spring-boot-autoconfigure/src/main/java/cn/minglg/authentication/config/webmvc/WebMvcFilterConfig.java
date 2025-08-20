@@ -8,6 +8,7 @@ import cn.minglg.authentication.handler.webmvc.WebMvcCustomAuthenticationFailure
 import cn.minglg.authentication.handler.webmvc.WebMvcCustomAuthenticationSuccessHandler;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,11 @@ import java.security.KeyPair;
  */
 @RequiredArgsConstructor
 @Configuration
+@ConditionalOnClass({
+        StringRedisTemplate.class,
+        WebMvcCustomAuthenticationSuccessHandler.class,
+        WebMvcCustomAuthenticationFailureHandler.class
+})
 public class WebMvcFilterConfig {
     private final WebMvcSecurityProperties securityProperties;
     private final StringRedisTemplate redisTemplate;
@@ -43,6 +49,7 @@ public class WebMvcFilterConfig {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnClass(WebMvcCaptchaFilter.class)
     public WebMvcCaptchaFilter getCaptchaFilter() {
         return new WebMvcCaptchaFilter(securityProperties, redisTemplate);
     }
@@ -71,6 +78,7 @@ public class WebMvcFilterConfig {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnClass(WebMvcCustomAuthenticationFilter.class)
     public WebMvcCustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) {
         // 创建自定义认证过滤器实例
         WebMvcCustomAuthenticationFilter filter = new WebMvcCustomAuthenticationFilter(securityProperties, keyPair, authenticationManager);
@@ -92,6 +100,7 @@ public class WebMvcFilterConfig {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnClass(WebMvcJwtTokenFilter.class)
     public WebMvcJwtTokenFilter jwtTokenFilter() {
         return new WebMvcJwtTokenFilter(securityProperties, redisTemplate);
     }
@@ -107,6 +116,7 @@ public class WebMvcFilterConfig {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnClass(WebMvcRequestBodyCacheFilter.class)
     public WebMvcRequestBodyCacheFilter requestBodyCacheFilter() {
         return new WebMvcRequestBodyCacheFilter();
     }

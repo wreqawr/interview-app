@@ -14,6 +14,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -47,9 +49,12 @@ public class WebMvcJwtTokenFilter extends OncePerRequestFilter {
         response.setContentType("application/json;charset=UTF-8");
         R checkResult = R.builder().code(ResponseCode.JWT_VERIFY_FAIL.getCode()).message("请先登录！").build();
         // 绿色通道或者预检请求直接放行
-        if (this.securityProperties.getWhiteListPatternsAsRequestMatcher().matches(request)
-                || "OPTIONS".equalsIgnoreCase(request.getMethod())
-        ) {
+        RequestMatcher requestMatcher = this.securityProperties.getWhiteListPatternsAsRequestMatcher();
+        if (RequestMethod.OPTIONS.name().equals(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if ((requestMatcher != null && requestMatcher.matches(request))) {
             filterChain.doFilter(request, response);
             return;
         }

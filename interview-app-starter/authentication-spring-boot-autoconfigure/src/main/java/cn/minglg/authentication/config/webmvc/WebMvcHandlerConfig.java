@@ -6,6 +6,7 @@ import cn.minglg.authentication.handler.webmvc.WebMvcCustomAuthenticationSuccess
 import cn.minglg.authentication.handler.webmvc.WebMvcCustomLogoutSuccessHandler;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 @RequiredArgsConstructor
 @Configuration
+@ConditionalOnClass({StringRedisTemplate.class})
 public class WebMvcHandlerConfig {
     private final WebMvcSecurityProperties securityProperties;
     private final StringRedisTemplate redisTemplate;
@@ -36,6 +38,7 @@ public class WebMvcHandlerConfig {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnClass(WebMvcCustomAccessDeniedHandler.class)
     public WebMvcCustomAccessDeniedHandler customAccessDeniedHandler() {
         return new WebMvcCustomAccessDeniedHandler();
     }
@@ -50,6 +53,7 @@ public class WebMvcHandlerConfig {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnClass(WebMvcCustomAuthenticationFailureHandler.class)
     public WebMvcCustomAuthenticationFailureHandler customAuthenticationFailureHandler() {
         return new WebMvcCustomAuthenticationFailureHandler();
     }
@@ -65,6 +69,7 @@ public class WebMvcHandlerConfig {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnClass(WebMvcCustomAuthenticationSuccessHandler.class)
     public WebMvcCustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
         return new WebMvcCustomAuthenticationSuccessHandler(securityProperties, redisTemplate);
     }
@@ -79,6 +84,7 @@ public class WebMvcHandlerConfig {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnClass(WebMvcCustomLogoutSuccessHandler.class)
     public WebMvcCustomLogoutSuccessHandler customLogoutSuccessHandler() {
         return new WebMvcCustomLogoutSuccessHandler(securityProperties, redisTemplate);
     }

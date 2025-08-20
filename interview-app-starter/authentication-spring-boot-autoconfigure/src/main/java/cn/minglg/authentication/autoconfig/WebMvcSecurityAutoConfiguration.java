@@ -107,9 +107,9 @@ public class WebMvcSecurityAutoConfiguration {
     /**
      * 配置Spring Security的安全过滤器链
      *
-     * @param http                       HttpSecurity对象，用于配置安全策略
+     * @param http                             HttpSecurity对象，用于配置安全策略
      * @param webMvcCustomAuthenticationFilter 自定义认证过滤器，用于替换默认的UsernamePasswordAuthenticationFilter
-     * @param configurationSource        CORS配置源，用于处理跨域请求
+     * @param configurationSource              CORS配置源，用于处理跨域请求
      * @return 配置完成的SecurityFilterChain对象
      * @throws Exception 配置过程中可能抛出的异常
      */
@@ -122,10 +122,17 @@ public class WebMvcSecurityAutoConfiguration {
                 // 配置跨域资源共享(CORS)
                 .cors(cors ->
                         cors.configurationSource(configurationSource))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()// 显式放行所有OPTIONS
-                        .requestMatchers(securityProperties.getWhiteListPatterns().toArray(new String[0])).permitAll()  // 白名单内请求，无需认证
-                        .anyRequest().authenticated() // 其他所有请求走认证
+                .authorizeHttpRequests(auth -> {
+                            // 显式放行所有OPTIONS
+                            auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                            List<String> whiteListPatterns = securityProperties.getWhiteListPatterns();
+                            // 白名单内请求，无需认证
+                            if (whiteListPatterns != null && !whiteListPatterns.isEmpty()) {
+                                auth.requestMatchers(whiteListPatterns.toArray(new String[0])).permitAll();
+                            }
+                            // 其他所有请求走认证
+                            auth.anyRequest().authenticated();
+                        }
                 )
 
                 // 配置无状态会话管理，适用于前后端分离架构

@@ -13,13 +13,13 @@ management:
       exposure:
         include: '*'
 
-logging:
-  level:
+#logging:
+#  level:
 #    org.springframework.boot.autoconfigure: DEBUG
 #    org.springframework.context.annotation: DEBUG
 #    org.springframework.beans.factory: DEBUG
 #    cn.minglg.authentication: DEBUG
-    org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: debug
+#    org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: debug
 
 
 spring:
