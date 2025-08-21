@@ -24,7 +24,7 @@ management:
 
 spring:
   application:
-    name: interview-app-mvc
+    name: interview-app-webmvc
   banner:
     location: classpath:banner/banner.txt
 
@@ -105,13 +105,19 @@ spring:
 
 
 #mybatis配置
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-    # 开启懒加载配置
-    lazy-loading-enabled: true
-    aggressive-lazy-loading: false
-  mapper-locations: classpath:mapper/**/*.xml
+#mybatis:
+#  configuration:
+#    map-underscore-to-camel-case: true
+#    # 开启懒加载配置
+#    lazy-loading-enabled: true
+#    aggressive-lazy-loading: false
+#  mapper-locations: classpath:mapper/**/*.xml
+
+# mybatis-plus配置
+mybatis-plus:
+  global-config:
+    banner: false
+
 
 # 安全配置
 interview:

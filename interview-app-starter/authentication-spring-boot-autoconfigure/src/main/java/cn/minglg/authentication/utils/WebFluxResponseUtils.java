@@ -3,6 +3,7 @@ package cn.minglg.authentication.utils;
 import cn.minglg.authentication.constant.response.ResponseCode;
 import cn.minglg.authentication.response.R;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
@@ -31,8 +32,9 @@ public class WebFluxResponseUtils {
      */
     public static Mono<Void> reactiveResponseWithJson(ServerWebExchange exchange, ResponseCode responseCode, String message, Object data) {
         ServerHttpResponse response = exchange.getResponse();
-        // 设置响应内容类型为JSON
+        // 明确设置字符编码为 UTF-8
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        response.getHeaders().set(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
         // 构建未授权访问的响应结果
         R result = R.builder()
                 .code(responseCode.getCode())

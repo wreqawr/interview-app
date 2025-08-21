@@ -2,6 +2,9 @@ package cn.minglg.interview.common.pojo;
 
 import cn.minglg.interview.common.constant.task.TaskStatus;
 import cn.minglg.interview.common.constant.task.TaskType;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,10 +27,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@TableName("t_task")
 public class Task implements Serializable {
     /**
      * id(自增主键)
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
     /**
      * 用户id

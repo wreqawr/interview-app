@@ -5,9 +5,7 @@ import cn.minglg.authentication.config.webflux.WebFluxHandlerConfig;
 import cn.minglg.authentication.filter.webflux.WebFluxJwtTokenFilter;
 import cn.minglg.authentication.properties.WebFluxSecurityProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +38,6 @@ import java.util.List;
  * @Version 1.0
  */
 @RequiredArgsConstructor
-@AutoConfiguration
 @EnableConfigurationProperties(WebFluxSecurityProperties.class)
 @ConditionalOnClass({DispatcherHandler.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
@@ -87,7 +84,6 @@ public class WebFluxSecurityAutoConfiguration {
      * 轻量级配置：只包含基础认证、权限拒绝处理和跨域
      */
     @Bean("webFluxSecurityFilterChain")
-    @ConditionalOnMissingBean
     public SecurityWebFilterChain webFluxSecurityFilterChain(ServerHttpSecurity http) {
         return http
                 // 关闭CSRF防护（适用于API接口）
@@ -127,7 +123,6 @@ public class WebFluxSecurityAutoConfiguration {
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.accessDeniedHandler(accessDeniedHandler)
                 )
-
                 .build();
     }
 }

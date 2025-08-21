@@ -10,9 +10,7 @@ import cn.minglg.authentication.handler.webmvc.WebMvcCustomLogoutSuccessHandler;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
 import jakarta.servlet.Servlet;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +42,6 @@ import java.util.List;
  * @Version 1.0
  */
 @RequiredArgsConstructor
-@AutoConfiguration
 @EnableConfigurationProperties(WebMvcSecurityProperties.class)
 @ConditionalOnClass({Servlet.class, DispatcherServlet.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
@@ -114,7 +111,6 @@ public class WebMvcSecurityAutoConfiguration {
      * @throws Exception 配置过程中可能抛出的异常
      */
     @Bean("webMvcSecurityFilterChain")
-    @ConditionalOnMissingBean
     public SecurityFilterChain webMvcSecurityFilterChain(HttpSecurity http, WebMvcCustomAuthenticationFilter webMvcCustomAuthenticationFilter, CorsConfigurationSource configurationSource) throws Exception {
         return http
                 // 关闭CSRF防护

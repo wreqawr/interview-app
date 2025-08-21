@@ -1,5 +1,8 @@
 package cn.minglg.interview.resume.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,10 +27,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@TableName("t_resume_metadata")
 public class ResumeMetadata implements Serializable {
     /**
      * 文件ID
      */
+    @TableId(value = "resume_id", type = IdType.NONE)
     private String resumeId;
 
     /**

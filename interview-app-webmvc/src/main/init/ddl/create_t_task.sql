@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS t_task
     method_name   TEXT COMMENT '方法名',
     method_args   TEXT COMMENT '方法参数',
     start_time    DATETIME                                                  DEFAULT CURRENT_TIMESTAMP COMMENT '开始时间',
-    end_time      DATETIME                                                  DEFAULT CURRENT_TIMESTAMP COMMENT '结束时间',
+    end_time      DATETIME COMMENT '结束时间',
     error_message TEXT                                             NULL COMMENT '错误详情',
 
     PRIMARY KEY (id),

@@ -100,7 +100,6 @@ public class WebMvcFilterConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnClass(WebMvcJwtTokenFilter.class)
     public WebMvcJwtTokenFilter jwtTokenFilter() {
         return new WebMvcJwtTokenFilter(securityProperties, redisTemplate);
     }
@@ -116,7 +115,6 @@ public class WebMvcFilterConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnClass(WebMvcRequestBodyCacheFilter.class)
     public WebMvcRequestBodyCacheFilter requestBodyCacheFilter() {
         return new WebMvcRequestBodyCacheFilter();
     }

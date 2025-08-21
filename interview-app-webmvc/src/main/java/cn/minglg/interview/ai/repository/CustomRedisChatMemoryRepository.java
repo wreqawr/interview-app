@@ -146,8 +146,6 @@ public class CustomRedisChatMemoryRepository implements ChatMemoryRepository {
         } catch (Exception e) {
             userId = 0L;
         }
-        System.out.println("------------------");
-        System.out.println(userId);
         return CHAT_MEMORY_REDIS_KEY_PREFIX + userId + ":";
     }
 }

@@ -1,4 +1,17 @@
+server:
+  port: 8082
+
 spring:
+  application:
+    name: interview-app-webflux
+  banner:
+    location: classpath:banner/banner.txt
+
+  security:
+    user:
+      name: disabled
+      password: disabled
+
   # redis配置
   data:
     #    基本配置

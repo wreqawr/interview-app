@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c551e47c-bd6a-42fd-ad98-925a4d079316" name="更改" comment="feat(security-webflux): 引入 WebFlux JWT 过滤与权限不足处理，完善白名单与无状态配置&#10;&#10;- 新增：WebFlux 安全组件&#10;  - WebFluxJwtTokenFilter（JWT 鉴权过滤器）&#10;  - WebFluxCustomAccessDeniedHandler（权限不足处理）&#10;  - WebFluxFilterConfig、WebFluxHandlerConfig（配置装配）&#10;  - WebFluxResponseUtils（WebFlux JSON 响应工具）&#10;- 优化：白名单判空处理，避免向 pathMatchers 传入空数组导致启动异常&#10;- 改动：细化 WebFlux/WebMvc 安全链路配置，WebMvcJwtTokenFilter 行为对齐&#10;- 配置：interview-app-webflux 引入 reactive 组件与应用入口/配置（pom.xml、application.yml）；更新 docker-compose 配置&#10;- 文档：更新 README.md 与 BUILD_GUIDE.md 说明&#10;&#10;备注：&#10;- 需在应用侧引入 spring-boot-starter-data-redis-reactive 并配置 Redis 连接，才能自动装配 ReactiveStringRedisTemplate">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/38bfee29-3705-4749-96d3-f9b0216eaddb.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/38bfee29-3705-4749-96d3-f9b0216eaddb/storage_v2/_src_/schema/information_schema.FNRwLQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/38bfee29-3705-4749-96d3-f9b0216eaddb/storage_v2/_src_/schema/performance_schema.kIw0nw.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/6580a947-494a-4f73-8c24-fda8f3759bf9.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/dd63329f-9d43-4844-bbe0-87b2de4c5a9f.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interview-app-webflux/src/main/resources/banner/banner.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebFluxSecurityAutoConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebFluxSecurityAutoConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebMvcSecurityAutoConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebMvcSecurityAutoConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcFilterConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcFilterConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcHandlerConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcHandlerConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/WebFluxResponseUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/WebFluxResponseUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webflux/src/main/resources/config/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webflux/src/main/resources/config/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/init/ddl/create_t_task.sql" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/init/ddl/create_t_task.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/ai/repository/CustomRedisChatMemoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/ai/repository/CustomRedisChatMemoryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/ai/service/ToolService.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/ai/service/ToolService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/common/mapper/SkillMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/common/mapper/SkillMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/common/mapper/TaskMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/common/mapper/TaskMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/common/pojo/Skill.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/common/pojo/Skill.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/common/pojo/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/common/pojo/Task.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/resume/mapper/ResumeMetadataMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/resume/mapper/ResumeMetadataMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/resume/pojo/ResumeDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/resume/pojo/ResumeDetail.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/resume/pojo/ResumeMetadata.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/resume/pojo/ResumeMetadata.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/resources/config/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/resources/config/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/resources/mapper/common/SkillMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/resources/mapper/common/TaskMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/resources/mapper/resume/ResumeMetadataMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;wreqawr&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:wreqawr/interview-app.git&quot;,
+    &quot;accountId&quot;: &quot;2f05a9e6-c200-43d3-9f54-94e6ed95d925&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="31RbY2BruD3uw5UWCZ3CYWB2hGx" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven.interview-app [clean].executor": "Run",
+    "Maven.interview-app-starter [install].executor": "Run",
+    "Maven.interview-app-webmvc [clean].executor": "Run",
+    "Maven.interview-app-webmvc [compile].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found": "找到数据库连接形参",
+    "Notification.DoNotAsk-DatabaseConfigFileWatcher.found": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.WebFluxApplication.executor": "Run",
+    "Spring Boot.WebMvcApplication.executor": "Run",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/kfzx-minglg/project/interview/interview-app/interview-app-webflux/src/main/resources",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.completion",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "redis",
+      "mongo",
+      "mysql"
+    ]
+  }
+}]]></component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/interview-app-webflux/src/main/resources" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/interview-app-webflux/src/main/resources/config" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.WebMvcApplication">
+    <configuration name="WebFluxApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="interview-app-webflux" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="cn.minglg.interview.WebFluxApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cn.minglg.interview.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WebMvcApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="interview-app-webmvc" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="cn.minglg.interview.WebMvcApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.WebFluxApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="c551e47c-bd6a-42fd-ad98-925a4d079316" name="更改" comment="" />
+      <created>1755489875711</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1755489875711</updated>
+      <workItem from="1755489876797" duration="751000" />
+      <workItem from="1755494141430" duration="2132000" />
+      <workItem from="1755592099039" duration="1931000" />
+      <workItem from="1755670715990" duration="11640000" />
+      <workItem from="1755741050868" duration="16413000" />
+    </task>
+    <task id="LOCAL-00001" summary="项目重构">
+      <option name="closed" value="true" />
+      <created>1755490567564</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1755490567564</updated>
+    </task>
+    <task id="LOCAL-00002" summary="项目重构">
+      <option name="closed" value="true" />
+      <created>1755494283372</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1755494283372</updated>
+    </task>
+    <task id="LOCAL-00003" summary="feat(security-webflux): 引入 WebFlux JWT 过滤与权限不足处理，完善白名单与无状态配置&#10;&#10;- 新增：WebFlux 安全组件&#10;  - WebFluxJwtTokenFilter（JWT 鉴权过滤器）&#10;  - WebFluxCustomAccessDeniedHandler（权限不足处理）&#10;  - WebFluxFilterConfig、WebFluxHandlerConfig（配置装配）&#10;  - WebFluxResponseUtils（WebFlux JSON 响应工具）&#10;- 优化：白名单判空处理，避免向 pathMatchers 传入空数组导致启动异常&#10;- 改动：细化 WebFlux/WebMvc 安全链路配置，WebMvcJwtTokenFilter 行为对齐&#10;- 配置：interview-app-webflux 引入 reactive 组件与应用入口/配置（pom.xml、application.yml）；更新 docker-compose 配置&#10;- 文档：更新 README.md 与 BUILD_GUIDE.md 说明&#10;&#10;备注：&#10;- 需在应用侧引入 spring-boot-starter-data-redis-reactive 并配置 Redis 连接，才能自动装配 ReactiveStringRedisTemplate">
+      <option name="closed" value="true" />
+      <created>1755684285341</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1755684285341</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="项目重构" />
+    <MESSAGE value="feat(security-webflux): 引入 WebFlux JWT 过滤与权限不足处理，完善白名单与无状态配置&#10;&#10;- 新增：WebFlux 安全组件&#10;  - WebFluxJwtTokenFilter（JWT 鉴权过滤器）&#10;  - WebFluxCustomAccessDeniedHandler（权限不足处理）&#10;  - WebFluxFilterConfig、WebFluxHandlerConfig（配置装配）&#10;  - WebFluxResponseUtils（WebFlux JSON 响应工具）&#10;- 优化：白名单判空处理，避免向 pathMatchers 传入空数组导致启动异常&#10;- 改动：细化 WebFlux/WebMvc 安全链路配置，WebMvcJwtTokenFilter 行为对齐&#10;- 配置：interview-app-webflux 引入 reactive 组件与应用入口/配置（pom.xml、application.yml）；更新 docker-compose 配置&#10;- 文档：更新 README.md 与 BUILD_GUIDE.md 说明&#10;&#10;备注：&#10;- 需在应用侧引入 spring-boot-starter-data-redis-reactive 并配置 Redis 连接，才能自动装配 ReactiveStringRedisTemplate" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(security-webflux): 引入 WebFlux JWT 过滤与权限不足处理，完善白名单与无状态配置&#10;&#10;- 新增：WebFlux 安全组件&#10;  - WebFluxJwtTokenFilter（JWT 鉴权过滤器）&#10;  - WebFluxCustomAccessDeniedHandler（权限不足处理）&#10;  - WebFluxFilterConfig、WebFluxHandlerConfig（配置装配）&#10;  - WebFluxResponseUtils（WebFlux JSON 响应工具）&#10;- 优化：白名单判空处理，避免向 pathMatchers 传入空数组导致启动异常&#10;- 改动：细化 WebFlux/WebMvc 安全链路配置，WebMvcJwtTokenFilter 行为对齐&#10;- 配置：interview-app-webflux 引入 reactive 组件与应用入口/配置（pom.xml、application.yml）；更新 docker-compose 配置&#10;- 文档：更新 README.md 与 BUILD_GUIDE.md 说明&#10;&#10;备注：&#10;- 需在应用侧引入 spring-boot-starter-data-redis-reactive 并配置 Redis 连接，才能自动装配 ReactiveStringRedisTemplate" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/resume/mapper/ResumeMetadataMapper.java</url>
+          <line>23</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/ai/core/resume/AiResumeCoreService.java</url>
+          <line>66</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/ai/core/resume/AiResumeCoreService.java</url>
+          <line>58</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/interview-app-webmvc/src/main/java/cn/minglg/interview/ai/core/resume/AiResumeCoreService.java</url>
+          <line>51</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

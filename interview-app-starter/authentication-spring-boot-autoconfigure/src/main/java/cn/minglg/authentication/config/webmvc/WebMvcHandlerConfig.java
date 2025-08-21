@@ -69,7 +69,6 @@ public class WebMvcHandlerConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnClass(WebMvcCustomAuthenticationSuccessHandler.class)
     public WebMvcCustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
         return new WebMvcCustomAuthenticationSuccessHandler(securityProperties, redisTemplate);
     }
@@ -84,7 +83,6 @@ public class WebMvcHandlerConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnClass(WebMvcCustomLogoutSuccessHandler.class)
     public WebMvcCustomLogoutSuccessHandler customLogoutSuccessHandler() {
         return new WebMvcCustomLogoutSuccessHandler(securityProperties, redisTemplate);
     }

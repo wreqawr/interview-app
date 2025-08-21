@@ -1,6 +1,7 @@
 package cn.minglg.interview.resume.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Document(collection = "c_resume_detail")
+@JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ResumeDetail {
     /**
      * 简历id
@@ -69,6 +71,7 @@ public class ResumeDetail {
     private List<Project> projects;
 
     @Data
+    @JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class BasicInfo {
         private String name;         // 姓名
         private String phone;        // 手机号
@@ -79,6 +82,7 @@ public class ResumeDetail {
     }
 
     @Data
+    @JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class WorkExperience {
         private String company;       // 公司名称
         private String title;         // 职位名称
@@ -89,6 +93,7 @@ public class ResumeDetail {
     }
 
     @Data
+    @JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Education {
         private String school;    // 学校名称
         private String degree;    // 学历（本科/硕士等）
@@ -98,12 +103,14 @@ public class ResumeDetail {
     }
 
     @Data
+    @JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Skills {
         private List<String> technical;   // 技术技能
         private List<Language> languages; // 语言能力
         private List<String> certificates; // 证书
 
         @Data
+        @JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy.class)
         public static class Language {
             private String language; // 语言名称
             private String level;    // 熟练程度
@@ -111,6 +118,7 @@ public class ResumeDetail {
     }
 
     @Data
+    @JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Project {
         private String name;       // 项目名称
         private String role;       // 担任角色
