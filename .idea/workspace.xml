@@ -5,115 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c551e47c-bd6a-42fd-ad98-925a4d079316" name="更改" comment="重构项目结构，解决starter模块依赖传递问题&#10;&#10;## 主要变更&#10;&#10;### 项目结构重构&#10;- 将 interview-app-starter 从主项目子模块提升到顶级&#10;- 创建新的 interview-app-starters 独立项目&#10;- 删除原有的 interview-app-starter 目录&#10;&#10;### 依赖管理优化&#10;- starter模块不再继承主项目的业务依赖&#10;- 避免不必要的依赖传递（如MyBatis、Druid等）&#10;- 保持starter模块的轻量化和可复用性&#10;&#10;### 配置文件更新&#10;- 更新根项目pom.xml，移除starter子模块&#10;- 在webmvc和webflux模块中添加对starter的显式依赖&#10;- 添加Spring Boot Maven插件的主类配置&#10;&#10;### 新增文件&#10;- interview-app-starters/ 目录结构&#10;- build-starters.sh 构建脚本&#10;- README.md 使用说明文档&#10;&#10;### 解决的问题&#10;- 解决starter模块被业务依赖污染的问题&#10;- 实现清晰的模块职责分离&#10;- 提高starter模块的可复用性和维护性&#10;&#10;## 技术细节&#10;- 保持原有依赖配置不变&#10;- 使用Spring Boot父项目管理版本&#10;- 支持WebMVC和WebFlux两种模式">
-      <change afterPath="$PROJECT_DIR$/build-starters.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebFluxSecurityAutoConfiguration.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebMvcSecurityAutoConfiguration.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webflux/WebFluxFilterConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webflux/WebFluxHandlerConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/CaptchaGeneratorConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/RsaKeyGeneratorConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcFilterConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcHandlerConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcServiceConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/constant/response/ResponseCode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/constant/user/UserRole.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/constant/user/UserStatus.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/exception/InvalidUsernameOrPasswordException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/exception/UnKnowUserException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/filter/webflux/WebFluxJwtTokenFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/filter/webmvc/WebMvcCaptchaFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/filter/webmvc/WebMvcCustomAuthenticationFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/filter/webmvc/WebMvcJwtTokenFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/filter/webmvc/WebMvcRequestBodyCacheFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/handler/webflux/WebFluxCustomAccessDeniedHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/handler/webmvc/WebMvcCustomAccessDeniedHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/handler/webmvc/WebMvcCustomAuthenticationFailureHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/handler/webmvc/WebMvcCustomAuthenticationSuccessHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/handler/webmvc/WebMvcCustomLogoutSuccessHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/pojo/Company.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/pojo/Permission.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/pojo/Role.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/pojo/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/properties/WebFluxSecurityProperties.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/properties/WebMvcSecurityProperties.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/response/R.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/service/CaptchaService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/service/RsaService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/service/impl/CaptchaServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/service/impl/RsaServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/CaptchaUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/JsonUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/JwtUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/RsaUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/UserUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/WebFluxResponseUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/wrapper/CachedBodyHttpServletRequestWrapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/wrapper/CachedBodyServletInputStreamWrapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-starter/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview-app-starters/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-autoconfigure/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-autoconfigure/src/main/java/cn/minglg/ai/autoconfig/AiAutoConfiguration.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-autoconfigure/src/main/java/cn/minglg/ai/constant/ChatClientType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-autoconfigure/src/main/java/cn/minglg/ai/context/UserContextProvider.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-autoconfigure/src/main/java/cn/minglg/ai/properties/AiProperties.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-autoconfigure/src/main/java/cn/minglg/ai/render/CustomMultiCharTemplateRenderer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-autoconfigure/src/main/java/cn/minglg/ai/repository/RedisChatMemoryRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-autoconfigure/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-starter/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebFluxSecurityAutoConfiguration.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebMvcSecurityAutoConfiguration.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webflux/WebFluxFilterConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webflux/WebFluxHandlerConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/CaptchaGeneratorConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/RsaKeyGeneratorConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcFilterConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcHandlerConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcServiceConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/constant/response/ResponseCode.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/constant/user/UserRole.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/constant/user/UserStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/exception/InvalidUsernameOrPasswordException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/exception/UnKnowUserException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/filter/webflux/WebFluxJwtTokenFilter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/filter/webmvc/WebMvcCaptchaFilter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/filter/webmvc/WebMvcCustomAuthenticationFilter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/filter/webmvc/WebMvcJwtTokenFilter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/filter/webmvc/WebMvcRequestBodyCacheFilter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/handler/webflux/WebFluxCustomAccessDeniedHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/handler/webmvc/WebMvcCustomAccessDeniedHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/handler/webmvc/WebMvcCustomAuthenticationFailureHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/handler/webmvc/WebMvcCustomAuthenticationSuccessHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/handler/webmvc/WebMvcCustomLogoutSuccessHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/pojo/Company.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/pojo/Permission.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/pojo/Role.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/pojo/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/properties/WebFluxSecurityProperties.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/properties/WebMvcSecurityProperties.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/response/R.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/service/CaptchaService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/service/RsaService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/service/impl/CaptchaServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/service/impl/RsaServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/CaptchaUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/JsonUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/JwtUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/RsaUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/UserUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/utils/WebFluxResponseUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/wrapper/CachedBodyHttpServletRequestWrapper.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/wrapper/CachedBodyServletInputStreamWrapper.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-autoconfigure/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/authentication-spring-boot-starter/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-starter/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starters/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starters/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebFluxSecurityAutoConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebFluxSecurityAutoConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebMvcSecurityAutoConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/autoconfig/WebMvcSecurityAutoConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webflux/WebFluxFilterConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webflux/WebFluxFilterConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcFilterConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcFilterConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcHandlerConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcHandlerConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcServiceConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starters/authentication-spring-boot-autoconfigure/src/main/java/cn/minglg/authentication/config/webmvc/WebMvcServiceConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interview-app-starters/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-starters/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interview-app-webflux/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webflux/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-webflux/src/main/java/cn/minglg/interview/WebFluxApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webflux/src/main/java/cn/minglg/interview/WebFluxApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-webflux/src/main/resources/config/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webflux/src/main/resources/config/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interview-app-webmvc/src/main/resources/config/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/interview-app-webmvc/src/main/resources/config/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,6 +37,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -147,7 +61,7 @@
   &quot;isMigrated&quot;: true
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -180,7 +94,7 @@
     "Spring Boot.WebFluxApplication.executor": "Run",
     "Spring Boot.WebMvcApplication.executor": "Run",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/kfzx-minglg/project/interview/interview-app/interview-app-webflux/src/main/resources",
+    "last_opened_file_path": "/Users/kfzx-minglg/project/interview/interview-app/interview-app-starters/ai-spring-boot-autoconfigure/src/main/java/cn/minglg/ai",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -202,10 +116,16 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-autoconfigure/src/main/java/cn/minglg/ai" />
+      <recent name="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-autoconfigure/src/main/resources" />
+      <recent name="$PROJECT_DIR$/interview-app-starters/ai-spring-boot-autoconfigure/src/main/java/cn/minglg/ai/autoconfig" />
       <recent name="$PROJECT_DIR$/interview-app-webflux/src/main/resources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/interview-app-webflux/src/main/resources/config" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="cn.minglg.ai.autoconfig.constant" />
     </key>
   </component>
   <component name="RunManager" selected="Spring Boot.WebMvcApplication">
@@ -247,7 +167,8 @@
       <workItem from="1755592099039" duration="1931000" />
       <workItem from="1755670715990" duration="11640000" />
       <workItem from="1755741050868" duration="18166000" />
-      <workItem from="1755827341050" duration="4636000" />
+      <workItem from="1755827341050" duration="10465000" />
+      <workItem from="1755846053446" duration="7771000" />
     </task>
     <task id="LOCAL-00001" summary="项目重构">
       <option name="closed" value="true" />
@@ -281,7 +202,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755768543624</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="重构项目结构，解决starter模块依赖传递问题&#10;&#10;## 主要变更&#10;&#10;### 项目结构重构&#10;- 将 interview-app-starter 从主项目子模块提升到顶级&#10;- 创建新的 interview-app-starters 独立项目&#10;- 删除原有的 interview-app-starter 目录&#10;&#10;### 依赖管理优化&#10;- starter模块不再继承主项目的业务依赖&#10;- 避免不必要的依赖传递（如MyBatis、Druid等）&#10;- 保持starter模块的轻量化和可复用性&#10;&#10;### 配置文件更新&#10;- 更新根项目pom.xml，移除starter子模块&#10;- 在webmvc和webflux模块中添加对starter的显式依赖&#10;- 添加Spring Boot Maven插件的主类配置&#10;&#10;### 新增文件&#10;- interview-app-starters/ 目录结构&#10;- build-starters.sh 构建脚本&#10;- README.md 使用说明文档&#10;&#10;### 解决的问题&#10;- 解决starter模块被业务依赖污染的问题&#10;- 实现清晰的模块职责分离&#10;- 提高starter模块的可复用性和维护性&#10;&#10;## 技术细节&#10;- 保持原有依赖配置不变&#10;- 使用Spring Boot父项目管理版本&#10;- 支持WebMVC和WebFlux两种模式">
+      <option name="closed" value="true" />
+      <created>1755832252387</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1755832252387</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

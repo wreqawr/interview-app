@@ -9,7 +9,7 @@ import cn.minglg.authentication.handler.webmvc.WebMvcCustomAccessDeniedHandler;
 import cn.minglg.authentication.handler.webmvc.WebMvcCustomLogoutSuccessHandler;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
 import jakarta.servlet.Servlet;
-import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,7 +41,6 @@ import java.util.List;
  * @Create 2025/8/16
  * @Version 1.0
  */
-@RequiredArgsConstructor
 @EnableConfigurationProperties(WebMvcSecurityProperties.class)
 @ConditionalOnClass({Servlet.class, DispatcherServlet.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
@@ -54,64 +53,58 @@ import java.util.List;
         WebMvcHandlerConfig.class,
         WebMvcServiceConfig.class
 })
+@AutoConfiguration
 public class WebMvcSecurityAutoConfiguration {
-    /**
-     * 登录认证成功，但是对应controller无访问权限自定义处理器
-     */
-    private final WebMvcCustomAccessDeniedHandler webMvcCustomAccessDeniedHandler;
-    /**
-     * 退出成功自定义处理器（前提是处于登录状态）
-     */
-    private final WebMvcCustomLogoutSuccessHandler webMvcCustomLogoutSuccessHandler;
-    /**
-     * 全局配置信息
-     */
-    private final WebMvcSecurityProperties securityProperties;
-    /**
-     * JWT登录认证过滤器
-     */
-    private final WebMvcJwtTokenFilter jwtTokenFilter;
-    /**
-     * 验证码过滤器
-     */
-    private final WebMvcCaptchaFilter captchaFilter;
-    /**
-     * 包装request的filter
-     */
-    private final WebMvcRequestBodyCacheFilter webMvcRequestBodyCacheFilter;
 
-
+    /**
+     * 配置跨域资源共享(CORS)配置源
+     *
+     * @return CorsConfigurationSource 跨域配置源对象，用于处理跨域请求
+     */
     @Bean
     public CorsConfigurationSource configurationSource() {
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
 
-        //跨域配置
+        // 跨域配置
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        //允许任何来源，http://localhost:10492/
         corsConfiguration.setAllowedOrigins(List.of("*"));
-        //允许任何请求方法，post、get、put、delete
         corsConfiguration.setAllowedMethods(List.of("*"));
-        //允许任何的请求头 (jwt)
         corsConfiguration.setAllowedHeaders(List.of("*"));
         // 暴露响应头
         corsConfiguration.setExposedHeaders(List.of("captchaId", "Authorization"));
 
-        //注册跨域配置
+        // 注册跨域配置
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return urlBasedCorsConfigurationSource;
     }
 
+
     /**
-     * 配置Spring Security的安全过滤器链
+     * 配置WebMvc安全过滤器链，用于处理认证、授权、跨域、会话管理等安全相关逻辑。
      *
-     * @param http                             HttpSecurity对象，用于配置安全策略
-     * @param webMvcCustomAuthenticationFilter 自定义认证过滤器，用于替换默认的UsernamePasswordAuthenticationFilter
+     * @param http                             Spring Security的HttpSecurity对象，用于构建安全配置
+     * @param webMvcCustomAuthenticationFilter 自定义认证过滤器，替换默认的用户名密码认证逻辑
      * @param configurationSource              CORS配置源，用于处理跨域请求
-     * @return 配置完成的SecurityFilterChain对象
+     * @param webMvcCustomAccessDeniedHandler  权限不足时的自定义处理逻辑
+     * @param webMvcCustomLogoutSuccessHandler 登出成功后的自定义处理逻辑
+     * @param securityProperties               安全相关配置属性，如白名单、登出路径等
+     * @param jwtTokenFilter                   JWT Token验证过滤器，用于解析和验证请求中的JWT
+     * @param captchaFilter                    验证码验证过滤器，用于校验请求中的验证码
+     * @param webMvcRequestBodyCacheFilter     请求体缓存过滤器，用于多次读取请求体内容
+     * @return 构建完成的SecurityFilterChain实例
      * @throws Exception 配置过程中可能抛出的异常
      */
     @Bean("webMvcSecurityFilterChain")
-    public SecurityFilterChain webMvcSecurityFilterChain(HttpSecurity http, WebMvcCustomAuthenticationFilter webMvcCustomAuthenticationFilter, CorsConfigurationSource configurationSource) throws Exception {
+    public SecurityFilterChain webMvcSecurityFilterChain(HttpSecurity http,
+                                                         WebMvcCustomAuthenticationFilter webMvcCustomAuthenticationFilter,
+                                                         CorsConfigurationSource configurationSource,
+                                                         WebMvcCustomAccessDeniedHandler webMvcCustomAccessDeniedHandler,
+                                                         WebMvcCustomLogoutSuccessHandler webMvcCustomLogoutSuccessHandler,
+                                                         WebMvcSecurityProperties securityProperties,
+                                                         WebMvcJwtTokenFilter jwtTokenFilter,
+                                                         WebMvcCaptchaFilter captchaFilter,
+                                                         WebMvcRequestBodyCacheFilter webMvcRequestBodyCacheFilter
+    ) throws Exception {
         return http
                 // 关闭CSRF防护
                 .csrf(AbstractHttpConfigurer::disable)
@@ -119,7 +112,7 @@ public class WebMvcSecurityAutoConfiguration {
                 .cors(cors ->
                         cors.configurationSource(configurationSource))
                 .authorizeHttpRequests(auth -> {
-                            // 显式放行所有OPTIONS
+                            // 显式放行所有OPTIONS请求
                             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                             List<String> whiteListPatterns = securityProperties.getWhiteListPatterns();
                             // 白名单内请求，无需认证

@@ -1,0 +1,182 @@
+package cn.minglg.ai.autoconfig;
+
+import cn.minglg.ai.constant.ChatClientType;
+import cn.minglg.ai.context.UserContextProvider;
+import cn.minglg.ai.properties.AiProperties;
+import cn.minglg.ai.render.CustomMultiCharTemplateRenderer;
+import cn.minglg.ai.repository.RedisChatMemoryRepository;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
+import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.template.TemplateRenderer;
+import org.springframework.ai.template.st.StTemplateRenderer;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+import java.util.Map;
+
+/**
+ * ClassName:AiAutoConfiguration
+ * Package:cn.minglg.ai.autoconfig
+ * Description:
+ *
+ * @Author kfzx-minglg
+ * @Create 2025/8/22
+ * @Version 1.0
+ */
+@EnableConfigurationProperties(AiProperties.class)
+@AutoConfiguration
+public class AiAutoConfiguration {
+
+    /**
+     * 创建并配置聊天客户端Bean
+     *
+     * @param builder 聊天客户端构建器，用于创建不同配置的聊天客户端实例
+     * @param advisor 消息聊天记忆顾问，为需要记忆功能的聊天客户端提供记忆能力
+     * @return 返回一个映射表，包含两种类型的聊天客户端：带记忆功能和不带记忆功能
+     */
+    @Bean
+    @ConditionalOnClass(ChatClient.class)
+    public Map<ChatClientType, ChatClient> chatClient(ChatClient.Builder builder, MessageChatMemoryAdvisor advisor) {
+        // 构建不带记忆的聊天客户端
+        ChatClient chatWithoutMemory = builder
+                .defaultAdvisors(new SimpleLoggerAdvisor())
+                .build();
+        // 构建带记忆的聊天客户端
+        ChatClient chatWithMemory = builder
+                .defaultAdvisors(new SimpleLoggerAdvisor())
+                .defaultAdvisors(advisor)
+                .build();
+        return Map.of(
+                ChatClientType.GENERAL_WITHOUT_MEMORY, chatWithoutMemory,
+                ChatClientType.GENERAL_WITH_MEMORY, chatWithMemory
+        );
+    }
+
+    /**
+     * 创建并配置模板渲染器Bean
+     *
+     * @param aiProperties AI配置属性对象，用于获取模板分隔符配置
+     * @return 配置好的TemplateRenderer实例
+     */
+    @Bean("stTemplateRenderer")
+    @ConditionalOnProperty(
+            name = {"interview.ai.start-delimiter-character", "interview.ai.end-delimiter-character"},
+            matchIfMissing = true)
+    public TemplateRenderer templateRenderer(AiProperties aiProperties) {
+        // 获取模板开始和结束分隔符字符配置
+        char startDelimiterToken = aiProperties.getStartDelimiterCharacter();
+        char endDelimiterToken = aiProperties.getEndDelimiterCharacter();
+
+        // 构建并返回StTemplateRenderer实例
+        return StTemplateRenderer.builder()
+                .startDelimiterToken(startDelimiterToken)
+                .endDelimiterToken(endDelimiterToken)
+                .build();
+    }
+
+    /**
+     * 创建自定义模板渲染器Bean
+     *
+     * @param aiProperties AI配置属性，用于获取模板解析的开始和结束分隔符
+     * @return 自定义多字符模板渲染器实例
+     */
+    @Bean("customTemplateRenderer")
+    @ConditionalOnMissingBean(name = "stTemplateRenderer")
+    public TemplateRenderer customTemplateRenderer(AiProperties aiProperties) {
+        // 设置模板解析的开始和结束分隔符
+        String startDelimiter = aiProperties.getStartDelimiterString();
+        String endDelimiter = aiProperties.getEndDelimiterString();
+
+        // 构建并返回自定义多字符模板渲染器
+        return CustomMultiCharTemplateRenderer.builder()
+                .startDelimiter(startDelimiter)
+                .endDelimiter(endDelimiter)
+                .build();
+    }
+
+
+    /**
+     * 创建默认的聊天记忆存储库Bean
+     * 当没有其他ChatMemoryRepository实现时，使用内存存储作为后备方案
+     *
+     * @return ChatMemoryRepository 默认的内存存储实现
+     */
+    @Bean
+    @ConditionalOnMissingBean(ChatMemoryRepository.class)
+    public ChatMemoryRepository chatMemoryRepository() {
+        return new InMemoryChatMemoryRepository();
+    }
+
+    /**
+     * 创建聊天记忆实例的工厂方法
+     *
+     * @param aiProperties         AI配置属性，用于获取最大聊天消息数量限制
+     * @param chatMemoryRepository 聊天记忆存储库，用于持久化聊天记录
+     * @return 配置好聊天记忆实例
+     */
+    @Bean
+    @ConditionalOnClass({ChatMemory.class, ChatMemoryRepository.class})
+    @ConditionalOnMissingBean(ChatMemory.class)
+    public ChatMemory chatMemory(AiProperties aiProperties, ChatMemoryRepository chatMemoryRepository) {
+        // 构建消息窗口聊天记忆实例，设置存储库和最大消息数量限制
+        return MessageWindowChatMemory.builder()
+                .chatMemoryRepository(chatMemoryRepository)
+                .maxMessages(aiProperties.getMaxChatMessages())
+                .build();
+    }
+
+
+    /**
+     * 创建消息聊天内存顾问Bean
+     *
+     * @param chatMemory 聊天内存实例，用于存储和管理聊天历史记录
+     * @return MessageChatMemoryAdvisor 消息聊天内存拦截器实例
+     */
+    @Bean
+    @ConditionalOnClass(MessageChatMemoryAdvisor.class)
+    @ConditionalOnMissingBean(MessageChatMemoryAdvisor.class)
+    public MessageChatMemoryAdvisor chatMemoryAdvisor(ChatMemory chatMemory) {
+        return MessageChatMemoryAdvisor.builder(chatMemory).build();
+    }
+
+    /**
+     * 创建并返回一个UserContextProvider实例
+     * 该方法用于在Spring容器中注册UserContextProvider Bean，当容器中不存在同类型的Bean时才会创建
+     * 返回的UserContextProvider实现了一个简单的用户上下文提供者，始终返回用户ID为0L
+     *
+     * @return UserContextProvider 用户上下文提供者实例
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public UserContextProvider userContextProvider() {
+        return () -> 0L;
+    }
+
+
+    /**
+     * 创建Redis聊天记忆仓库Bean
+     *
+     * @param redisTemplate       Redis字符串模板，用于与Redis进行数据交互
+     * @param aiProperties        AI配置属性，包含AI相关的配置信息
+     * @param userContextProvider 用户上下文提供者，用于获取用户相关信息
+     * @return Redis聊天记忆仓库实例
+     */
+    @Bean
+    @ConditionalOnClass({StringRedisTemplate.class})
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+    public RedisChatMemoryRepository redisChatMemoryRepository(StringRedisTemplate redisTemplate, AiProperties aiProperties, UserContextProvider userContextProvider) {
+        return new RedisChatMemoryRepository(redisTemplate, aiProperties, userContextProvider);
+    }
+
+}

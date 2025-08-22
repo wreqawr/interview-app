@@ -7,9 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="authentication-spring-boot-autoconfigure" />
         <module name="authentication-spring-boot-starter" />
+        <module name="ai-spring-boot-autoconfigure" />
         <module name="interview-app-webflux" />
+        <module name="authentication-spring-boot-autoconfigure" />
+        <module name="ai-spring-boot-starter" />
       </profile>
       <profile name="Annotation profile for interview-app" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -27,6 +29,8 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ai-spring-boot-autoconfigure" options="-parameters" />
+      <module name="ai-spring-boot-starter" options="-parameters" />
       <module name="authentication-spring-boot-autoconfigure" options="-parameters" />
       <module name="authentication-spring-boot-starter" options="-parameters" />
       <module name="interview-app-webflux" options="-parameters" />

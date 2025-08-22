@@ -22,6 +22,8 @@
     <modules>
         <module>authentication-spring-boot-autoconfigure</module>
         <module>authentication-spring-boot-starter</module>
+        <module>ai-spring-boot-autoconfigure</module>
+        <module>ai-spring-boot-starter</module>
     </modules>
 
     <properties>
@@ -63,6 +65,16 @@
             <dependency>
                 <groupId>cn.minglg.interview</groupId>
                 <artifactId>authentication-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.minglg.interview</groupId>
+                <artifactId>ai-spring-boot-autoconfigure</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.minglg.interview</groupId>
+                <artifactId>ai-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

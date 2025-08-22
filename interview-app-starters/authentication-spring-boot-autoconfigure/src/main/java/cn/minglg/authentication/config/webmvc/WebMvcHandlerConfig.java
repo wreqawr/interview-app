@@ -5,7 +5,6 @@ import cn.minglg.authentication.handler.webmvc.WebMvcCustomAuthenticationFailure
 import cn.minglg.authentication.handler.webmvc.WebMvcCustomAuthenticationSuccessHandler;
 import cn.minglg.authentication.handler.webmvc.WebMvcCustomLogoutSuccessHandler;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -22,13 +21,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * @Create 2025/8/16
  * @Version 1.0
  */
-@RequiredArgsConstructor
 @Configuration
 @ConditionalOnClass({StringRedisTemplate.class})
 public class WebMvcHandlerConfig {
-    private final WebMvcSecurityProperties securityProperties;
-    private final StringRedisTemplate redisTemplate;
-
     /**
      * 创建自定义访问拒绝处理器的Bean
      * 该方法用于创建并注册CustomAccessDeniedHandler实例作为Spring Bean。
@@ -38,7 +33,6 @@ public class WebMvcHandlerConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnClass(WebMvcCustomAccessDeniedHandler.class)
     public WebMvcCustomAccessDeniedHandler customAccessDeniedHandler() {
         return new WebMvcCustomAccessDeniedHandler();
     }
@@ -53,7 +47,6 @@ public class WebMvcHandlerConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnClass(WebMvcCustomAuthenticationFailureHandler.class)
     public WebMvcCustomAuthenticationFailureHandler customAuthenticationFailureHandler() {
         return new WebMvcCustomAuthenticationFailureHandler();
     }
@@ -61,30 +54,34 @@ public class WebMvcHandlerConfig {
 
     /**
      * 创建自定义认证成功处理器Bean
+     * 该方法用于创建WebMvcCustomAuthenticationSuccessHandler实例，用于处理用户认证成功后的业务逻辑。
+     * 只有在Spring容器中不存在同类型的Bean时才会创建此Bean。
      *
-     * @return WebMvcCustomAuthenticationSuccessHandler 自定义认证成功处理器实例
-     * 条件说明：
-     * - 仅在容器中不存在CustomAuthenticationSuccessHandler类型的Bean时才会创建
-     * - 使用securityProperties和redisTemplate依赖注入来初始化处理器
+     * @param securityProperties 安全配置属性，包含认证成功后的跳转配置等信息
+     * @param redisTemplate      Redis模板，用于存储认证成功后的相关数据
+     * @return WebMvcCustomAuthenticationSuccessHandler 认证成功处理器实例
      */
     @Bean
     @ConditionalOnMissingBean
-    public WebMvcCustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+    public WebMvcCustomAuthenticationSuccessHandler customAuthenticationSuccessHandler(WebMvcSecurityProperties securityProperties,
+                                                                                       StringRedisTemplate redisTemplate) {
         return new WebMvcCustomAuthenticationSuccessHandler(securityProperties, redisTemplate);
     }
+
 
     /**
      * 创建自定义登出成功处理器Bean
      *
+     * @param securityProperties 安全配置属性，包含登出相关的配置信息
+     * @param redisTemplate      Redis模板，用于操作Redis中的用户会话数据
      * @return WebMvcCustomLogoutSuccessHandler 自定义登出成功处理器实例
-     * 该方法用于创建并配置自定义的登出成功处理器，当用户登出成功时会调用该处理器
-     * 处理器依赖于安全属性配置和Redis模板来进行相关业务逻辑处理
-     * 只有在Spring容器中不存在同类型的Bean时才会创建该Bean实例
      */
     @Bean
     @ConditionalOnMissingBean
-    public WebMvcCustomLogoutSuccessHandler customLogoutSuccessHandler() {
+    public WebMvcCustomLogoutSuccessHandler customLogoutSuccessHandler(WebMvcSecurityProperties securityProperties,
+                                                                       StringRedisTemplate redisTemplate) {
         return new WebMvcCustomLogoutSuccessHandler(securityProperties, redisTemplate);
     }
+
 
 }

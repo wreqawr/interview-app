@@ -4,7 +4,7 @@ import cn.minglg.authentication.config.webflux.WebFluxFilterConfig;
 import cn.minglg.authentication.config.webflux.WebFluxHandlerConfig;
 import cn.minglg.authentication.filter.webflux.WebFluxJwtTokenFilter;
 import cn.minglg.authentication.properties.WebFluxSecurityProperties;
-import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,26 +37,14 @@ import java.util.List;
  * @Create 2025/8/16
  * @Version 1.0
  */
-@RequiredArgsConstructor
 @EnableConfigurationProperties(WebFluxSecurityProperties.class)
 @ConditionalOnClass({DispatcherHandler.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 @Import({WebFluxFilterConfig.class, WebFluxHandlerConfig.class})
+@AutoConfiguration
 public class WebFluxSecurityAutoConfiguration {
-
-    /**
-     * WebFlux安全配置属性
-     */
-    private final WebFluxSecurityProperties securityProperties;
-
-    /**
-     * WebFlux JWT过滤器
-     */
-    private final WebFluxJwtTokenFilter jwtTokenFilter;
-
-    private final ServerAccessDeniedHandler accessDeniedHandler;
 
     /**
      * 配置WebFlux跨域
@@ -84,7 +72,10 @@ public class WebFluxSecurityAutoConfiguration {
      * 轻量级配置：只包含基础认证、权限拒绝处理和跨域
      */
     @Bean("webFluxSecurityFilterChain")
-    public SecurityWebFilterChain webFluxSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain webFluxSecurityFilterChain(ServerHttpSecurity http,
+                                                             WebFluxSecurityProperties securityProperties,
+                                                             WebFluxJwtTokenFilter jwtTokenFilter,
+                                                             ServerAccessDeniedHandler accessDeniedHandler) {
         return http
                 // 关闭CSRF防护（适用于API接口）
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)

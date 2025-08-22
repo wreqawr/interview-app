@@ -7,7 +7,6 @@ import cn.minglg.authentication.filter.webmvc.WebMvcRequestBodyCacheFilter;
 import cn.minglg.authentication.handler.webmvc.WebMvcCustomAuthenticationFailureHandler;
 import cn.minglg.authentication.handler.webmvc.WebMvcCustomAuthenticationSuccessHandler;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -28,29 +27,21 @@ import java.security.KeyPair;
  * @Create 2025/8/16
  * @Version 1.0
  */
-@RequiredArgsConstructor
 @Configuration
-@ConditionalOnClass({
-        StringRedisTemplate.class,
-        WebMvcCustomAuthenticationSuccessHandler.class,
-        WebMvcCustomAuthenticationFailureHandler.class
-})
+@ConditionalOnClass(StringRedisTemplate.class)
 public class WebMvcFilterConfig {
-    private final WebMvcSecurityProperties securityProperties;
-    private final StringRedisTemplate redisTemplate;
-    private final KeyPair keyPair;
-    private final WebMvcCustomAuthenticationSuccessHandler webMvcCustomAuthenticationSuccessHandler;
-    private final WebMvcCustomAuthenticationFailureHandler webMvcCustomAuthenticationFailureHandler;
 
     /**
-     * 创建验证码过滤器Bean
+     * 创建并配置验证码过滤器Bean
      *
-     * @return WebMvcCaptchaFilter 验证码过滤器实例
+     * @param securityProperties 安全配置属性，用于获取验证码相关配置
+     * @param redisTemplate      Redis模板，用于存储和验证验证码
+     * @return 配置好的WebMvcCaptchaFilter实例
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnClass(WebMvcCaptchaFilter.class)
-    public WebMvcCaptchaFilter getCaptchaFilter() {
+    public WebMvcCaptchaFilter getCaptchaFilter(WebMvcSecurityProperties securityProperties,
+                                                StringRedisTemplate redisTemplate) {
         return new WebMvcCaptchaFilter(securityProperties, redisTemplate);
     }
 
@@ -73,13 +64,20 @@ public class WebMvcFilterConfig {
     /**
      * 创建自定义认证过滤器Bean
      *
-     * @param authenticationManager 认证管理器，用于处理认证逻辑
-     * @return 配置完成的自定义认证过滤器实例
+     * @param authenticationManager                    认证管理器，用于处理认证逻辑
+     * @param securityProperties                       安全配置属性，包含认证相关的配置信息
+     * @param keyPair                                  密钥对，用于认证过程中的加密解密操作
+     * @param webMvcCustomAuthenticationSuccessHandler 认证成功处理器，处理认证成功后的逻辑
+     * @param webMvcCustomAuthenticationFailureHandler 认证失败处理器，处理认证失败后的逻辑
+     * @return 配置完成的WebMvcCustomAuthenticationFilter实例
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnClass(WebMvcCustomAuthenticationFilter.class)
-    public WebMvcCustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public WebMvcCustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager,
+                                                                       WebMvcSecurityProperties securityProperties,
+                                                                       KeyPair keyPair,
+                                                                       WebMvcCustomAuthenticationSuccessHandler webMvcCustomAuthenticationSuccessHandler,
+                                                                       WebMvcCustomAuthenticationFailureHandler webMvcCustomAuthenticationFailureHandler) {
         // 创建自定义认证过滤器实例
         WebMvcCustomAuthenticationFilter filter = new WebMvcCustomAuthenticationFilter(securityProperties, keyPair, authenticationManager);
         // 设置认证成功处理器
@@ -89,18 +87,17 @@ public class WebMvcFilterConfig {
         return filter;
     }
 
-
     /**
      * 创建JWT令牌过滤器Bean
      *
+     * @param securityProperties WebMvc安全配置属性，用于获取JWT相关的配置信息
+     * @param redisTemplate      Redis模板，用于操作Redis中的令牌黑名单等数据
      * @return WebMvcJwtTokenFilter JWT令牌过滤器实例
-     * 条件说明：
-     * - 仅在容器中不存在JwtTokenFilter类型的Bean时才会创建
-     * - 该过滤器用于处理JWT令牌的验证和解析
      */
     @Bean
     @ConditionalOnMissingBean
-    public WebMvcJwtTokenFilter jwtTokenFilter() {
+    public WebMvcJwtTokenFilter jwtTokenFilter(WebMvcSecurityProperties securityProperties,
+                                               StringRedisTemplate redisTemplate) {
         return new WebMvcJwtTokenFilter(securityProperties, redisTemplate);
     }
 
