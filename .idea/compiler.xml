@@ -21,6 +21,9 @@
         <module name="interview-app-webmvc" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="interview-app-starter" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

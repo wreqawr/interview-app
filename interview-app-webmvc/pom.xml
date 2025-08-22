@@ -18,12 +18,6 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <!--alibaba-ai-->
-        <dependency>
-            <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -130,16 +124,11 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
-        <!--spring ai 上下文记忆持久化-->
-        <dependency>
-            <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter-memory-redis</artifactId>
-        </dependency>
-
         <!--自定义认证starter-->
         <dependency>
             <groupId>cn.minglg.interview</groupId>
             <artifactId>authentication-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
@@ -165,6 +154,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <mainClass>cn.minglg.interview.WebMvcApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

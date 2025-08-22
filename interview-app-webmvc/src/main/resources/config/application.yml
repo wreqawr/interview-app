@@ -133,6 +133,7 @@ interview:
         effective-patterns:
           - /api/auth/login
           - /api/auth/register
+
     # 注册相关
     register:
       # redis中保存的所有角色字典信息的key前缀

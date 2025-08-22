@@ -1,0 +1,139 @@
+{
+  "properties": [
+    {
+      "name": "interview.webmvc.security.request-timeout-seconds",
+      "type": "java.lang.Integer",
+      "description": "登录请求超时时间（秒）.",
+      "defaultValue": 5
+    },
+    {
+      "name": "interview.webmvc.security.authentication-expiration-minutes",
+      "type": "java.lang.Integer",
+      "description": "JWT token有效时间过期时间（分钟）.",
+      "defaultValue": 30
+    },
+    {
+      "name": "interview.webmvc.security.jwt-secret-key",
+      "type": "java.lang.String",
+      "description": "JWT签名密钥，用于生成和验证JWT token.",
+      "defaultValue": "kX7$!aT9@qW5sE6*RzP"
+    },
+    {
+      "name": "interview.webmvc.security.login-uri",
+      "type": "java.lang.String",
+      "description": "登录请求的URI路径.",
+      "defaultValue": "/api/auth/login"
+    },
+    {
+      "name": "interview.webmvc.security.logout-uri",
+      "type": "java.lang.String",
+      "description": "退出登录的URI路径.",
+      "defaultValue": "/api/auth/logout"
+    },
+    {
+      "name": "interview.webmvc.security.auth-key-prefix",
+      "type": "java.lang.String",
+      "description": "登录认证信息存储在Redis中的key前缀.",
+      "defaultValue": "user:security:login"
+    },
+    {
+      "name": "interview.webmvc.security.white-list-patterns",
+      "type": "java.util.List<java.lang.String>",
+      "description": "不会被JWT拦截的请求路径（白名单，支持通配符表达式）.",
+      "defaultValue": null
+    },
+    {
+      "name": "interview.webmvc.security.captcha.width",
+      "type": "java.lang.Integer",
+      "description": "验证码图片宽度（像素）.",
+      "defaultValue": 120
+    },
+    {
+      "name": "interview.webmvc.security.captcha.height",
+      "type": "java.lang.Integer",
+      "description": "验证码图片高度（像素）.",
+      "defaultValue": 40
+    },
+    {
+      "name": "interview.webmvc.security.captcha.thickness",
+      "type": "java.lang.Integer",
+      "description": "验证码干扰元素个数.",
+      "defaultValue": 10
+    },
+    {
+      "name": "interview.webmvc.security.captcha.code-count",
+      "type": "java.lang.Integer",
+      "description": "验证码数字个数.",
+      "defaultValue": 4
+    },
+    {
+      "name": "interview.webmvc.security.captcha.base-str",
+      "type": "java.lang.String",
+      "description": "随机字符序列（当验证码生成器为RandomGenerator时有效）.",
+      "defaultValue": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    },
+    {
+      "name": "interview.webmvc.security.captcha.code-generator",
+      "type": "java.lang.String",
+      "description": "验证码生成器类名.",
+      "defaultValue": "cn.hutool.captcha.generator.MathGenerator"
+    },
+    {
+      "name": "interview.webmvc.security.captcha.redis-key-prefix",
+      "type": "java.lang.String",
+      "description": "验证码保存在Redis中的key前缀.",
+      "defaultValue": "user:security:captcha"
+    },
+    {
+      "name": "interview.webmvc.security.captcha.captcha-expire-minutes",
+      "type": "java.lang.Integer",
+      "description": "验证码过期时间（分钟）.",
+      "defaultValue": 5
+    },
+    {
+      "name": "interview.webmvc.security.captcha.effective-patterns",
+      "type": "java.util.List<java.lang.String>",
+      "description": "需要使用验证码的请求路径.",
+      "defaultValue": null
+    },
+    {
+      "name": "interview.webflux.security.authentication-expiration-minutes",
+      "type": "java.lang.Integer",
+      "description": "JWT token有效时间过期时间（分钟）.",
+      "defaultValue": 30
+    },
+    {
+      "name": "interview.webflux.security.jwt-secret-key",
+      "type": "java.lang.String",
+      "description": "JWT签名密钥，用于生成和验证JWT token.",
+      "defaultValue": "kX7$!aT9@qW5sE6*RzP"
+    },
+    {
+      "name": "interview.webflux.security.auth-key-prefix",
+      "type": "java.lang.String",
+      "description": "登录认证信息存储在Redis中的key前缀.",
+      "defaultValue": "user:security:login"
+    },
+    {
+      "name": "interview.webflux.security.white-list-patterns",
+      "type": "java.util.List<java.lang.String>",
+      "description": "不会被JWT拦截的请求路径（白名单，支持通配符表达式）.",
+      "defaultValue": null
+    }
+  ],
+  "hints": [
+    {
+      "name": "interview.webmvc.security.captcha.code-generator",
+      "values": [
+        {
+          "value": "cn.hutool.captcha.generator.MathGenerator",
+          "description": "数学运算验证码生成器."
+        },
+        {
+          "value": "cn.hutool.captcha.generator.RandomGenerator",
+          "description": "随机字符验证码生成器."
+        }
+      ]
+    }
+  ]
+} 
