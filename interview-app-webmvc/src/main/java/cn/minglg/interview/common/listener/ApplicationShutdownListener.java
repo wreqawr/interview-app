@@ -1,7 +1,7 @@
 package cn.minglg.interview.common.listener;
 
+import cn.minglg.ai.properties.AiProperties;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
-import cn.minglg.interview.common.properties.AiProperties;
 import cn.minglg.interview.common.properties.RegisterProperties;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;

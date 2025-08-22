@@ -172,15 +172,6 @@ interview:
       bucket-name-prefix:
         resumeUpload: resume-upload-
 
-    # ai相关
-    ai:
-      # 持久化上下文记忆的redis前缀
-      chat-memory-redis-key-prefix: chat:history
-      # 会话保存时间（天）;
-      chat-memory-redis-expire-days: 30
-      # 单次对话上下文最长消息条数
-      max-chat-messages: 20
-
     # 线程池相关
     async:
       # 核心线程数：线程池长期保持的线程数

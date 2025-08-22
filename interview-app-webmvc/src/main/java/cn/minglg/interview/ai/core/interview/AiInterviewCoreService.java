@@ -1,6 +1,6 @@
 package cn.minglg.interview.ai.core.interview;
 
-import cn.minglg.interview.common.constant.ai.ChatClientType;
+import cn.minglg.ai.constant.ChatClientType;
 import cn.minglg.interview.common.constant.task.TaskType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;

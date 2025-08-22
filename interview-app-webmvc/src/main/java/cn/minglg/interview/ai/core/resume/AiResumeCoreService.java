@@ -1,9 +1,9 @@
 package cn.minglg.interview.ai.core.resume;
 
+import cn.minglg.ai.constant.ChatClientType;
 import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.interview.ai.exception.AiResumeAnalyzeAndSaveException;
 import cn.minglg.interview.common.annotation.TaskHandler;
-import cn.minglg.interview.common.constant.ai.ChatClientType;
 import cn.minglg.interview.common.constant.task.TaskStatus;
 import cn.minglg.interview.common.constant.task.TaskType;
 import cn.minglg.interview.common.properties.ResumeProperties;
@@ -45,7 +45,7 @@ public class AiResumeCoreService {
      *
      * @param content 简历内容
      */
-    @Async
+    @Async("taskExecutor")
     @TaskHandler(taskType = TaskType.RESUME_SUMMARIZE)
     public void resumeSummarizeAndSave(Long userId, String taskId, String resumeId, String content, ResumeMetadata resumeMetadata) {
         // 第一步：获取ai解析结果
@@ -76,7 +76,7 @@ public class AiResumeCoreService {
      * @param taskId   任务id
      * @param resumeId 简历id
      */
-    @Async
+    @Async("taskExecutor")
     @TaskHandler(taskType = TaskType.RESUME_ANALYZE)
     public void resumeAnalyzeAndSave(Long userId, String taskId, String resumeId) {
 
@@ -97,6 +97,7 @@ public class AiResumeCoreService {
                     .user(resumeDetail.getRawText())
                     .call()
                     .content();
+            System.out.println(analyzeResult);
             if (analyzeResult != null) {
                 redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyze, analyzeResult);
                 redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyzeStatus, TaskStatus.FINISHED.toString());

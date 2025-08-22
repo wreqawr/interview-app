@@ -1,5 +1,6 @@
 package cn.minglg.interview.ai.render;
 
+import cn.minglg.ai.render.CustomMultiCharTemplateRenderer;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.template.TemplateRenderer;

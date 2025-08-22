@@ -1,6 +1,6 @@
 package cn.minglg.interview.ai.service;
 
-import cn.minglg.interview.common.constant.ai.ChatClientType;
+import cn.minglg.ai.constant.ChatClientType;
 import cn.minglg.interview.common.constant.task.TaskType;
 import cn.minglg.interview.common.response.R;
 import lombok.RequiredArgsConstructor;

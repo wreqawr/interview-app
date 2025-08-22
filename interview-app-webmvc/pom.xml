@@ -130,6 +130,13 @@
             <artifactId>authentication-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!--自定义ai配置-->
+        <dependency>
+            <groupId>cn.minglg.interview</groupId>
+            <artifactId>ai-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
