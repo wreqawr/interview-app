@@ -15,7 +15,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ai.alibaba.version>1.0.0.2</ai.alibaba.version>
+        <ai.alibaba.version>1.0.0.3</ai.alibaba.version>
     </properties>
 
     <dependencies>
@@ -23,14 +23,6 @@
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!--spring ai 上下文记忆持久化-->
-        <dependency>
-            <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter-memory-redis</artifactId>
-            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -38,11 +30,13 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
             <optional>true</optional>
         </dependency>
+
     </dependencies>
 
     <dependencyManagement>

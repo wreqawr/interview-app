@@ -1,8 +1,8 @@
 package cn.minglg.ai.repository;
 
 import cn.minglg.ai.context.UserContextProvider;
+import cn.minglg.ai.deserializer.MessageDeserializer;
 import cn.minglg.ai.properties.AiProperties;
-import com.alibaba.cloud.ai.memory.redis.serializer.MessageDeserializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;

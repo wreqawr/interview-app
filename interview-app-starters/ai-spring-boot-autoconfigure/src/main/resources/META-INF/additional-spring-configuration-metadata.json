@@ -1,0 +1,105 @@
+{
+  "properties": [
+    {
+      "name": "interview.ai.chat-memory-redis-key-prefix",
+      "type": "java.lang.String",
+      "description": "持久化上下文记忆的Redis键前缀，用于在Redis中存储聊天历史记录时区分不同的键.",
+      "defaultValue": "chat:history"
+    },
+    {
+      "name": "interview.ai.chat-memory-redis-expire-days",
+      "type": "java.lang.Integer",
+      "description": "会话保存时间，以天为单位。超过此时间的聊天记录将被自动清理.",
+      "defaultValue": 30
+    },
+    {
+      "name": "interview.ai.max-chat-messages",
+      "type": "java.lang.Integer",
+      "description": "单次对话上下文中最长消息条数。超过此数量的消息将被自动清理，以控制内存使用.",
+      "defaultValue": 50
+    },
+    {
+      "name": "interview.ai.start-delimiter-character",
+      "type": "java.lang.Character",
+      "description": "提示词模板渲染器使用的起始分隔符字符，用于标识模板变量.",
+      "defaultValue": "<"
+    },
+    {
+      "name": "interview.ai.end-delimiter-character",
+      "type": "java.lang.Character",
+      "description": "提示词模板渲染器使用的结束分隔符字符，用于标识模板变量的结束.",
+      "defaultValue": ">"
+    },
+    {
+      "name": "interview.ai.start-delimiter-string",
+      "type": "java.lang.String",
+      "description": "功能更强大的提示词模板渲染器使用的起始分隔符字符串，支持多字符分隔符.",
+      "defaultValue": "#{"
+    },
+    {
+      "name": "interview.ai.end-delimiter-string",
+      "type": "java.lang.String",
+      "description": "功能更强大的提示词模板渲染器使用的结束分隔符字符串，支持多字符分隔符.",
+      "defaultValue": "}"
+    },
+    {
+      "name": "interview.ai.chat-memory-repository",
+      "type": "java.lang.String",
+      "description": "聊天上下文存储仓库类型。可选值：memory（内存存储）、redis（Redis存储）、mongodb（MongoDB存储）。如果不配置，默认使用基于内存的存储.",
+      "defaultValue": "memory"
+    }
+  ],
+  "hints": [
+    {
+      "name": "interview.ai.chat-memory-repository",
+      "values": [
+        {
+          "value": "memory",
+          "description": "基于内存的聊天上下文存储，适用于单实例部署或测试环境."
+        },
+        {
+          "value": "redis",
+          "description": "基于Redis的聊天上下文存储，支持分布式部署和持久化."
+        },
+        {
+          "value": "mongodb",
+          "description": "基于MongoDB的聊天上下文存储，支持复杂查询和文档存储."
+        }
+      ]
+    },
+    {
+      "name": "interview.ai.chat-memory-redis-expire-days",
+      "values": [
+        {
+          "value": 7,
+          "description": "短期存储，适用于临时对话场景."
+        },
+        {
+          "value": 30,
+          "description": "中期存储，适用于一般业务场景."
+        },
+        {
+          "value": 90,
+          "description": "长期存储，适用于需要长期保存对话历史的场景."
+        }
+      ]
+    },
+    {
+      "name": "interview.ai.max-chat-messages",
+      "values": [
+        {
+          "value": 20,
+          "description": "较少消息数量，适用于简单对话场景."
+        },
+        {
+          "value": 50,
+          "description": "中等消息数量，适用于一般对话场景."
+        },
+        {
+          "value": 100,
+          "description": "较多消息数量，适用于复杂对话场景."
+        }
+      ]
+    }
+  ]
+} 

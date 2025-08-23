@@ -37,9 +37,12 @@ spring:
           min-idle: 0
           max-wait: -1ms
   # ai-alibaba配置
-  ai:
-    dashscope:
-      api-key: ${ALIYUN_API_KEY}
-      chat:
-        options:
-          model: qwen-plus
+#  ai:
+#    dashscope:
+#      api-key: ${ALIYUN_API_KEY}
+#      chat:
+#        options:
+#          model: qwen-plus
+#interview:
+#  ai:
+#    chat-memory-repository: memory

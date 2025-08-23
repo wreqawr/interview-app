@@ -48,4 +48,10 @@ public class AiProperties {
      * 功能更强大的提示词模板渲染器使用的结束分隔符字符串
      */
     private String endDelimiterString = "}";
+
+    /**
+     * 聊天上下文存储仓库，可选：memory、redis、mongodb
+     * 如果不填，默认基于内存存储
+     */
+    private String chatMemoryRepository = "memory";
 }

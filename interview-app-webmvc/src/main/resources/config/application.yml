@@ -183,6 +183,9 @@ interview:
       # 线程名前缀：线程名称的前缀，方便日志追踪（如：AsyncTask-1, AsyncTask-2...）
       thread-name-prefix: AsyncTask-
 
+  # ai相关配置
+  ai:
+    chat-memory-repository: mongodb
 
 
 

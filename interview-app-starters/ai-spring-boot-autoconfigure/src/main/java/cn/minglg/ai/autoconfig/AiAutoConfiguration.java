@@ -1,16 +1,17 @@
 package cn.minglg.ai.autoconfig;
 
+import cn.minglg.ai.config.InMemoryChatMemoryRepositoryConfig;
+import cn.minglg.ai.config.MongoChatMemoryRepositoryConfig;
+import cn.minglg.ai.config.RedisChatMemoryRepositoryConfig;
 import cn.minglg.ai.constant.ChatClientType;
 import cn.minglg.ai.context.UserContextProvider;
 import cn.minglg.ai.properties.AiProperties;
 import cn.minglg.ai.render.CustomMultiCharTemplateRenderer;
-import cn.minglg.ai.repository.RedisChatMemoryRepository;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
-import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.ai.template.st.StTemplateRenderer;
@@ -18,10 +19,9 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.context.annotation.Import;
 
 import java.util.Map;
 
@@ -35,6 +35,11 @@ import java.util.Map;
  * @Version 1.0
  */
 @EnableConfigurationProperties(AiProperties.class)
+@Import({
+        InMemoryChatMemoryRepositoryConfig.class,
+        MongoChatMemoryRepositoryConfig.class,
+        RedisChatMemoryRepositoryConfig.class
+})
 @AutoConfiguration
 public class AiAutoConfiguration {
 
@@ -105,19 +110,6 @@ public class AiAutoConfiguration {
                 .build();
     }
 
-
-    /**
-     * 创建默认的聊天记忆存储库Bean
-     * 当没有其他ChatMemoryRepository实现时，使用内存存储作为后备方案
-     *
-     * @return ChatMemoryRepository 默认的内存存储实现
-     */
-    @Bean
-    @ConditionalOnMissingBean(ChatMemoryRepository.class)
-    public ChatMemoryRepository chatMemoryRepository() {
-        return new InMemoryChatMemoryRepository();
-    }
-
     /**
      * 创建聊天记忆实例的工厂方法
      *
@@ -161,22 +153,6 @@ public class AiAutoConfiguration {
     @ConditionalOnMissingBean
     public UserContextProvider userContextProvider() {
         return () -> 0L;
-    }
-
-
-    /**
-     * 创建Redis聊天记忆仓库Bean
-     *
-     * @param redisTemplate       Redis字符串模板，用于与Redis进行数据交互
-     * @param aiProperties        AI配置属性，包含AI相关的配置信息
-     * @param userContextProvider 用户上下文提供者，用于获取用户相关信息
-     * @return Redis聊天记忆仓库实例
-     */
-    @Bean
-    @ConditionalOnClass({StringRedisTemplate.class})
-    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-    public RedisChatMemoryRepository redisChatMemoryRepository(StringRedisTemplate redisTemplate, AiProperties aiProperties, UserContextProvider userContextProvider) {
-        return new RedisChatMemoryRepository(redisTemplate, aiProperties, userContextProvider);
     }
 
 }

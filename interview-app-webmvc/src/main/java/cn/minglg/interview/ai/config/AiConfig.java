@@ -1,7 +1,8 @@
 package cn.minglg.interview.ai.config;
 
+import cn.minglg.ai.context.UserContextProvider;
+import cn.minglg.authentication.utils.UserUtils;
 import cn.minglg.interview.common.constant.task.TaskType;
-import cn.minglg.interview.common.context.SecurityUserContext;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,8 +79,8 @@ public class AiConfig {
     }
 
     @Bean
-    public SecurityUserContext securityUserContext() {
-        return new SecurityUserContext();
+    public UserContextProvider userContextProvider() {
+        return () -> UserUtils.getCurrentUser().getUserId();
     }
 
 }
