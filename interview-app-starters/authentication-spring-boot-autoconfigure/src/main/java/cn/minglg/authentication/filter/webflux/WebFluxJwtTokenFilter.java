@@ -1,6 +1,7 @@
 package cn.minglg.authentication.filter.webflux;
 
 import cn.minglg.authentication.constant.response.ResponseCode;
+import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.pojo.User;
 import cn.minglg.authentication.properties.WebFluxSecurityProperties;
 import cn.minglg.authentication.utils.JwtUtils;
@@ -33,6 +34,7 @@ import java.util.List;
 public class WebFluxJwtTokenFilter implements WebFilter {
     private final WebFluxSecurityProperties securityProperties;
     private final ReactiveStringRedisTemplate redisTemplate;
+    private final RequestScopedUserContext userContext;
 
 
     /**
@@ -90,7 +92,10 @@ public class WebFluxJwtTokenFilter implements WebFilter {
                         if (valid) {
                             // 认证成功，设置安全上下文并继续执行
                             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                            Context context = ReactiveSecurityContextHolder.withAuthentication(authenticationToken);
+                            Context context = ReactiveSecurityContextHolder
+                                    .withAuthentication(authenticationToken);
+                            // 设置到请求作用域的用户上下文
+                            userContext.setUserId(user.getUserId());
                             return chain.filter(exchange)
                                     .contextWrite(context);
                         }

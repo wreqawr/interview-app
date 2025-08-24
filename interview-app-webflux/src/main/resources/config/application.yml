@@ -1,6 +1,15 @@
 server:
   port: 8082
 
+# actuator观测指标
+management:
+  endpoints:
+    web:
+      discovery:
+        enabled: true
+      exposure:
+        include: '*'
+
 spring:
   application:
     name: interview-app-webflux
@@ -37,12 +46,12 @@ spring:
           min-idle: 0
           max-wait: -1ms
   # ai-alibaba配置
-#  ai:
-#    dashscope:
-#      api-key: ${ALIYUN_API_KEY}
-#      chat:
-#        options:
-#          model: qwen-plus
-#interview:
-#  ai:
-#    chat-memory-repository: memory
+  ai:
+    dashscope:
+      api-key: ${ALIYUN_API_KEY}
+      chat:
+        options:
+          model: qwen-plus
+interview:
+  ai:
+    chat-memory-repository: redis

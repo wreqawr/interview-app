@@ -2,12 +2,15 @@ package cn.minglg.ai.config;
 
 import cn.minglg.ai.context.UserContextProvider;
 import cn.minglg.ai.properties.AiProperties;
+import cn.minglg.ai.repository.ReactiveRedisChatMemoryRepository;
 import cn.minglg.ai.repository.RedisChatMemoryRepository;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
@@ -35,7 +38,14 @@ public class RedisChatMemoryRepositoryConfig {
      * @return Redis聊天记忆仓库实例
      */
     @Bean("redisChatMemoryRepository")
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
     public ChatMemoryRepository redisChatMemoryRepository(StringRedisTemplate redisTemplate, AiProperties aiProperties, UserContextProvider userContextProvider) {
         return new RedisChatMemoryRepository(redisTemplate, aiProperties, userContextProvider);
+    }
+
+    @Bean("reactiveRedisChatMemoryRepository")
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+    public ChatMemoryRepository reactiveRedisChatMemoryRepository(ReactiveStringRedisTemplate redisTemplate, AiProperties aiProperties, UserContextProvider userContextProvider) {
+        return new ReactiveRedisChatMemoryRepository(redisTemplate, aiProperties, userContextProvider);
     }
 }

@@ -3,7 +3,11 @@ package cn.minglg.authentication.utils;
 import cn.minglg.authentication.exception.UnKnowUserException;
 import cn.minglg.authentication.pojo.User;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Objects;
 
 /**
  * ClassName:UserUtils
@@ -21,6 +25,19 @@ public class UserUtils {
     public static User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof User user) {
+            return user;
+        }
+        throw new UnKnowUserException("未知用户！");
+    }
+
+    public static User getReactiveCurrentUser() {
+        User user = ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .filter(Objects::nonNull)
+                .filter(authentication -> authentication.getPrincipal() instanceof User)
+                .map(authentication -> (User) authentication.getPrincipal())
+                .block();
+        if (user != null) {
             return user;
         }
         throw new UnKnowUserException("未知用户！");

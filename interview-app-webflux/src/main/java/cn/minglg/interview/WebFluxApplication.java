@@ -1,5 +1,7 @@
 package cn.minglg.interview;
 
+import com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeImageAutoConfiguration;
+import com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeVideoAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -13,7 +15,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Version 1.0
  */
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+        DashScopeImageAutoConfiguration.class,
+        DashScopeVideoAutoConfiguration.class
+})
 public class WebFluxApplication {
     public static void main(String[] args) {
         SpringApplication.run(WebFluxApplication.class, args);
