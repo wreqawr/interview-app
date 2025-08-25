@@ -45,6 +45,15 @@ spring:
           max-idle: 8
           min-idle: 0
           max-wait: -1ms
+
+    # mongodb配置
+    mongodb:
+      host: ${MONGODB_HOST}
+      port: ${MONGODB_PORT}
+      username: ${MONGODB_USERNAME}
+      password: ${MONGODB_PASSWORD}
+      database: interview
+
   # ai-alibaba配置
   ai:
     dashscope:
@@ -54,4 +63,4 @@ spring:
           model: qwen-plus
 interview:
   ai:
-    chat-memory-repository: redis
+    chat-memory-repository: mongodb

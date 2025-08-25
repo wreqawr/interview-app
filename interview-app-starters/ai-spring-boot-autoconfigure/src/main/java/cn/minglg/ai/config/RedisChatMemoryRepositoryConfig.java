@@ -2,8 +2,8 @@ package cn.minglg.ai.config;
 
 import cn.minglg.ai.context.UserContextProvider;
 import cn.minglg.ai.properties.AiProperties;
-import cn.minglg.ai.repository.ReactiveRedisChatMemoryRepository;
-import cn.minglg.ai.repository.RedisChatMemoryRepository;
+import cn.minglg.ai.repository.webflux.ReactiveRedisChatMemoryRepository;
+import cn.minglg.ai.repository.webmvc.RedisChatMemoryRepository;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

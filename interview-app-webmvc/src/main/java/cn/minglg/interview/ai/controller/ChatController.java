@@ -1,6 +1,5 @@
 package cn.minglg.interview.ai.controller;
 
-import cn.minglg.interview.ai.service.ChatService;
 import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.common.response.R;
@@ -27,7 +26,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/ai")
 public class ChatController {
-    private final ChatService chatService;
+    //private final ChatService chatService;
 
     @PostMapping(path = "/chat")
     @ResponseEntityExceptionHandler(
@@ -36,7 +35,8 @@ public class ChatController {
     public ResponseEntity<R> chatOnline(@RequestBody Map<String, String> paramMap) {
         String conversationId = paramMap.get("conversationId");
         String userMessage = paramMap.get("userMessage");
-        R result = chatService.generalChat(conversationId, userMessage);
+        //R result = chatService.generalChat(conversationId, userMessage);
+        R result = null;
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

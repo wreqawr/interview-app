@@ -1,4 +1,4 @@
-package cn.minglg.ai.repository;
+package cn.minglg.ai.repository.webflux;
 
 import cn.minglg.ai.context.UserContextProvider;
 import cn.minglg.ai.deserializer.MessageDeserializer;
@@ -19,7 +19,7 @@ import java.util.Objects;
 
 /**
  * ClassName:ReactiveRedisChatMemoryRepository
- * Package:cn.minglg.ai.repository
+ * Package:cn.minglg.ai.repository.webflux
  * Description:
  *
  * @Author kfzx-minglg

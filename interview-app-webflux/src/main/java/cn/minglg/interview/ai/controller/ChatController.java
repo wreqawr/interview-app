@@ -27,12 +27,25 @@ import java.util.Map;
 public class ChatController {
     private final ChatService chatService;
 
+    /**
+     * 处理聊天请求的接口方法
+     *
+     * @param chatParamMap 包含聊天参数的Map对象，包含以下键值：
+     *                     - conversationId: 会话ID
+     *                     - userMessage: 用户消息内容
+     *                     - taskType: 任务类型
+     *                     - params: 额外参数Map
+     * @return 返回一个Flux流，包含聊天响应的字符串数据
+     */
     @PostMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @SuppressWarnings("unchecked")
     public Flux<String> chat(@RequestBody Map<String, Object> chatParamMap) {
+        // 从参数Map中提取聊天所需的基本信息
         String conversationId = (String) chatParamMap.get("conversationId");
         String userMessage = (String) chatParamMap.get("userMessage");
         TaskType taskType = TaskType.fromString((String) chatParamMap.get("taskType"));
+
+        // 安全地提取参数Map，如果转换失败则使用空Map
         Map<String, Object> params;
         try {
             params = (Map<String, Object>) chatParamMap.get("params");
@@ -40,6 +53,8 @@ public class ChatController {
             params = Map.of();
         }
 
+        // 调用聊天服务处理聊天逻辑并返回响应流
         return chatService.chat(conversationId, userMessage, taskType, params);
     }
+
 }

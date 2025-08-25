@@ -1,4 +1,4 @@
-package cn.minglg.ai.repository;
+package cn.minglg.ai.repository.webmvc;
 
 import cn.minglg.ai.context.UserContextProvider;
 import cn.minglg.ai.deserializer.MessageDeserializer;
@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * ClassName:MongoChatMemoryRepository
- * Package:cn.minglg.ai.repository
+ * Package:cn.minglg.ai.repository.webmvc
  * Description:
  *
  * @Author kfzx-minglg
@@ -84,7 +84,7 @@ public class MongoChatMemoryRepository implements ChatMemoryRepository {
                         try {
                             return objectMapper.readValue(messageString, Message.class);
                         } catch (JsonProcessingException e) {
-                            throw new RuntimeException("将redis中的消息反序列成Message对象失败！", e);
+                            throw new RuntimeException("将mongo中的消息反序列成Message对象失败！", e);
                         }
                     })
                     .toList();

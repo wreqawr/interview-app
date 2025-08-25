@@ -1,4 +1,4 @@
-package cn.minglg.ai.repository;
+package cn.minglg.ai.repository.webmvc;
 
 import cn.minglg.ai.context.UserContextProvider;
 import cn.minglg.ai.deserializer.MessageDeserializer;
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * ClassName:RedisChatMemoryRepository
- * Package:cn.minglg.interview.ai.repository
+ * Package:cn.minglg.interview.ai.repository.webmvc
  * Description:自定义的redis上下文持久化
  *
  * @Author kfzx-minglg

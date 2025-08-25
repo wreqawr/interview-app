@@ -38,7 +38,6 @@ public class AiConfig {
         return () -> {
             Long userId = userContext.getUserId();
             if (userId != null) {
-                System.out.println("从RequestScopedUserContext获取到用户ID: " + userId);
                 return userId;
             }
             throw new UnKnowUserException("未知用户！");
