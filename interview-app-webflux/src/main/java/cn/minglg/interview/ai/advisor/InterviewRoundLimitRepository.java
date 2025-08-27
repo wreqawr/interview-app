@@ -33,16 +33,18 @@ public class InterviewRoundLimitRepository implements RoundLimitRepository {
     public ChatClientRequest modifyChatClientRequest(ChatClientRequest chatClientRequest, String taskTypeString) {
         // 第一步：获取当前的对话类型，只有面试才需要限制
         TaskType taskType = TaskType.fromString(taskTypeString);
-        if (taskType != TaskType.GENERAL_CHAT) {
+        if (taskType != TaskType.MOCK_INTERVIEW) {
             return chatClientRequest;
         }
         // 第二步：获得用户输入文本，并构建提示词模板
         String currentUserMessage = chatClientRequest.prompt().getUserMessage().getText();
         Map<String, Object> templateParams = Map.of("currentUserMessage", currentUserMessage);
         String renderedTemplate = promptTemplate.render(templateParams);
-        // 第三步：修改请求
+        // 第三步：修改请求(只修改prompt，不修改context
+        Map<String, Object> context = chatClientRequest.context();
         return ChatClientRequest.builder()
                 .prompt(Prompt.builder().content(renderedTemplate).build())
+                .context(context)
                 .build();
     }
 }

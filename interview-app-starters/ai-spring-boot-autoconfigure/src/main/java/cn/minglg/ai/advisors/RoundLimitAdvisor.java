@@ -32,10 +32,6 @@ public class RoundLimitAdvisor implements BaseChatMemoryAdvisor {
     private final ChatMemory chatMemory;
     private final RoundLimitProperties roundLimitProperties;
     private final RoundLimitRepository roundLimitRepository;
-//    protected final int order;
-//    protected final String defaultConversationId;
-//    protected final Scheduler scheduler;
-//    protected final int maxRounds;
 
     @Override
     public int getOrder() {
@@ -114,11 +110,21 @@ public class RoundLimitAdvisor implements BaseChatMemoryAdvisor {
 
     }
 
+    /**
+     * 获取任务类型字符串
+     *
+     * @param context               上下文映射，包含任务相关的上下文信息，不能为null且不能包含null键
+     * @param defaultConversationId 默认对话ID，不能为null或空字符串
+     * @return 任务类型字符串，如果上下文中包含任务类型则返回上下文中的值，否则返回默认的任务类型字符串
+     */
     private String getTaskTypeString(Map<String, Object> context, String defaultConversationId) {
         Assert.notNull(context, "context cannot be null");
         Assert.noNullElements(context.keySet().toArray(), "context cannot contain null keys");
         Assert.hasText(defaultConversationId, "defaultConversationId cannot be null or empty");
+
+        // 如果上下文中包含任务类型字符串，则使用上下文中的值，否则使用默认值
         return context.containsKey(RoundLimitRepository.TASK_TYPE_STRING) ? context.get(RoundLimitRepository.TASK_TYPE_STRING).toString()
                 : roundLimitProperties.getDefaultTaskTypeString();
     }
+
 }
