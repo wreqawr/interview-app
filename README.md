@@ -1,397 +1,275 @@
-# Interview App - AI 模拟面试系统
+## Interview App - AI 模拟面试系统（详解版）
 
 [![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://openjdk.java.net/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Maven](https://img.shields.io/badge/Maven-3.9+-blue.svg)](https://maven.apache.org/)
-[![Docker](https://img.shields.io/badge/Docker-20.10+-blue.svg)](https://www.docker.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-> 🚀 **Interview App** 是一个基于 Spring Boot 3.x 的智能 AI 模拟面试系统，提供简历分析、AI 面试、用户管理等核心功能。项目采用模块化架构设计，通过自定义
-> Spring Boot Starter 实现功能模块的复用和共享。
-
-## ✨ 核心特性
-
-### 🤖 **AI 驱动功能**
-
-- **智能简历解析**: 基于大语言模型的简历内容提取和结构化分析
-- **AI 模拟面试**: 根据简历内容进行个性化技术面试问答
-- **多模型支持**: 集成阿里云 DashScope 等多种 AI 服务
-- **智能提示词**: 动态模板渲染，支持中英文混合提示词
-
-### 🔧 **自定义启动器架构**
-
-- **模块化设计**: 通过 `interview-app-starter` 实现功能模块的复用
-- **自动配置**: Spring Boot 自动配置机制，零配置集成
-- **安全框架**: 基于 RBAC 的用户权限管理系统
-- **可插拔**: 支持在不同项目中独立使用各个模块
-
-### 🏗️ **技术架构**
-
-- **微服务就绪**: 支持单体部署和微服务拆分
-- **多数据源**: MySQL、Redis Cluster、MongoDB、MinIO 集成
-- **异步处理**: 基于 Spring 异步任务处理简历分析
-- **容器化部署**: Docker + Docker Compose 支持
-
-## 🏗️ 项目架构
-
-### 模块结构
-
-```
-interview-app/                          # 父项目
-├── interview-app-starter/             # 启动器模块
-│   ├── authentication-spring-boot-autoconfigure/  # 自动配置模块
-│   │   ├── config/                   # 安全配置
-│   │   ├── filter/                   # 认证过滤器
-│   │   ├── handler/                  # 认证处理器
-│   │   ├── properties/               # 配置属性
-│   │   ├── service/                  # 认证服务
-│   │   └── utils/                    # 工具类
-│   └── authentication-spring-boot-starter/        # 启动器入口
-├── interview-app-mvc/                 # Web MVC 模块
-│   ├── ai/                           # AI 功能模块
-│   │   ├── config/                   # AI 配置
-│   │   ├── controller/               # AI 控制器
-│   │   ├── core/                     # AI 核心服务
-│   │   │   ├── interview/            # 面试服务
-│   │   │   └── resume/               # 简历服务
-│   │   ├── repository/               # AI 存储
-│   │   ├── render/                   # 模板渲染
-│   │   └── service/                  # AI 服务
-│   ├── resume/                       # 简历管理模块
-│   ├── user/                         # 用户管理模块
-│   ├── job/                          # 职位管理模块
-│   ├── minio/                        # 文件存储模块
-│   └── common/                       # 公共模块
-└── 构建和部署文件
-    ├── build-all.sh                  # 统一构建脚本
-    ├── manage-modules.sh             # 模块管理脚本
-    ├── docker-compose-all.yml        # 应用服务编排
-    └── docker-compose-infrastructure.yml # 基础设施服务
-```
-
-### 技术栈
-
-- **后端框架**: Spring Boot 3.4.6 + Spring Security + Spring AI
-- **数据访问**: MyBatis + Druid + Spring Data Redis + Spring Data MongoDB
-- **AI 服务**: 阿里云 DashScope + Spring AI
-- **存储服务**: MySQL 8.0 + Redis Cluster + MongoDB 6.0 + MinIO
-- **构建工具**: Maven 3.9+ + Docker + Docker Compose
-- **开发语言**: Java 17
-
-## 🚀 快速开始
-
-### 环境要求
-
-- **JDK**: 17 或更高版本
-- **Maven**: 3.9+
-- **Docker**: 20.10+ (推荐)
-- **Docker Compose**: 2.0+
-
-### 快速启动
-
-#### 1. 克隆项目
-
-```bash
-git clone git@github.com:wreqawr/interview-app.git
-cd interview-app
-```
-
-#### 2. 一键构建和部署
-
-```bash
-# 构建所有模块的 Docker 镜像
-./build-all.sh
-
-# 构建并运行所有服务
-./build-all.sh -r
-
-# 启动应用服务编排
-./build-all.sh -s
-```
-
-#### 3. 访问系统
-
-- **主应用**: http://localhost:8081
-- **健康检查**: http://localhost:8081/actuator/health
-- **MinIO 控制台**: http://localhost:9001 (用户名/密码: minioadmin/minioadmin)
-
-### 开发环境
-
-#### 本地构建
-
-```bash
-# 构建整个项目
-mvn clean install -Dmaven.test.skip=true
-
-# 运行 MVC 模块
-cd interview-app-mvc
-mvn spring-boot:run
-```
-
-#### 模块管理
-
-```bash
-# 查看所有模块
-./manage-modules.sh list
-
-# 创建新模块
-./manage-modules.sh create interview-app-realtime spring-boot
-
-# 构建特定模块
-./manage-modules.sh build interview-app-mvc
-```
-
-## 🤖 AI 功能详解
-
-### 智能简历解析
-
-系统基于大语言模型，能够智能解析简历内容并提取结构化信息：
-
-- **信息提取**: 自动识别姓名、联系方式、工作经历、教育背景、技能等
-- **智能纠错**: 自动修正错别字和技术术语错误
-- **内容优化**: 合并同类技术栈，保留量化指标
-- **异常检测**: 标记时间冲突和关键信息缺失
-
-**示例提示词模板**:
-
-```st
-你是一名专业的简历解析专家，请从简历文本中提取关键信息并生成JSON数据...
-```
-
-### AI 模拟面试
-
-根据候选人简历内容，进行个性化的技术面试：
-
-- **简历驱动**: 基于简历内容设计面试问题
-- **难度自适应**: 根据回答质量动态调整问题难度
-- **技术深挖**: 重点考察简历中的技术栈和项目经验
-- **量化评估**: 鼓励候选人提供具体的量化指标
-
-**面试流程**:
-
-1. 简历分析 → 2. 问题设计 → 3. 实时问答 → 4. 综合评估
-
-### 多模型支持
-
-- **阿里云 DashScope**: 主要 AI 服务提供商
-- **Spring AI**: 统一的 AI 抽象层
-- **自定义渲染器**: 支持多种模板格式
-- **记忆管理**: 支持带记忆和无记忆的对话模式
-
-## 🔧 自定义启动器详解
-
-### 架构设计
-
-项目采用 Spring Boot Starter 模式，实现了功能模块的复用和共享：
-
-```
-authentication-spring-boot-autoconfigure  # 自动配置模块
-├── 安全配置 (SecurityConfig)
-├── 认证过滤器 (JwtTokenFilter, CaptchaFilter)
-├── 认证处理器 (CustomAuthenticationHandler)
-├── 配置属性 (WebMvcSecurityProperties)
-└── 工具类 (JwtUtils, CaptchaUtils)
-
-authentication-spring-boot-starter        # 启动器入口
-└── 依赖管理 (引入 autoconfigure 模块)
-```
-
-### 核心特性
-
-- **零配置集成**: 通过 `@EnableAutoConfiguration` 自动启用
-- **条件装配**: 使用 `@ConditionalOnMissingBean` 避免冲突
-- **配置外部化**: 支持通过 `application.yml` 自定义配置
-- **模块复用**: 可在其他项目中独立使用认证模块
-
-### 使用方式
-
-在其他项目中引入启动器：
-
-```xml
-<dependency>
-    <groupId>cn.minglg.interview</groupId>
-    <artifactId>authentication-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
-
-## 📊 核心业务模块
-
-### 简历管理
-
-- **简历上传**: 支持多种格式 (PDF, Word, TXT)
-- **内容解析**: AI 驱动的智能内容提取
-- **版本管理**: 简历历史版本追踪
-- **分析报告**: 求职者视角的优劣势分析
-
-### 用户管理
-
-- **RBAC 权限**: 基于角色的访问控制
-- **多租户**: 支持公司级别的用户管理
-- **安全认证**: JWT + 验证码双重认证
-- **会话管理**: Redis 集群存储用户会话
-
-### 职位管理
-
-- **职位发布**: 企业职位信息管理
-- **智能匹配**: 基于简历内容的职位推荐
-- **状态跟踪**: 简历投递进度管理
-
-## 🐳 部署说明
-
-### Docker 部署
-
-项目提供了完整的 Docker 化支持：
-
-```bash
-# 构建所有镜像
-./build-all.sh
-
-# 启动应用服务
-docker-compose -f docker-compose-all.yml up -d
-
-# 启动基础设施服务（可选）
-docker-compose -f docker-compose-infrastructure.yml up -d
-```
-
-### 环境配置
-
-通过环境变量配置外部服务：
-
-```bash
-# 数据库配置
-MYSQL_JDBC_URL=jdbc:mysql://localhost:3306/interview
-MYSQL_USERNAME=your_username
-MYSQL_PASSWORD=your_password
-
-# Redis 配置
-REDIS_NODE_1=localhost:6379
-REDIS_PASSWORD=your_redis_password
-
-# AI 服务配置
-ALIYUN_API_KEY=your_api_key
-```
-
-### 生产环境
-
-- **高可用**: 支持 Redis Cluster 和 MySQL 主从
-- **监控**: 集成 Spring Boot Actuator
-- **日志**: 结构化日志输出
-- **健康检查**: 容器级别的健康状态监控
-
-## 🔄 开发指南
-
-### 添加新模块
-
-```bash
-# 创建新的 Spring Boot 模块
-./manage-modules.sh create interview-app-realtime spring-boot
-
-# 创建通用工具模块
-./manage-modules.sh create interview-app-common common
-```
-
-### 代码规范
-
-- **包命名**: 遵循 `cn.minglg.interview.{module}` 规范
-- **异常处理**: 使用统一的异常处理机制
-- **日志记录**: 使用 SLF4J + Logback
-- **测试覆盖**: 单元测试覆盖率 > 80%
-
-### API 设计
-
-- **RESTful**: 遵循 REST 设计原则
-- **版本控制**: 通过 URL 路径进行版本管理
-- **统一响应**: 使用 `R<T>` 包装响应结果
-- **错误处理**: 标准化的错误码和错误信息
-
-## 📈 性能优化
-
-### 缓存策略
-
-- **Redis Cluster**: 分布式缓存，支持高并发
-- **本地缓存**: Caffeine 本地缓存，减少网络开销
-- **缓存预热**: 系统启动时预加载热点数据
-
-### 异步处理
-
-- **简历解析**: 异步处理大文件解析任务
-- **AI 调用**: 异步调用 AI 服务，提升响应速度
-- **任务队列**: 基于 Redis 的任务队列管理
-
-### 数据库优化
-
-- **连接池**: Druid 连接池，支持监控和防 SQL 注入
-- **索引优化**: 针对查询场景优化数据库索引
-- **读写分离**: 支持主从数据库配置
-
-## 🧪 测试
-
-### 测试策略
-
-- **单元测试**: 使用 JUnit 5 + Mockito
-- **集成测试**: Spring Boot Test 集成测试
-- **端到端测试**: 完整的业务流程测试
-
-### 测试命令
-
-```bash
-# 运行所有测试
-mvn test
-
-# 运行特定模块测试
-cd interview-app-mvc
-mvn test
-
-# 生成测试报告
-mvn surefire-report:report
-```
-
-## 📚 相关文档
-
-- [构建指南](BUILD_GUIDE_ALL.md) - 完整的构建和部署说明
-- [MVC 模块指南](interview-app-mvc/BUILD_GUIDE.md) - MVC 模块详细说明
-- [API 文档](docs/api.md) - 接口文档和示例
-- [部署指南](docs/deployment.md) - 生产环境部署指南
-
-## 🤝 贡献指南
-
-我们欢迎所有形式的贡献！
-
-### 贡献方式
-
-1. **报告 Bug**: 在 [Issues](../../issues) 中报告问题
-2. **功能建议**: 提出新功能或改进建议
-3. **代码贡献**: 提交 Pull Request
-4. **文档改进**: 完善项目文档
-
-### 开发流程
-
-1. Fork 项目
-2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 创建 Pull Request
-
-## 📄 许可证
-
-本项目采用 [MIT 许可证](LICENSE)。
-
-## 🙏 致谢
-
-- **Spring Boot**: 优秀的应用框架
-- **Spring AI**: 统一的 AI 抽象层
-- **阿里云 DashScope**: 强大的 AI 服务
-- **开源社区**: 所有贡献者和用户
-
-## 📞 联系我们
-
-- **项目维护者**: kfzx-minglg
-- **项目地址**: [GitHub Repository](../../)
-- **问题反馈**: [Issues](../../issues)
-- **功能建议**: [Discussions](../../discussions)
+**简介**：Interview App 是一个以“AI 驱动的模拟面试”为核心的后端项目，采用模块化与自定义 Starter 架构，支持 WebFlux 与 WebMvc 两种运行形态。系统将“AI 聊天/面试能力”抽象为独立的 Starter，便于在不同项目中复用；同时提供认证 Starter，开箱即用地集成安全能力。
 
 ---
 
-**Interview App** - 让 AI 为你的面试保驾护航！ 🚀
+## 系统功能点与设计意图
+
+- **AI 通用聊天与面试问答**
+  - 通过 Spring AI 与阿里云 DashScope 整合，提供通用对话与“基于简历内容的模拟面试”。
+  - 设计意图：将模型调用、提示词渲染、对话上下文记忆、对话轮次控制分层抽象，形成可组合的能力单元（Advisor/Memory/Renderer）。
+
+- **提示词模板渲染（TemplateRenderer）**
+  - 支持 StringTemplate(`StTemplateRenderer`) 与“自定义多字符分隔渲染器”(`CustomMultiCharTemplateRenderer`) 两种。
+  - 设计意图：解耦提示词模板与业务逻辑，允许团队自由选择单字符或多字符分隔符，兼容多语言与复杂模板。
+
+- **对话记忆（ChatMemory）与存储（Repository）**
+  - 可配置 Memory、Redis、MongoDB 三种存储；配合 `MessageChatMemoryAdvisor` 自动注入上下文历史。
+  - 设计意图：将“上下文记忆”独立为能力，既能用于面试场景，也能复用于其他 AI 对话业务。
+
+- **对话轮次限制（RoundLimitAdvisor）**
+  - 可配置最大轮次、执行顺序、默认会话 ID、默认任务类型；应用侧实现 `RoundLimitRepository` 挂载面试“停止/结束”逻辑（如返回总结提示词）。
+  - 设计意图：用 Advisor 对对话过程施加规则控制，保持 ChatClient 默认行为的简洁与可扩展。
+
+- **认证与鉴权（Authentication Starter）**
+  - 提供 WebMvc/WebFlux 两套安全自动配置、JWT 验证、验证码、登录登出处理器、异常处理等。
+  - 设计意图：安全能力模块化，Starter 化后在任意应用可即插即用。
+
+- **丰富的领域能力（WebMvc 应用）**
+  - 简历模块：上传、解析（AI 驱动）、结构化存储、综合评估。
+  - 用户模块：公司/角色/权限管理，配套 MyBatis XML 与初始化 SQL。
+  - MinIO 文件存储：上传下载与统一封装。
+
+---
+
+## 目录结构（逐层说明）
+
+```
+interview-app/                                 # 父项目 (pom)
+├── interview-app-starters/                    # 自定义 Starter 聚合模块
+│   ├── authentication-spring-boot-autoconfigure/
+│   │   ├── src/main/java/cn/minglg/authentication/
+│   │   │   ├── autoconfig/                   # WebMvc/WebFlux 安全自动配置入口
+│   │   │   ├── config/                        # Security 配置（Mvc/WebFlux）
+│   │   │   ├── filter/handler/exception/...   # 认证过滤器/处理器/异常
+│   │   │   ├── properties/                    # 安全属性类（WebMvc/WebFlux）
+│   │   │   └── utils/                          # Jwt/RSA/Captcha 等工具
+│   │   └── META-INF/spring/AutoConfiguration.imports
+│   ├── authentication-spring-boot-starter/    # 认证 Starter（声明式引入上面的自动配置）
+│   ├── ai-spring-boot-autoconfigure/
+│   │   ├── src/main/java/cn/minglg/ai/
+│   │   │   ├── autoconfig/AiAutoConfiguration.java      # AI 自动配置(核心)
+│   │   │   ├── advisors/                                # RoundLimitAdvisor 等
+│   │   │   ├── config/                                  # ChatMemory Repository 配置(InMemory/Redis/Mongo)
+│   │   │   ├── properties/                              # AiProperties/RoundLimitProperties
+│   │   │   ├── render/                                  # 自定义多字符模板渲染器
+│   │   │   └── constant/context/pojo/...                # 常量/上下文/POJO
+│   │   └── META-INF/
+│   │       ├── spring/AutoConfiguration.imports         # 自动配置入口
+│   │       └── additional-spring-configuration-metadata.json # 属性元数据(IDE 补全)
+│   └── ai-spring-boot-starter/               # AI Starter（声明式引入 AI 自动配置）
+│
+├── interview-app-webflux/                     # WebFlux 应用（反应式接口）
+│   ├── src/main/java/cn/minglg/interview/
+│   │   ├── WebFluxApplication.java            # 应用入口
+│   │   └── ai/
+│   │       ├── controller/ChatController.java # 聊天 REST 接口（Flux 返回）
+│   │       ├── service/ChatService.java       # ChatClient 调用封装 + 上下文参数组装
+│   │       ├── advisor/RoundLimitRepositoryImpl.java     # 应用侧实现轮次限制仓库
+│   │       └── config/AiConfig.java           # 组合 Prompt、Repository 的装配桥接
+│   └── src/main/resources/
+│       ├── config/application.yml             # WebFlux 应用配置（端口、Redis/Mongo、AI 模型等）
+│       └── prompt/                            # Prompt 模板（general/interview/resume）
+│
+└── interview-app-webmvc/                      # WebMvc 应用（业务更完整）
+    ├── src/main/java/cn/minglg/interview/
+    │   ├── WebMvcApplication.java
+    │   ├── ai/                                # 简历/面试核心 (解析、问答、评估)
+    │   ├── user/                              # 用户/公司/权限
+    │   ├── minio/                             # 文件存储封装
+    │   └── common/mapper/properties/...       # 公共组件/配置/持久化
+    ├── src/main/resources/
+    │   ├── config/application.yml
+    │   ├── mapper/                            # MyBatis XML（user/company/role 等）
+    │   ├── prompt/                            # 简历/面试模板
+    │   └── init/ddl & dml                     # 初始化建表与数据脚本
+    └── test/java/...                          # 单元/集成测试
+```
+
+---
+
+## 架构设计（分层与装配）
+
+- **Starter 抽象层**：
+  - `ai-spring-boot-autoconfigure` 将 AI 能力抽象为：`ChatClient` + `Advisor` + `ChatMemory` + `TemplateRenderer` + `Properties`。
+  - 通过 `@AutoConfiguration` 与 `AutoConfiguration.imports` 自动生效，应用只需引入 `ai-spring-boot-starter` 依赖即可使用。
+
+- **应用装配层（WebFlux/WebMvc）**：
+  - 业务侧（如 WebFlux）根据自身需求提供 `RoundLimitRepository` 实现，桥接 Prompt 模板与“结束语/终止逻辑”。
+  - 应用可自定义 `AiConfig`，选择合适的 Prompt 模板、设置 TaskType 上下文参数等。
+
+- **可插拔存储层（ChatMemoryRepository）**：
+  - InMemory（默认）、Redis、MongoDB 三种实现，按属性开关装配，满足从开发到生产的阶段性需求。
+
+- **Advisor 链式编排**：
+  - 核心默认组合：`SimpleLoggerAdvisor` + `MessageChatMemoryAdvisor` + `RoundLimitAdvisor`。
+  - 顺序与开关由 `RoundLimitProperties.order` 与 `enabled` 控制，便于按需开启。
+
+---
+
+## AI 模块（Starter 能力详解）
+
+### 1) ChatClient 映射
+- 自动提供 `Map<ChatClientType, ChatClient>`：
+  - `GENERAL_WITHOUT_MEMORY`：仅日志 Advisor，适合一次性问答或健康检查。
+  - `GENERAL_WITH_MEMORY`：叠加 `MessageChatMemoryAdvisor` 与 `RoundLimitAdvisor`，适合连续对话与面试流程。
+- 设计理由：通过枚举键选择不同默认能力组合，简化业务层的获取与切换。
+
+### 2) TemplateRenderer（模板渲染器）
+- `stTemplateRenderer`（默认，`StTemplateRenderer`）：单字符分隔符，默认 `<` 与 `>`。
+- `customTemplateRenderer`（备选，`CustomMultiCharTemplateRenderer`）：多字符分隔符，默认 `#{` 与 `}`。
+- 选择策略：若未定义 `stTemplateRenderer`，则装配 `customTemplateRenderer`。
+
+### 3) ChatMemory 与 Repository
+- `ChatMemory`：使用 `MessageWindowChatMemory`，`max-messages` 默认 50，可通过属性调整。
+- Repository 三选一：
+  - `memory`（默认）：无外部依赖，开发/测试友好。
+  - `redis`：支持集群、过期控制（`chat-memory-redis-expire-days`）。
+  - `mongodb`：适合更复杂查询与持久需求。
+
+### 4) RoundLimitAdvisor（对话轮次限制）
+- 属性类：`RoundLimitProperties` 前缀 `interview.ai.advisor.round`
+- 关键字段：
+  - `enabled`：是否启用（默认 false）
+  - `max-rounds`：最大轮次（默认 5）
+  - `order`：执行顺序（建议早于 ChatMemory）
+  - `default-conversation-id`：默认会话 ID
+  - `default-task-type-string`：默认任务类型字符串（如 `GENERAL_CHAT`）
+- 装配条件：`ChatMemory` + `RoundLimitProperties` + `RoundLimitRepository`
+- 应用职责：实现 `RoundLimitRepository`，定义“到达上限时如何修改请求/响应”（如返回“结束”模板）。
+
+### 5) 关键类与条件注解（节选）
+- `AiAutoConfiguration.chatClient(...)`：`@ConditionalOnClass(ChatClient.class)`
+- `AiAutoConfiguration.chatMemory(...)`：`@ConditionalOnMissingBean(ChatMemory.class)`
+- `AiAutoConfiguration.chatMemoryAdvisor(...)`：`@ConditionalOnBean(ChatMemory.class)`
+- `AiAutoConfiguration.roundLimitAdvisor(...)`：`@ConditionalOnBean({ChatMemory.class, RoundLimitProperties.class, RoundLimitRepository.class})`
+
+---
+
+## 配置清单（additional-spring-configuration-metadata.json 已维护）
+
+### interview.ai（通用）
+```yaml
+interview:
+  ai:
+    chat-memory-repository: memory | redis | mongodb  # 默认 memory
+    chat-memory-redis-key-prefix: "chat:history"
+    chat-memory-redis-expire-days: 30
+    max-chat-messages: 50
+
+    # 单字符分隔符（默认）
+    start-delimiter-character: "<"
+    end-delimiter-character: ">"
+
+    # 或多字符分隔符（二选一）
+    start-delimiter-string: "#{"
+    end-delimiter-string: "}"
+```
+
+### interview.ai.advisor.round（轮次限制）
+```yaml
+interview:
+  ai:
+    advisor:
+      round:
+        enabled: true
+        max-rounds: 3
+        # order: 100  # 可选，建议早于 ChatMemory
+        # default-conversation-id: default
+        # default-task-type-string: GENERAL_CHAT
+```
+
+---
+
+## WebFlux 应用（cn.minglg.interview:webflux）
+
+- `ChatController`：暴露聊天接口（通常以 POST/stream 形式返回），将参数传递给 `ChatService`。
+- `ChatService`：
+  - 根据请求与业务场景，组装 `ChatClient` 所需上下文（如 `ChatMemory.CONVERSATION_ID`、`RoundLimitRepository.TASK_TYPE_STRING`）。
+  - 选择 `ChatClientType`（是否启用记忆/轮次限制）。
+- `RoundLimitRepositoryImpl`：
+  - 基于不同 `TaskType` 选择结束/总结类 Prompt 模板。
+  - 在达到最大轮次时，修改 `request/response` 以返回终结性内容。
+- `AiConfig`：
+  - 管理 Prompt 模板映射、公开 `RoundLimitRepository` Bean 等。
+- `application.yml`：
+  - 端口：`server.port=8082`
+  - Redis Cluster：`REDIS_NODE_1..6`、`REDIS_PASSWORD`
+  - MongoDB：`MONGODB_HOST`/`PORT`/`USERNAME`/`PASSWORD`
+  - DashScope 模型：`spring.ai.dashscope.chat.options.model=qwen-plus`
+
+---
+
+## WebMvc 应用（cn.minglg.interview:webmvc）
+
+- 领域模块：
+  - `ai/`：简历解析、面试流程、评估
+  - `user/`：公司、角色、权限、用户管理
+  - `minio/`：对象存储，简历文件管理
+  - `common/`：AOP、通用配置、异常/响应封装、工具等
+- 数据层：
+  - `mapper/*.xml`：MyBatis 映射文件
+  - `init/ddl & dml`：初始化表结构与基础数据
+
+---
+
+## 认证 Starter（简述）
+
+- WebMvc/WebFlux 双栈支持：安全过滤器链、JWT 验证、验证码校验、异常处理器
+- 可配置项：见 `authentication-spring-boot-autoconfigure` 下 `properties` 包
+- 扩展点：覆盖/新增 AuthenticationProvider、Token 生成策略、Captcha 实现等
+
+---
+
+## 构建与运行
+
+- 先安装自定义 Starters（供 IDE/应用识别元数据与自动配置）：
+```bash
+mvn -q -f interview-app-starters/pom.xml clean install
+```
+
+- 运行 WebFlux：
+```bash
+mvn -q -f interview-app-webflux/pom.xml spring-boot:run
+```
+
+- 运行 WebMvc：
+```bash
+mvn -q -f interview-app-webmvc/pom.xml spring-boot:run
+```
+
+> 提示：请准备好 Redis/MongoDB 与 DashScope 的访问凭据。
+
+---
+
+## 常见问题（排障）
+
+- 启动提示缺少 `MessageChatMemoryAdvisor`：
+  - 确认 `AiAutoConfiguration.chatMemory(...)` 带有 `@Bean` 且已装配 `ChatMemoryRepository`。
+- 启动提示缺少 `RoundLimitAdvisor`：
+  - 确认应用侧已提供 `RoundLimitRepository` Bean（如 WebFlux 的 `RoundLimitRepositoryImpl`）。
+  - 确认 `interview.ai.advisor.round.enabled=true` 且 `ChatMemory` 存在。
+- 依赖构建异常：
+  - 先执行 Starters 的 `clean install`，再编译/运行应用模块。
+
+---
+
+## 版本与兼容性
+
+- Java 17+
+- Spring Boot 3.4.6
+- Spring AI（通过 `spring-ai-alibaba-starter-dashscope` 1.0.0.x）
+
+> 若升级 Spring Boot/Spring AI，请同步验证 `spring-ai-*` 组件版本与 API 的兼容性（尤其是 ChatClient 与 Advisor 相关）。
+
+---
+
+## 许可证
+
+MIT
 

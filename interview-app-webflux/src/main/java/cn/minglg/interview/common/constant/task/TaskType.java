@@ -18,15 +18,14 @@ public enum TaskType {
     /**
      * 任务类型枚举
      */
-    RESUME_SUMMARIZE("简历结构化"),
-    RESUME_ANALYZE("简历分析"),
+
     SKILL_EVALUATION("能力评估"),
     COMPREHENSIVE_ASSESSMENT("综合评估"),
     RESUME_METADATA_UPDATE("简历元数据更新"),
 
     TASK_RESULT_QUERY("任务执行结果查询"),
 
-    MOCK_INTERVIEW_START("模拟面试开始"),
+    MOCK_INTERVIEW("模拟面试"),
     MOCK_INTERVIEW_STOP("模拟面试结束"),
 
     GENERAL_CHAT("通用聊天"),

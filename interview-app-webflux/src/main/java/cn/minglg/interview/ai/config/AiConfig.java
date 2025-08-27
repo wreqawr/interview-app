@@ -1,8 +1,10 @@
 package cn.minglg.interview.ai.config;
 
+import cn.minglg.ai.advisors.RoundLimitRepository;
 import cn.minglg.ai.context.UserContextProvider;
 import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.exception.UnKnowUserException;
+import cn.minglg.interview.ai.advisor.InterviewRoundLimitRepository;
 import cn.minglg.interview.common.constant.task.TaskType;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.template.TemplateRenderer;
@@ -56,13 +58,14 @@ public class AiConfig {
 
         // 定义各类任务对应的系统提示词文件路径
         String systemPromptForComprehensiveAssessment = "/prompt/resume/综合评估-HR.st";
-        String systemPromptForMockInterviewStart = "/prompt/interview/基于简历内容的模拟面试问答（开始）.st";
+        String systemPromptForMockInterview = "/prompt/interview/基于简历内容的模拟面试问答（开始）.st";
         String systemPromptForMockInterviewStop = "/prompt/interview/基于简历内容的模拟面试问答（结束）.st";
         String systemPromptForGeneralChat = "/prompt/general/通用聊天.st";
 
+
         // 将任务类型与对应的提示词资源进行映射
         map.put(TaskType.COMPREHENSIVE_ASSESSMENT, new ClassPathResource(systemPromptForComprehensiveAssessment));
-        map.put(TaskType.MOCK_INTERVIEW_START, new ClassPathResource(systemPromptForMockInterviewStart));
+        map.put(TaskType.MOCK_INTERVIEW, new ClassPathResource(systemPromptForMockInterview));
         map.put(TaskType.MOCK_INTERVIEW_STOP, new ClassPathResource(systemPromptForMockInterviewStop));
         map.put(TaskType.GENERAL_CHAT, new ClassPathResource(systemPromptForGeneralChat));
         return map;
@@ -91,5 +94,18 @@ public class AiConfig {
         }
         return map;
     }
+
+    /**
+     * 创建RoundLimitRepository实例的Bean
+     *
+     * @param promptTemplateMap 包含任务类型和提示模板映射关系的Map
+     * @return RoundLimitRepository实例
+     */
+    @Bean
+    public RoundLimitRepository roundLimitRepository(Map<TaskType, PromptTemplate> promptTemplateMap) {
+        // 从提示模板映射中获取模拟面试停止任务类型的模板，并创建RoundLimitRepository实现类实例
+        return new InterviewRoundLimitRepository(promptTemplateMap.get(TaskType.MOCK_INTERVIEW_STOP));
+    }
+
 
 }

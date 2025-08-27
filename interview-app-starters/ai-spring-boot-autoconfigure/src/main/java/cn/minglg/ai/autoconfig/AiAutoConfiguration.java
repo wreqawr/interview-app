@@ -16,6 +16,7 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.ai.template.st.StTemplateRenderer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -46,27 +47,29 @@ public class AiAutoConfiguration {
     /**
      * 创建并配置聊天客户端Bean
      *
-     * @param builder 聊天客户端构建器，用于创建不同配置的聊天客户端实例
-     * @param advisor 消息聊天记忆顾问，为需要记忆功能的聊天客户端提供记忆能力
-     * @return 返回一个映射表，包含两种类型的聊天客户端：带记忆功能和不带记忆功能
+     * @param builder                  聊天客户端构建器，用于创建不同配置的聊天客户端实例
+     * @param messageChatMemoryAdvisor 消息记忆顾问，提供聊天记忆功能支持
+     * @return 包含两种类型聊天客户端的映射表，键为客户端类型，值为对应的聊天客户端实例
      */
     @Bean
     @ConditionalOnClass(ChatClient.class)
-    public Map<ChatClientType, ChatClient> chatClient(ChatClient.Builder builder, MessageChatMemoryAdvisor advisor) {
-        // 构建不带记忆的聊天客户端
+    public Map<ChatClientType, ChatClient> chatClient(ChatClient.Builder builder,
+                                                      MessageChatMemoryAdvisor messageChatMemoryAdvisor) {
+        // 构建不带记忆功能的基础聊天客户端
         ChatClient chatWithoutMemory = builder
                 .defaultAdvisors(new SimpleLoggerAdvisor())
                 .build();
-        // 构建带记忆的聊天客户端
+        // 构建带记忆功能的聊天客户端
         ChatClient chatWithMemory = builder
                 .defaultAdvisors(new SimpleLoggerAdvisor())
-                .defaultAdvisors(advisor)
+                .defaultAdvisors(messageChatMemoryAdvisor)
                 .build();
         return Map.of(
                 ChatClientType.GENERAL_WITHOUT_MEMORY, chatWithoutMemory,
                 ChatClientType.GENERAL_WITH_MEMORY, chatWithMemory
         );
     }
+
 
     /**
      * 创建并配置模板渲染器Bean
@@ -118,7 +121,6 @@ public class AiAutoConfiguration {
      * @return 配置好聊天记忆实例
      */
     @Bean
-    @ConditionalOnClass({ChatMemory.class, ChatMemoryRepository.class})
     @ConditionalOnMissingBean(ChatMemory.class)
     public ChatMemory chatMemory(AiProperties aiProperties, ChatMemoryRepository chatMemoryRepository) {
         // 构建消息窗口聊天记忆实例，设置存储库和最大消息数量限制
@@ -136,11 +138,12 @@ public class AiAutoConfiguration {
      * @return MessageChatMemoryAdvisor 消息聊天内存拦截器实例
      */
     @Bean
-    @ConditionalOnClass(MessageChatMemoryAdvisor.class)
     @ConditionalOnMissingBean(MessageChatMemoryAdvisor.class)
+    @ConditionalOnBean(ChatMemory.class)
     public MessageChatMemoryAdvisor chatMemoryAdvisor(ChatMemory chatMemory) {
         return MessageChatMemoryAdvisor.builder(chatMemory).build();
     }
+
 
     /**
      * 创建并返回一个UserContextProvider实例

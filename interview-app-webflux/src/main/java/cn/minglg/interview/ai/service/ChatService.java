@@ -1,5 +1,7 @@
 package cn.minglg.interview.ai.service;
 
+import cn.minglg.ai.advisors.RoundLimitAdvisor;
+import cn.minglg.ai.advisors.RoundLimitRepository;
 import cn.minglg.ai.constant.ChatClientType;
 import cn.minglg.interview.common.constant.task.TaskType;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class ChatService {
     private final Map<ChatClientType, ChatClient> chatClientMap;
     private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
     private final Scheduler blockingScheduler = Schedulers.boundedElastic();
+    private final RoundLimitAdvisor roundLimitAdvisor;
 
     /**
      * 执行聊天对话操作，支持不同的任务类型和系统提示模板
@@ -44,15 +47,14 @@ public class ChatService {
                     // 构建聊天请求对象，包含聊天客户端、提示模板和参数
                     ChatClient chatClient = chatClientMap.get(ChatClientType.GENERAL_WITH_MEMORY);
                     PromptTemplate systemPrompt = systemPromptDynamicTemplate.get(taskType);
-                    PromptTemplate defaultPrompt = systemPromptDynamicTemplate.get(TaskType.GENERAL_CHAT);
-                    PromptTemplate promptTemplate = systemPrompt != null ? systemPrompt : defaultPrompt;
-                    return new ChatRequest(chatClient, promptTemplate, params);
+                    return new ChatRequest(chatClient, systemPrompt, params);
                 })
                 // 切换到专门的线程池
                 .publishOn(blockingScheduler)
                 .flatMapMany(chatRequest ->
                         chatRequest.chatClient.prompt()
-                                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+                                .advisors(a -> a.params(Map.of(ChatMemory.CONVERSATION_ID, conversationId, RoundLimitRepository.TASK_TYPE_STRING, taskType.toString())))
+                                .advisors(roundLimitAdvisor)
                                 .system(chatRequest.promptTemplate.render(chatRequest.params))
                                 .user(userMessage)
                                 .stream()

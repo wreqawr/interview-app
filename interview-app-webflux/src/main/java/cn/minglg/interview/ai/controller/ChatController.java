@@ -43,7 +43,7 @@ public class ChatController {
         // 从参数Map中提取聊天所需的基本信息
         String conversationId = (String) chatParamMap.get("conversationId");
         String userMessage = (String) chatParamMap.get("userMessage");
-        TaskType taskType = TaskType.fromString((String) chatParamMap.get("taskType"));
+        TaskType taskType = TaskType.fromString((String) chatParamMap.get("taskType"), TaskType.GENERAL_CHAT);
 
         // 安全地提取参数Map，如果转换失败则使用空Map
         Map<String, Object> params;
