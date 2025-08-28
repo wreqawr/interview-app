@@ -1,28 +1,26 @@
-package cn.minglg.ai.properties;
+package cn.minglg.interview.ai.properties;
 
 import lombok.Data;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 /**
- * ClassName:RoundLimitProperties
- * Package:cn.minglg.ai.properties
+ * ClassName:InterviewRoundLimitProperties
+ * Package:cn.minglg.interview.ai.properties
  * Description:
  *
  * @Author kfzx-minglg
- * @Create 2025/8/25
+ * @Create 2025/8/28
  * @Version 1.0
  */
-@Data
 @ConfigurationProperties(prefix = "interview.ai.advisor.round")
-public class RoundLimitProperties {
-    /**
-     * 是否启用自动配置，默认不启用
-     */
-    private boolean enabled = false;
+@Component
+@Data
+public class InterviewRoundLimitProperties {
     /**
      * 最大轮次
      */
@@ -34,7 +32,18 @@ public class RoundLimitProperties {
     /**
      * 默认会话ID
      */
-    private String defaultConversationId = ChatMemory.DEFAULT_CONVERSATION_ID;
+    private String defaultConversationId = "interview_round_limit_default";
+
+    /**
+     * 会话ID的key
+     */
+    private final String conversationIdKey = ChatMemory.CONVERSATION_ID;
+
+    /**
+     * 任务类型的key
+     */
+    private String taskTypeKey = "interview_round_limit_task_type";
+
     /**
      * 默认的taskType
      */

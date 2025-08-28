@@ -1,25 +1,19 @@
 package cn.minglg.ai.advisors;
 
-import cn.minglg.ai.properties.RoundLimitProperties;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.ai.chat.client.ChatClientMessageAggregator;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
-import org.springframework.ai.chat.client.advisor.api.BaseChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
 import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
-import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
-import java.util.Map;
-
 /**
- * ClassName:RoundLimitAdvisor
+ * ClassName:CommonAdvisor
  * Package:cn.minglg.ai.advisors
  * Description:
  *
@@ -28,20 +22,18 @@ import java.util.Map;
  * @Version 1.0
  */
 @AllArgsConstructor
-public class RoundLimitAdvisor implements BaseChatMemoryAdvisor {
-    private final ChatMemory chatMemory;
-    private final RoundLimitProperties roundLimitProperties;
-    private final RoundLimitRepository roundLimitRepository;
+public class CommonAdvisor implements BaseAdvisor {
+    private final CommonAdvisorRepository commonAdvisorRepository;
 
     @Override
     public int getOrder() {
-        return roundLimitProperties.getOrder();
+        return commonAdvisorRepository.getOrder();
     }
 
     @NotNull
     @Override
     public Scheduler getScheduler() {
-        return this.roundLimitProperties.getScheduler();
+        return this.commonAdvisorRepository.getScheduler();
     }
 
     /**
@@ -55,21 +47,7 @@ public class RoundLimitAdvisor implements BaseChatMemoryAdvisor {
     @Override
 
     public ChatClientRequest before(@NotNull ChatClientRequest chatClientRequest, @NotNull AdvisorChain advisorChain) {
-        // 第一步：获取当前会话ID，以及任务类型
-        String conversationId = getConversationId(chatClientRequest.context(), roundLimitProperties.getDefaultConversationId());
-        String taskTypeString = getTaskTypeString(chatClientRequest.context(), roundLimitProperties.getDefaultTaskTypeString());
-        // 第二步：获取当前的轮次
-        int currentRound = Math.toIntExact(this.chatMemory.get(conversationId)
-                .stream()
-                .filter(message -> message.getMessageType() == MessageType.ASSISTANT)
-                .count()) + 1;
-
-        // 判断当前轮次是否超出限制，超出限制则修改请求
-        // 适配器模式和模板方法模式，具体的模板方法由用户自行实现
-        if (currentRound > roundLimitProperties.getMaxRounds()) {
-            return roundLimitRepository.modifyChatClientRequest(chatClientRequest, taskTypeString);
-        }
-        return chatClientRequest;
+        return commonAdvisorRepository.modifyChatClientRequest(chatClientRequest);
     }
 
     /**
@@ -82,8 +60,7 @@ public class RoundLimitAdvisor implements BaseChatMemoryAdvisor {
     @NotNull
     @Override
     public ChatClientResponse after(@NotNull ChatClientResponse chatClientResponse, @NotNull AdvisorChain advisorChain) {
-        String taskTypeString = getTaskTypeString(chatClientResponse.context(), roundLimitProperties.getDefaultTaskTypeString());
-        return roundLimitRepository.modifyChatClientResponse(chatClientResponse, taskTypeString);
+        return commonAdvisorRepository.modifyChatClientResponse(chatClientResponse);
     }
 
     /**
@@ -108,23 +85,6 @@ public class RoundLimitAdvisor implements BaseChatMemoryAdvisor {
                 .transform(flux -> new ChatClientMessageAggregator().aggregateChatClientResponse(flux,
                         response -> this.after(response, streamAdvisorChain)));
 
-    }
-
-    /**
-     * 获取任务类型字符串
-     *
-     * @param context               上下文映射，包含任务相关的上下文信息，不能为null且不能包含null键
-     * @param defaultConversationId 默认对话ID，不能为null或空字符串
-     * @return 任务类型字符串，如果上下文中包含任务类型则返回上下文中的值，否则返回默认的任务类型字符串
-     */
-    private String getTaskTypeString(Map<String, Object> context, String defaultConversationId) {
-        Assert.notNull(context, "context cannot be null");
-        Assert.noNullElements(context.keySet().toArray(), "context cannot contain null keys");
-        Assert.hasText(defaultConversationId, "defaultConversationId cannot be null or empty");
-
-        // 如果上下文中包含任务类型字符串，则使用上下文中的值，否则使用默认值
-        return context.containsKey(RoundLimitRepository.TASK_TYPE_STRING) ? context.get(RoundLimitRepository.TASK_TYPE_STRING).toString()
-                : roundLimitProperties.getDefaultTaskTypeString();
     }
 
 }

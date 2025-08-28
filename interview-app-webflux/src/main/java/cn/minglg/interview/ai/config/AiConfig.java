@@ -1,18 +1,26 @@
 package cn.minglg.interview.ai.config;
 
-import cn.minglg.ai.advisors.RoundLimitRepository;
+import cn.minglg.ai.advisors.ReactiveRoundLimitManager;
 import cn.minglg.ai.context.UserContextProvider;
 import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.exception.UnKnowUserException;
-import cn.minglg.interview.ai.advisor.InterviewRoundLimitRepository;
+import cn.minglg.interview.ai.advisor.InterviewRoundAdvisorRepository;
+import cn.minglg.interview.ai.properties.InterviewRoundLimitProperties;
 import cn.minglg.interview.common.constant.task.TaskType;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -96,15 +104,50 @@ public class AiConfig {
     }
 
     /**
-     * 创建RoundLimitRepository实例的Bean
+     * 创建InterviewRoundAdvisorRepository Bean实例
+     * 该Bean依赖于InterviewRoundLimitProperties和ReactiveRoundLimitManager Bean的存在
      *
-     * @param promptTemplateMap 包含任务类型和提示模板映射关系的Map
-     * @return RoundLimitRepository实例
+     * @param promptTemplateMap 任务类型与提示模板的映射关系，用于获取Mock面试停止的提示模板
+     * @param properties        面试轮次限制配置属性
+     * @param roundLimitManager 响应式轮次限制管理器
+     * @return InterviewRoundAdvisorRepository实例
      */
     @Bean
-    public RoundLimitRepository roundLimitRepository(Map<TaskType, PromptTemplate> promptTemplateMap) {
-        // 从提示模板映射中获取模拟面试停止任务类型的模板，并创建RoundLimitRepository实现类实例
-        return new InterviewRoundLimitRepository(promptTemplateMap.get(TaskType.MOCK_INTERVIEW_STOP));
+    @ConditionalOnBean({InterviewRoundLimitProperties.class, ReactiveRoundLimitManager.class})
+    public InterviewRoundAdvisorRepository roundAdvisorRepository(Map<TaskType, PromptTemplate> promptTemplateMap,
+                                                                  InterviewRoundLimitProperties properties,
+                                                                  ReactiveRoundLimitManager roundLimitManager) {
+        // 从提示模板映射中获取Mock面试停止任务对应的提示模板
+        PromptTemplate promptTemplate = promptTemplateMap.get(TaskType.MOCK_INTERVIEW_STOP);
+        // 创建并返回InterviewRoundAdvisorRepository实例
+        return new InterviewRoundAdvisorRepository(promptTemplate, properties, roundLimitManager);
+    }
+
+    /**
+     * 创建ReactiveRedisTemplate实例，用于处理String类型键和Integer类型值的Redis操作
+     *
+     * @param factory ReactiveRedisConnectionFactory连接工厂实例
+     * @return 配置好的ReactiveRedisTemplate<String, Integer>实例
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public ReactiveRedisTemplate<String, Integer> reactiveIntegerRedisTemplate(
+            ReactiveRedisConnectionFactory factory) {
+
+        StringRedisSerializer keySerializer = new StringRedisSerializer();
+        // 数值序列化，使用字符串表示，简单直观
+        GenericToStringSerializer<Integer> valueSerializer = new GenericToStringSerializer<>(Integer.class);
+
+        // 构建Redis序列化上下文，配置键值的序列化方式
+        RedisSerializationContext<String, Integer> context = RedisSerializationContext
+                .<String, Integer>newSerializationContext(keySerializer)
+                .key(keySerializer)
+                .value(valueSerializer)
+                .hashKey(keySerializer)
+                .hashValue(valueSerializer)
+                .build();
+
+        return new ReactiveRedisTemplate<>(factory, context);
     }
 
 

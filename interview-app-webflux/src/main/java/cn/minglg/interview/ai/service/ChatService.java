@@ -1,18 +1,15 @@
 package cn.minglg.interview.ai.service;
 
-import cn.minglg.ai.advisors.RoundLimitAdvisor;
-import cn.minglg.ai.advisors.RoundLimitRepository;
+import cn.minglg.ai.advisors.CommonAdvisor;
 import cn.minglg.ai.constant.ChatClientType;
+import cn.minglg.interview.ai.properties.InterviewRoundLimitProperties;
 import cn.minglg.interview.common.constant.task.TaskType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 import java.util.Map;
 
@@ -30,8 +27,8 @@ import java.util.Map;
 public class ChatService {
     private final Map<ChatClientType, ChatClient> chatClientMap;
     private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
-    private final Scheduler blockingScheduler = Schedulers.boundedElastic();
-    private final RoundLimitAdvisor roundLimitAdvisor;
+    private final InterviewRoundLimitProperties properties;
+    private final CommonAdvisor commonAdvisor;
 
     /**
      * 执行聊天对话操作，支持不同的任务类型和系统提示模板
@@ -50,15 +47,18 @@ public class ChatService {
                     return new ChatRequest(chatClient, systemPrompt, params);
                 })
                 // 切换到专门的线程池
-                .publishOn(blockingScheduler)
-                .flatMapMany(chatRequest ->
-                        chatRequest.chatClient.prompt()
-                                .advisors(a -> a.params(Map.of(ChatMemory.CONVERSATION_ID, conversationId, RoundLimitRepository.TASK_TYPE_STRING, taskType.toString())))
-                                .advisors(roundLimitAdvisor)
-                                .system(chatRequest.promptTemplate.render(chatRequest.params))
-                                .user(userMessage)
-                                .stream()
-                                .content()
+                .publishOn(properties.getScheduler())
+                .flatMapMany(chatRequest -> {
+                            Map<String, Object> context = Map.of(properties.getConversationIdKey(), conversationId,
+                                    properties.getTaskTypeKey(), taskType);
+                            return chatRequest.chatClient.prompt()
+                                    .advisors(a -> a.params(context))
+                                    .advisors(commonAdvisor)
+                                    .system(chatRequest.promptTemplate.render(chatRequest.params))
+                                    .user(userMessage)
+                                    .stream()
+                                    .content();
+                        }
                 );
     }
 

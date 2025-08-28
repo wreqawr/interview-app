@@ -67,4 +67,3 @@ interview:
     advisor:
       round:
         max-rounds: 3
-        enabled: true

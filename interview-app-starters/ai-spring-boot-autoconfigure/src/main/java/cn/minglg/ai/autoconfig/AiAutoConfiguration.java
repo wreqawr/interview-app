@@ -1,5 +1,7 @@
 package cn.minglg.ai.autoconfig;
 
+import cn.minglg.ai.advisors.CommonAdvisor;
+import cn.minglg.ai.advisors.CommonAdvisorRepository;
 import cn.minglg.ai.config.InMemoryChatMemoryRepositoryConfig;
 import cn.minglg.ai.config.MongoChatMemoryRepositoryConfig;
 import cn.minglg.ai.config.RedisChatMemoryRepositoryConfig;
@@ -156,6 +158,13 @@ public class AiAutoConfiguration {
     @ConditionalOnMissingBean
     public UserContextProvider userContextProvider() {
         return () -> 0L;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnBean(CommonAdvisorRepository.class)
+    public CommonAdvisor commonAdvisor(CommonAdvisorRepository commonAdvisorRepository) {
+        return new CommonAdvisor(commonAdvisorRepository);
     }
 
 }
