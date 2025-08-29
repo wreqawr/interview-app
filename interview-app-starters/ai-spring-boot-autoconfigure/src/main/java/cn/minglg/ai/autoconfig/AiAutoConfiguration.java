@@ -26,6 +26,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,7 +53,7 @@ public class AiAutoConfiguration {
      * 创建并配置聊天客户端Bean
      *
      * @param builder                  聊天客户端构建器，用于创建不同配置的聊天客户端实例
-     * @param messageChatMemoryAdvisor 消息记忆顾问，提供聊天记忆功能支持
+     * @param messageChatMemoryAdvisor 消息记忆Advisor，提供聊天记忆功能支持
      * @return 包含两种类型聊天客户端的映射表，键为客户端类型，值为对应的聊天客户端实例
      */
     @Bean
@@ -134,7 +137,7 @@ public class AiAutoConfiguration {
 
 
     /**
-     * 创建消息聊天内存顾问Bean
+     * 创建消息聊天内存Advisor Bean
      *
      * @param chatMemory 聊天内存实例，用于存储和管理聊天历史记录
      * @return MessageChatMemoryAdvisor 消息聊天内存拦截器实例
@@ -160,11 +163,26 @@ public class AiAutoConfiguration {
         return () -> 0L;
     }
 
+        /**
+     * 创建并配置通用Advisor列表的Bean
+     * 
+     * @param advisorRepositoryList 通用AdvisorRepository列表，用于创建对应的Advisor实例
+     * @return 按照顺序排序的通用Advisor列表
+     */
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(CommonAdvisorRepository.class)
-    public CommonAdvisor commonAdvisor(CommonAdvisorRepository commonAdvisorRepository) {
-        return new CommonAdvisor(commonAdvisorRepository);
+    public List<CommonAdvisor> commonAdvisor(List<CommonAdvisorRepository> advisorRepositoryList) {
+        // 创建Advisor列表，基于Repository列表初始化Advisor实例
+        List<CommonAdvisor> advisorList = new ArrayList<>();
+        for (CommonAdvisorRepository advisorRepository : advisorRepositoryList) {
+            advisorList.add(new CommonAdvisor(advisorRepository));
+        }
+        
+        // 按照Advisor的order值进行排序
+        advisorList.sort(Comparator.comparingInt(CommonAdvisor::getOrder));
+        return advisorList;
     }
+
 
 }

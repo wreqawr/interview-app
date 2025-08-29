@@ -40,7 +40,7 @@ public class InterviewRoundAdvisorRepository implements CommonAdvisorRepository 
     /**
      * 修改聊天客户端请求，根据任务类型和对话轮次限制来决定是否需要修改原始请求
      *
-     * @param chatClientRequest 原始的聊天客户端请求对象，包含上下文和提示信息
+     * @param chatClientRequest 原始聊天客户端请求对象，包含上下文和提示信息
      * @return 修改后的聊天客户端请求对象，如果不需要修改则返回原始请求
      */
     @Override
@@ -54,7 +54,7 @@ public class InterviewRoundAdvisorRepository implements CommonAdvisorRepository 
         Integer currentRound = repository.getCurrentRound(conversationId).block();
         currentRound = currentRound == null ? 1 : currentRound + 1;
         // 判断当前对话类型是否需要被拦截，且轮次是否超出限制，超出限制则修改请求
-        if (taskType == TaskType.GENERAL_CHAT && currentRound > properties.getMaxRounds()) {
+        if (taskType == TaskType.MOCK_INTERVIEW && currentRound > properties.getMaxRounds()) {
             // 第三步：获得用户输入文本，并构建提示词模板
             String currentUserMessage = chatClientRequest.prompt().getUserMessage().getText();
             Map<String, Object> templateParams = Map.of("currentUserMessage", currentUserMessage);

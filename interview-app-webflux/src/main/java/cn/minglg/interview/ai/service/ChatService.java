@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,7 +29,7 @@ public class ChatService {
     private final Map<ChatClientType, ChatClient> chatClientMap;
     private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
     private final InterviewRoundLimitProperties properties;
-    private final CommonAdvisor commonAdvisor;
+    private final List<CommonAdvisor> commonAdvisors;
 
     /**
      * 执行聊天对话操作，支持不同的任务类型和系统提示模板
@@ -51,9 +52,15 @@ public class ChatService {
                 .flatMapMany(chatRequest -> {
                             Map<String, Object> context = Map.of(properties.getConversationIdKey(), conversationId,
                                     properties.getTaskTypeKey(), taskType);
-                            return chatRequest.chatClient.prompt()
-                                    .advisors(a -> a.params(context))
-                                    .advisors(commonAdvisor)
+                            ChatClient.ChatClientRequestSpec promptSpec = chatRequest.chatClient.prompt()
+                                    .advisors(a -> a.params(context));
+
+                            // 逐个应用 CommonAdvisor
+                            for (CommonAdvisor advisor : commonAdvisors) {
+                                promptSpec = promptSpec.advisors(advisor);
+                            }
+
+                            return promptSpec
                                     .system(chatRequest.promptTemplate.render(chatRequest.params))
                                     .user(userMessage)
                                     .stream()
