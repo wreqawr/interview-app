@@ -60,7 +60,7 @@ public class InterviewRoundAdvisorRepository implements CommonAdvisorRepository 
             Map<String, Object> templateParams = Map.of("currentUserMessage", currentUserMessage);
             String renderedTemplate = promptTemplate.render(templateParams);
 
-            // 第三步：修改请求(只修改prompt，不修改context
+            // 第四步：修改请求(只修改prompt，不修改context)
             return ChatClientRequest.builder()
                     .prompt(Prompt.builder().content(renderedTemplate).build())
                     .context(context)

@@ -163,9 +163,9 @@ public class AiAutoConfiguration {
         return () -> 0L;
     }
 
-        /**
+    /**
      * 创建并配置通用Advisor列表的Bean
-     * 
+     *
      * @param advisorRepositoryList 通用AdvisorRepository列表，用于创建对应的Advisor实例
      * @return 按照顺序排序的通用Advisor列表
      */
@@ -175,10 +175,11 @@ public class AiAutoConfiguration {
     public List<CommonAdvisor> commonAdvisor(List<CommonAdvisorRepository> advisorRepositoryList) {
         // 创建Advisor列表，基于Repository列表初始化Advisor实例
         List<CommonAdvisor> advisorList = new ArrayList<>();
-        for (CommonAdvisorRepository advisorRepository : advisorRepositoryList) {
-            advisorList.add(new CommonAdvisor(advisorRepository));
-        }
-        
+        advisorRepositoryList
+                .stream()
+                .sorted(Comparator.comparingInt(CommonAdvisorRepository::getOrder))
+                .map(CommonAdvisor::new)
+                .forEach(advisorList::add);
         // 按照Advisor的order值进行排序
         advisorList.sort(Comparator.comparingInt(CommonAdvisor::getOrder));
         return advisorList;
