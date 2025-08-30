@@ -1,5 +1,6 @@
 package cn.minglg.authentication.config.webmvc;
 
+import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.filter.webmvc.WebMvcCaptchaFilter;
 import cn.minglg.authentication.filter.webmvc.WebMvcCustomAuthenticationFilter;
 import cn.minglg.authentication.filter.webmvc.WebMvcJwtTokenFilter;
@@ -97,8 +98,9 @@ public class WebMvcFilterConfig {
     @Bean
     @ConditionalOnMissingBean
     public WebMvcJwtTokenFilter jwtTokenFilter(WebMvcSecurityProperties securityProperties,
-                                               StringRedisTemplate redisTemplate) {
-        return new WebMvcJwtTokenFilter(securityProperties, redisTemplate);
+                                               StringRedisTemplate redisTemplate,
+                                               RequestScopedUserContext userContext) {
+        return new WebMvcJwtTokenFilter(securityProperties, redisTemplate, userContext);
     }
 
 
@@ -114,6 +116,20 @@ public class WebMvcFilterConfig {
     @ConditionalOnMissingBean
     public WebMvcRequestBodyCacheFilter requestBodyCacheFilter() {
         return new WebMvcRequestBodyCacheFilter();
+    }
+
+    /**
+     * 创建并返回一个请求作用域的用户上下文Bean
+     * 该方法用于创建RequestScopedUserContext实例，并将其注册为Spring容器中的Bean。
+     * 通过@ConditionalOnMissingBean注解确保只有在容器中不存在同类型Bean时才会创建此Bean，
+     * 避免重复定义导致的冲突。
+     *
+     * @return RequestScopedUserContext 请求作用域的用户上下文实例
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public RequestScopedUserContext requestScopedUserContext() {
+        return new RequestScopedUserContext();
     }
 
 }

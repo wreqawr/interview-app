@@ -1,7 +1,8 @@
 package cn.minglg.interview.ai.config;
 
 import cn.minglg.ai.context.UserContextProvider;
-import cn.minglg.authentication.utils.UserUtils;
+import cn.minglg.authentication.context.RequestScopedUserContext;
+import cn.minglg.authentication.exception.UnKnowUserException;
 import cn.minglg.interview.common.constant.task.TaskType;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.template.TemplateRenderer;
@@ -76,9 +77,22 @@ public class AiConfig {
         return map;
     }
 
+    /**
+     * 创建并返回一个UserContextProvider实例
+     * 该Provider用于获取当前用户的用户ID
+     *
+     * @return UserContextProvider 返回一个Lambda表达式实现的UserContextProvider，
+     * 其getContext方法返回当前用户的用户ID
+     */
     @Bean
-    public UserContextProvider userContextProvider() {
-        return () -> UserUtils.getCurrentUser().getUserId();
+    public UserContextProvider userContextProvider(RequestScopedUserContext userContext) {
+        return () -> {
+            Long userId = userContext.getUser().getUserId();
+            if (userId != null) {
+                return userId;
+            }
+            throw new UnKnowUserException("未知用户！");
+        };
     }
 
 }

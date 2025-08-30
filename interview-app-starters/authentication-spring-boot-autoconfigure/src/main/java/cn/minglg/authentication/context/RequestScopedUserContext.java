@@ -1,5 +1,6 @@
 package cn.minglg.authentication.context;
 
+import cn.minglg.authentication.pojo.User;
 import lombok.Data;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -15,5 +16,5 @@ import org.springframework.web.context.annotation.RequestScope;
 @Data
 @RequestScope
 public class RequestScopedUserContext {
-    private Long userId;
+    private User user;
 }

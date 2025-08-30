@@ -48,7 +48,7 @@ public class InterviewRoundAdvisorRepository implements CommonAdvisorRepository 
         // 第一步：获取当前会话ID，以及任务类型
         Map<String, Object> context = chatClientRequest.context();
         String conversationId = getContextParam(context, properties.getConversationIdKey(), properties.getDefaultConversationId());
-        TaskType taskType = getContextParam(context, properties.getTaskTypeKey(), TaskType.fromString(properties.getDefaultTaskTypeString(), TaskType.GENERAL_CHAT));
+        TaskType taskType = getContextParam(context, properties.getTaskTypeKey(), properties.getDefaultTaskType());
 
         // 第二步：获取当前的轮次
         Integer currentRound = repository.getCurrentRound(conversationId).block();

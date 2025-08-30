@@ -46,7 +46,7 @@ public class AiConfig {
     @Bean
     public UserContextProvider userContextProvider(RequestScopedUserContext userContext) {
         return () -> {
-            Long userId = userContext.getUserId();
+            Long userId = userContext.getUser().getUserId();
             if (userId != null) {
                 return userId;
             }

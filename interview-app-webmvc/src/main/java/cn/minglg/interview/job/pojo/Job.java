@@ -4,6 +4,9 @@ import cn.minglg.interview.common.constant.job.EducationLevel;
 import cn.minglg.interview.common.constant.job.JobLevel;
 import cn.minglg.interview.common.constant.job.JobStatus;
 import cn.minglg.interview.common.constant.job.JobType;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -20,17 +23,24 @@ import java.time.LocalDateTime;
  * @Version 1.0
  */
 @Data
+@TableName("t_jobs")
 public class Job {
 
     /**
      * 岗位ID(自增主键)
      */
+    @TableId(type = IdType.AUTO)
     private Long jobId;
 
     /**
      * 企业ID
      */
     private Long companyId;
+
+    /**
+     * 企业名称
+     */
+    private String companyName;
 
     /**
      * 发布HR用户ID

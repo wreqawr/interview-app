@@ -1,7 +1,7 @@
 package cn.minglg.interview.common.aspects;
 
+import cn.minglg.authentication.response.R;
 import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
-import cn.minglg.interview.common.response.R;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

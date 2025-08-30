@@ -1,6 +1,6 @@
 package cn.minglg.interview.resume.service;
 
-import cn.minglg.interview.common.response.R;
+import cn.minglg.authentication.response.R;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

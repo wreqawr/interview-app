@@ -1,10 +1,10 @@
 package cn.minglg.interview.resume.controller;
 
+import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.pojo.User;
-import cn.minglg.authentication.utils.UserUtils;
+import cn.minglg.authentication.response.R;
 import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
 import cn.minglg.interview.common.constant.response.ResponseCode;
-import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/resume")
 public class ResumeController {
     private final ResumeService resumeService;
+    private final RequestScopedUserContext userContext;
 
 
     /**
@@ -101,7 +102,7 @@ public class ResumeController {
     public ResponseEntity<R> queryResumeSummarizeResult(
             @PathVariable("taskId") String taskId,
             @PathVariable("resumeId") String resumeId) {
-        User currentUser = UserUtils.getCurrentUser();
+        User currentUser = userContext.getUser();
         R result = resumeService.getResumeAsyncUploadResult(currentUser.getUserId(), taskId, resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -152,7 +153,7 @@ public class ResumeController {
     public ResponseEntity<R> queryResumeAsyncAnalyzeResult(
             @PathVariable("taskId") String taskId,
             @PathVariable("resumeId") String resumeId) {
-        User currentUser = UserUtils.getCurrentUser();
+        User currentUser = userContext.getUser();
         R result = resumeService.getResumeAsyncAnalyzeResult(currentUser.getUserId(), taskId, resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

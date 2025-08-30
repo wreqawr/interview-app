@@ -56,16 +56,7 @@
         <apache.tika.version>3.1.0</apache.tika.version>
         <apache.commons.lang3.version>3.18.0</apache.commons.lang3.version>
         <hutool.version>5.8.39</hutool.version>
-<!--        <spring.beans.version>6.2.10</spring.beans.version>-->
     </properties>
-
-<!--    <dependencies>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring-beans</artifactId>-->
-<!--            <version>${spring.beans.version}</version> &lt;!&ndash; 使用已修复漏洞的版本 &ndash;&gt;-->
-<!--        </dependency>-->
-<!--    </dependencies>-->
 
 
     <!-- 依赖管理 -->
@@ -75,6 +66,12 @@
             <dependency>
                 <groupId>cn.minglg.interview</groupId>
                 <artifactId>interview-app-webmvc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.minglg.interview</groupId>
+                <artifactId>interview-app-webflux</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

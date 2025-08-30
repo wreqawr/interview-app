@@ -1,6 +1,7 @@
 package cn.minglg.authentication.filter.webmvc;
 
 import cn.minglg.authentication.constant.response.ResponseCode;
+import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.pojo.User;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
 import cn.minglg.authentication.response.R;
@@ -33,6 +34,7 @@ import java.io.IOException;
 public class WebMvcJwtTokenFilter extends OncePerRequestFilter {
     private final WebMvcSecurityProperties securityProperties;
     private final StringRedisTemplate redisTemplate;
+    private final RequestScopedUserContext userContext;
 
 
     /**
@@ -72,6 +74,8 @@ public class WebMvcJwtTokenFilter extends OncePerRequestFilter {
                 // 才知道这个人是登录了的。
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                // 设置userContext，在当前请求内有效，防止因异步请求导致userContext丢失
+                userContext.setUser(user);
                 filterChain.doFilter(request, response);
             } else {
                 response.getWriter().write(JsonUtils.toJsonStr(checkResult));

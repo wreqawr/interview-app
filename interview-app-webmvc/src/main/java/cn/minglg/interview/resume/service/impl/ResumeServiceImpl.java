@@ -3,8 +3,9 @@ package cn.minglg.interview.resume.service.impl;
 
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
+import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.pojo.User;
-import cn.minglg.authentication.utils.UserUtils;
+import cn.minglg.authentication.response.R;
 import cn.minglg.interview.ai.core.resume.AiResumeCoreService;
 import cn.minglg.interview.common.annotation.AsyncTaskQuery;
 import cn.minglg.interview.common.constant.response.ResponseCode;
@@ -13,7 +14,6 @@ import cn.minglg.interview.common.constant.task.TaskStatus;
 import cn.minglg.interview.common.exception.NoSuchResumeException;
 import cn.minglg.interview.common.properties.MinioProperties;
 import cn.minglg.interview.common.properties.ResumeProperties;
-import cn.minglg.interview.common.response.R;
 import cn.minglg.interview.common.utils.FileUtils;
 import cn.minglg.interview.common.utils.TaskUtils;
 import cn.minglg.interview.minio.service.MinioService;
@@ -59,6 +59,7 @@ public class ResumeServiceImpl implements ResumeService {
     private final ResumeDetailRepository resumeDetailRepository;
     private final AiResumeCoreService aiResumeCoreService;
     private final StringRedisTemplate redisTemplate;
+    private final RequestScopedUserContext userContext;
 
 
     /**
@@ -70,7 +71,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public R resumeUpload(MultipartFile file) {
         List<String> allowFileTypes = resumeProperties.getAllowFileTypes();
-        User currentUser = UserUtils.getCurrentUser();
+        User currentUser = userContext.getUser();
 
         // 第一步：基础校验
         if (file.isEmpty()) {
@@ -145,7 +146,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public R resumeDownload(String[] resumeIds) {
-        User currentUser = UserUtils.getCurrentUser();
+        User currentUser = userContext.getUser();
         List<String> resumeIdList = Arrays.stream(resumeIds).toList();
         List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeIdList(currentUser.getUserId(), resumeIdList);
         if (resumeMetadataList == null) {
@@ -186,7 +187,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public R resumeDelete(String[] resumeIds) {
         R result;
-        User currentUser = UserUtils.getCurrentUser();
+        User currentUser = userContext.getUser();
         if (resumeIds == null || resumeIds.length == 0) {
             throw new ResumeDeleteException("简历信息不能为空！");
         }
@@ -230,7 +231,7 @@ public class ResumeServiceImpl implements ResumeService {
      */
     @Override
     public R resumeMetadataDisplay() {
-        User currentUser = UserUtils.getCurrentUser();
+        User currentUser = userContext.getUser();
         List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserId(currentUser.getUserId());
         String message = resumeMetadataList == null ? "未查询到当前用户的简历信息！" : "简历信息获取成功！";
         return R.builder()
@@ -267,7 +268,7 @@ public class ResumeServiceImpl implements ResumeService {
      */
     @Override
     public R resumePreview(String resumeId) {
-        User currentUser = UserUtils.getCurrentUser();
+        User currentUser = userContext.getUser();
         ResumeMetadata resumeMetadata = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(currentUser.getUserId(), resumeId);
         if (resumeMetadata == null) {
             throw new ResumePreviewException("简历不存在！");
@@ -301,7 +302,7 @@ public class ResumeServiceImpl implements ResumeService {
      */
     @Override
     public R resumeAnalyze(String resumeId) {
-        User currentUser = UserUtils.getCurrentUser();
+        User currentUser = userContext.getUser();
         Long userId = currentUser.getUserId();
         String redisKey = resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
         String hashKeyForAnalyze = "analyzeHtmlContent";

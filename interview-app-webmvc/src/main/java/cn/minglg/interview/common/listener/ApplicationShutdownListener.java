@@ -42,7 +42,7 @@ public class ApplicationShutdownListener implements ApplicationListener<ContextC
         String captchaKeyPrefix = securityProperties.getCaptcha().getRedisKeyPrefix();
         String roleRedisKeyPrefix = registerProperties.getRoleRedisKeyPrefix();
         String chatMemoryRedisKeyPrefix = aiProperties.getChatMemoryRedisKeyPrefix();
-        this.deleteKeysByPrefix(authKeyPrefix);
+//        this.deleteKeysByPrefix(authKeyPrefix);
         this.deleteKeysByPrefix(captchaKeyPrefix);
         this.deleteKeysByPrefix(roleRedisKeyPrefix);
         this.deleteKeysByPrefix(chatMemoryRedisKeyPrefix);

@@ -22,34 +22,35 @@
     </properties>
 
     <dependencies>
+        <!--webflux场景启动器-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
-
+        <!--可观测性，便于观察调试-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
+        <!--Lombok插件-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
+        <!--springboot测试-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <!--自动配置的配置文件提示-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <scope>provided</scope>
         </dependency>
-
+        <!--自定义认证启动器-->
         <dependency>
             <groupId>cn.minglg.interview</groupId>
             <artifactId>authentication-spring-boot-starter</artifactId>
@@ -65,28 +66,38 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+        <!--自定义ai启动器-->
         <dependency>
             <groupId>cn.minglg.interview</groupId>
             <artifactId>ai-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <!--响应式redis启动器-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
         </dependency>
-
+        <!--响应式mongodb启动器-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
         </dependency>
-
+        <!--适用于macOS的netty补丁-->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-resolver-dns-native-macos</artifactId>
             <version>4.1.75.Final</version>
             <classifier>osx-aarch_64</classifier>
+        </dependency>
+        <!--响应式r2dbc场景启动器-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+        <!-- r2dbc-mysql驱动 -->
+        <dependency>
+            <groupId>io.asyncer</groupId>
+            <artifactId>r2dbc-mysql</artifactId>
         </dependency>
 
     </dependencies>

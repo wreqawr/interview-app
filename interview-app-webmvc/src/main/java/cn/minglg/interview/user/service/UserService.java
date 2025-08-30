@@ -1,7 +1,7 @@
 package cn.minglg.interview.user.service;
 
 import cn.minglg.authentication.pojo.User;
-import cn.minglg.interview.common.response.R;
+import cn.minglg.authentication.response.R;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**

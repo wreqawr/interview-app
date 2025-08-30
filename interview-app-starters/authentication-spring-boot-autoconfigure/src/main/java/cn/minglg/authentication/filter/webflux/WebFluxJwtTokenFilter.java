@@ -95,7 +95,7 @@ public class WebFluxJwtTokenFilter implements WebFilter {
                             Context context = ReactiveSecurityContextHolder
                                     .withAuthentication(authenticationToken);
                             // 设置到请求作用域的用户上下文
-                            userContext.setUserId(user.getUserId());
+                            userContext.setUser(user);
                             return chain.filter(exchange)
                                     .contextWrite(context);
                         }
