@@ -6,7 +6,7 @@ import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.exception.UnKnowUserException;
 import cn.minglg.interview.ai.advisor.InterviewRoundAdvisorRepository;
 import cn.minglg.interview.ai.properties.InterviewRoundLimitProperties;
-import cn.minglg.interview.common.constant.task.TaskType;
+import cn.minglg.interview.constant.TaskType;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.beans.factory.annotation.Qualifier;

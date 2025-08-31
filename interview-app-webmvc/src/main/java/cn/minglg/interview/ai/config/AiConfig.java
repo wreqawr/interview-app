@@ -38,18 +38,14 @@ public class AiConfig {
         Map<TaskType, Resource> map = new HashMap<>(16);
 
         // 定义各类任务对应的系统提示词文件路径
-        String systemPromptForResumeSummarize = "/prompt/resume/简历关键信息提取.st";
-        String systemPromptForResumeAnalyze = "/prompt/resume/简历分析-求职者.st";
-        String systemPromptForComprehensiveAssessment = "/prompt/resume/综合评估-HR.st";
-        String systemPromptForMockInterviewStart = "/prompt/interview/基于简历内容的模拟面试问答（开始）.st";
-        String systemPromptForMockInterviewStop = "/prompt/interview/基于简历内容的模拟面试问答（结束）.st";
+        String systemPromptForResumeSummarize = "/prompt/简历关键信息提取.st";
+        String systemPromptForResumeAnalyze = "/prompt/简历分析-求职者.st";
+        String systemPromptForComprehensiveAssessment = "/prompt/综合评估-HR.st";
 
         // 将任务类型与对应的提示词资源进行映射
         map.put(TaskType.RESUME_SUMMARIZE, new ClassPathResource(systemPromptForResumeSummarize));
         map.put(TaskType.RESUME_ANALYZE, new ClassPathResource(systemPromptForResumeAnalyze));
         map.put(TaskType.COMPREHENSIVE_ASSESSMENT, new ClassPathResource(systemPromptForComprehensiveAssessment));
-        map.put(TaskType.MOCK_INTERVIEW_START, new ClassPathResource(systemPromptForMockInterviewStart));
-        map.put(TaskType.MOCK_INTERVIEW_STOP, new ClassPathResource(systemPromptForMockInterviewStop));
         return map;
     }
 

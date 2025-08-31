@@ -1,6 +1,6 @@
 package cn.minglg.interview.ai.core.resume;
 
-import cn.minglg.ai.constant.ChatClientType;
+import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.interview.ai.exception.AiResumeAnalyzeAndSaveException;
 import cn.minglg.interview.common.annotation.TaskHandler;
@@ -33,23 +33,27 @@ import java.util.Map;
 @Service
 public class AiResumeCoreService {
     private final ResumeProperties resumeProperties;
-    private final Map<ChatClientType, ChatClient> chatClientMap;
+    private final ChatClient chatClient;
     private final ResumeMetadataMapper resumeMetadataMapper;
     private final ResumeDetailRepository resumeDetailRepository;
     private final StringRedisTemplate redisTemplate;
     private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
+    private final RequestScopedUserContext userContext;
 
 
     /**
-     * 提取并结构化简历内容
+     * 简历摘要处理并保存
+     * 该方法通过AI解析简历内容，将解析结果保存到MongoDB，并更新简历元信息到MySQL
      *
-     * @param content 简历内容
+     * @param taskId         任务ID
+     * @param resumeId       简历ID
+     * @param content        简历原始内容
+     * @param resumeMetadata 简历元信息对象
      */
     @Async("taskExecutor")
     @TaskHandler(taskType = TaskType.RESUME_SUMMARIZE)
-    public void resumeSummarizeAndSave(Long userId, String taskId, String resumeId, String content, ResumeMetadata resumeMetadata) {
+    public void resumeSummarizeAndSave(String taskId, String resumeId, String content, ResumeMetadata resumeMetadata) {
         // 第一步：获取ai解析结果
-        ChatClient chatClient = chatClientMap.get(ChatClientType.GENERAL_WITHOUT_MEMORY);
         String chatResult = chatClient
                 .prompt()
                 .system(systemPromptDynamicTemplate.get(TaskType.RESUME_SUMMARIZE).render())
@@ -57,11 +61,13 @@ public class AiResumeCoreService {
                 .call()
                 .content();
         ResumeDetail resumeDetail = JsonUtils.toBean(chatResult, ResumeDetail.class);
+
         // 第二步：mongodb保存解析结果
-        resumeDetail.setUserId(userId);
+        resumeDetail.setUserId(userContext.getUser().getUserId());
         resumeDetail.setResumeId(resumeId);
         resumeDetail.setRawText(content);
         resumeDetailRepository.save(resumeDetail);
+
         // 第三步：mysql保存简历元信息
         String resumeTitle = resumeDetail.getBasicInfo().getTargetTitle();
         resumeMetadata.setResumeTitle(resumeTitle);
@@ -69,18 +75,11 @@ public class AiResumeCoreService {
 
     }
 
-    /**
-     * 面向求职者分析简历优劣势
-     *
-     * @param userId   用户id
-     * @param taskId   任务id
-     * @param resumeId 简历id
-     */
+
     @Async("taskExecutor")
     @TaskHandler(taskType = TaskType.RESUME_ANALYZE)
-    public void resumeAnalyzeAndSave(Long userId, String taskId, String resumeId) {
-
-        ChatClient chatClient = chatClientMap.get(ChatClientType.GENERAL_WITHOUT_MEMORY);
+    public void resumeAnalyzeAndSave(String taskId, String resumeId) {
+        Long userId = userContext.getUser().getUserId();
         ResumeDetail resumeDetail = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId);
         String redisKey = resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
         String hashKeyForAnalyze = "analyzeHtmlContent";

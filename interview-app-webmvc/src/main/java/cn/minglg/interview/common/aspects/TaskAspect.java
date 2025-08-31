@@ -1,5 +1,6 @@
 package cn.minglg.interview.common.aspects;
 
+import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.response.R;
 import cn.minglg.interview.common.annotation.TaskHandler;
 import cn.minglg.interview.common.constant.response.ResponseCode;
@@ -35,6 +36,7 @@ import java.util.Arrays;
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 public class TaskAspect {
     private final TaskMapper taskMapper;
+    private final RequestScopedUserContext userContext;
 
     /**
      * 给所有加了@AsyncTaskHandler注解的方法添加执行状态记录
@@ -47,8 +49,8 @@ public class TaskAspect {
     public Object handleTask(ProceedingJoinPoint pjp, TaskHandler handler) {
         // 第一步：获取初始化参数
         Object[] args = pjp.getArgs();
-        Long userId = (Long) args[0];
-        String taskId = (String) args[1];
+        Long userId = userContext.getUser().getUserId();
+        String taskId = (String) args[0];
         TaskType taskType = handler.taskType();
         TaskStatus taskStatus = TaskStatus.RUNNING;
         String methodName = pjp.getSignature().toLongString();
@@ -83,7 +85,7 @@ public class TaskAspect {
 
     @Around("@annotation(cn.minglg.interview.common.annotation.AsyncTaskQuery)")
     public Object getTaskResult(ProceedingJoinPoint pjp) {
-        Long userId = (Long) pjp.getArgs()[0];
+        Long userId = userContext.getUser().getUserId();
         String taskId = (String) pjp.getArgs()[1];
         Task task = TaskUtils.queryTaskByUserIdAndTaskId(taskMapper, userId, taskId);
         try {

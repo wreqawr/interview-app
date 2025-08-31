@@ -1,11 +1,11 @@
-package cn.minglg.interview.common.constant.task;
+package cn.minglg.interview.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * ClassName:TaskType
- * Package:cn.minglg.interview.common.constant
+ * Package:cn.minglg.interview.constant
  * Description:任务类型
  *
  * @Author kfzx-minglg
@@ -54,17 +54,6 @@ public enum TaskType {
         }
         // 未找到匹配项时返回默认值
         return defaultValue;
-    }
-
-
-    /**
-     * 根据字符串文本转换为TaskType枚举值
-     *
-     * @param text 需要转换的字符串文本
-     * @return 转换后的TaskType枚举值，如果转换失败则返回null
-     */
-    public static TaskType fromString(String text) {
-        return fromString(text, null);
     }
 
 }

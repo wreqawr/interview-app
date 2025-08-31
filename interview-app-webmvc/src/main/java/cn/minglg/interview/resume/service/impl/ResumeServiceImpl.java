@@ -122,7 +122,7 @@ public class ResumeServiceImpl implements ResumeService {
             String content = FileUtils.getContentFromFile(autoDetectParser, is2);
             // 第七步：调用异步方法，分析提取简历信息，并持久化保存
             String taskId = TaskUtils.generateTaskId();
-            aiResumeCoreService.resumeSummarizeAndSave(userId, taskId, resumeId, content, resumeMetadata);
+            aiResumeCoreService.resumeSummarizeAndSave(taskId, resumeId, content, resumeMetadata);
             // 第八步：构建响应
             Map<String, ? extends Serializable> data = Map.of("taskId", taskId, "resumeId", resumeId);
 
@@ -345,7 +345,7 @@ public class ResumeServiceImpl implements ResumeService {
         }
         // 三级缓存从ai获取，触发异步任务
         String taskId = TaskUtils.generateTaskId();
-        aiResumeCoreService.resumeAnalyzeAndSave(userId, taskId, resumeId);
+        aiResumeCoreService.resumeAnalyzeAndSave(taskId, resumeId);
         return R.builder()
                 .code(ResponseCode.ASYNC_TASK_RUNNING.getCode())
                 .data(Map.of("taskId", taskId))

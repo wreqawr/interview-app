@@ -26,12 +26,6 @@ public enum TaskType {
 
     TASK_RESULT_QUERY("任务执行结果查询"),
 
-    MOCK_INTERVIEW_START("模拟面试开始"),
-    MOCK_INTERVIEW_STOP("模拟面试结束"),
-
-    GENERAL_CHAT("通用聊天"),
-
-
     OTHER("其它任务类型");
 
 
