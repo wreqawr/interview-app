@@ -1,6 +1,6 @@
 package cn.minglg.interview.ai.controller;
 
-import cn.minglg.interview.ai.service.ChatService;
+import cn.minglg.interview.ai.service.AssistantService;
 import cn.minglg.interview.constant.TaskType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Flux;
 import java.util.Map;
 
 /**
- * ClassName:ChatController
+ * ClassName:AssistantController
  * Package:cn.minglg.interview.ai.controller
  * Description:
  *
@@ -24,8 +24,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/ai")
-public class ChatController {
-    private final ChatService chatService;
+public class AssistantController {
+    private final AssistantService assistantService;
 
     /**
      * 处理聊天请求的接口方法
@@ -37,7 +37,7 @@ public class ChatController {
      *                     - params: 额外参数Map
      * @return 返回一个Flux流，包含聊天响应的字符串数据
      */
-    @PostMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PostMapping(value = "/assistant", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @SuppressWarnings("unchecked")
     public Flux<String> chat(@RequestBody Map<String, Object> chatParamMap) {
         // 从参数Map中提取聊天所需的基本信息
@@ -54,7 +54,7 @@ public class ChatController {
         }
 
         // 调用聊天服务处理聊天逻辑并返回响应流
-        return chatService.chat(conversationId, userMessage, taskType, params);
+        return assistantService.chat(conversationId, userMessage, taskType, params);
     }
 
 }

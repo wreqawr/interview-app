@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ClassName:ChatService
+ * ClassName:AssistantService
  * Package:cn.minglg.interview.ai.service
  * Description:
  *
@@ -25,13 +25,22 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Service
-public class ChatService {
+public class AssistantService {
     private final ChatClient chatClient;
     private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
     private final InterviewRoundLimitProperties properties;
     private final List<CommonAdvisor> commonAdvisors;
     private final MessageChatMemoryAdvisor chatMemoryAdvisor;
 
+    /**
+     * 执行聊天对话操作
+     *
+     * @param conversationId 会话ID，用于标识一次对话上下文
+     * @param userMessage    用户发送的消息内容
+     * @param taskType       任务类型，用于确定使用的系统提示模板
+     * @param params         聊天参数，用于渲染提示模板和传递额外信息
+     * @return Flux<String> 流式返回聊天响应内容
+     */
     public Flux<String> chat(String conversationId, String userMessage, TaskType taskType, Map<String, Object> params) {
         return Mono.fromCallable(() -> {
                     // 构建聊天请求对象，包含聊天客户端、提示模板和参数
@@ -60,6 +69,7 @@ public class ChatService {
                         }
                 );
     }
+
 
 
     /**

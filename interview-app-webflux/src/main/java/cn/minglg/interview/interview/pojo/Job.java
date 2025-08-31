@@ -1,9 +1,7 @@
-package cn.minglg.interview.job.pojo;
+package cn.minglg.interview.interview.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
@@ -21,13 +19,12 @@ import java.time.LocalDateTime;
  * @Version 1.0
  */
 @Data
-@TableName("t_jobs")
+@Builder
 public class Job {
 
     /**
      * 岗位ID(自增主键)
      */
-    @TableId(type = IdType.AUTO)
     private Long jobId;
 
     /**

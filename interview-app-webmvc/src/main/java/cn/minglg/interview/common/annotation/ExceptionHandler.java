@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ResponseEntityExceptionHandler {
+public @interface ExceptionHandler {
     @AliasFor("errResponseCode")
     ResponseCode value() default ResponseCode.OTHER_EXCEPTION;
 

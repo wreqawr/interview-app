@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * ClassName:AiConfig
+ * ClassName:WebFluxAiConfig
  * Package:cn.minglg.interview.ai.config
  * Description:
  *
@@ -35,7 +35,7 @@ import java.util.Map;
  * @Version 1.0
  */
 @Configuration
-public class AiConfig {
+public class WebFluxAiConfig {
     /**
      * 创建并返回一个UserContextProvider实例
      * 该Provider用于获取当前用户的用户ID

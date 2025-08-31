@@ -1,7 +1,7 @@
 package cn.minglg.interview.common.aspects;
 
 import cn.minglg.authentication.response.R;
-import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
+import cn.minglg.interview.common.annotation.ExceptionHandler;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,7 +28,7 @@ public class ResponseEntityAspect {
      * @return 封装的响应数据
      */
     @Around("@annotation(handler)")
-    public ResponseEntity<?> responseHandler(ProceedingJoinPoint pjp, ResponseEntityExceptionHandler handler) {
+    public ResponseEntity<?> responseHandler(ProceedingJoinPoint pjp, ExceptionHandler handler) {
         Integer errorCode = handler.errResponseCode().getCode();
         String errorMessagePrefix = handler.errorMessagePrefix() + "，原因为：";
         try {

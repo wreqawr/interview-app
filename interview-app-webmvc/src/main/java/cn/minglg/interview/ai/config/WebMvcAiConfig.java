@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * ClassName:AiConfig
+ * ClassName:WebMvcAiConfig
  * Package:cn.minglg.interview.ai.config
  * Description:
  *
@@ -25,7 +25,7 @@ import java.util.Map;
  * @Version 1.0
  */
 @Configuration
-public class AiConfig {
+public class WebMvcAiConfig {
 
     /**
      * 系统提示词资源（当前对话有效）

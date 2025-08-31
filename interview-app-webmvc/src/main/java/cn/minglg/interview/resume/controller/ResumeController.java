@@ -3,7 +3,7 @@ package cn.minglg.interview.resume.controller;
 import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.pojo.User;
 import cn.minglg.authentication.response.R;
-import cn.minglg.interview.common.annotation.ResponseEntityExceptionHandler;
+import cn.minglg.interview.common.annotation.ExceptionHandler;
 import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class ResumeController {
      * @return 响应结果
      */
     @PostMapping("/upload")
-    @ResponseEntityExceptionHandler(
+    @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_UPLOAD_FAIL,
             errorMessagePrefix = "简历上传失败")
     public ResponseEntity<R> resumeUpload(@RequestParam("resume") MultipartFile file) {
@@ -51,7 +51,7 @@ public class ResumeController {
      * @return 响应结果
      */
     @GetMapping("/download")
-    @ResponseEntityExceptionHandler(
+    @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_DOWNLOAD_FAIL,
             errorMessagePrefix = "简历下载失败")
     public ResponseEntity<R> resumeDownload(@RequestParam("resumeIds") String[] resumeIds) {
@@ -66,7 +66,7 @@ public class ResumeController {
      * @return 删除结果
      */
     @DeleteMapping("/delete")
-    @ResponseEntityExceptionHandler(
+    @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_DELETE_FAIL,
             errorMessagePrefix = "简历删除失败")
     public ResponseEntity<R> resumeDelete(@RequestBody String[] resumeIds) {
@@ -80,7 +80,7 @@ public class ResumeController {
      * @return 简历元信息列表
      */
     @GetMapping("/getMyResume")
-    @ResponseEntityExceptionHandler(
+    @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_QUERY_FAIL,
             errorMessagePrefix = "简历查询失败")
     public ResponseEntity<R> resumeMetadataDisplay() {
@@ -96,7 +96,7 @@ public class ResumeController {
      * @return 查询信息
      */
     @GetMapping("/queryResumeAsyncUploadResult/{taskId}/{resumeId}")
-    @ResponseEntityExceptionHandler(
+    @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_SUMMARIZE_FAIL,
             errorMessagePrefix = "简历结果提取失败")
     public ResponseEntity<R> queryResumeSummarizeResult(
@@ -114,7 +114,7 @@ public class ResumeController {
      * @return 预览url地址
      */
     @GetMapping("/preview/{resumeId}")
-    @ResponseEntityExceptionHandler(
+    @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_PREVIEW_FAIL,
             errorMessagePrefix = "简历预览失败")
     public ResponseEntity<R> getPreviewUrl(
@@ -130,7 +130,7 @@ public class ResumeController {
      * @return 同步返回分析结果，异步返回taskId
      */
     @GetMapping("/analyze/{resumeId}")
-    @ResponseEntityExceptionHandler(
+    @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_PREVIEW_FAIL,
             errorMessagePrefix = "简历分析失败")
     public ResponseEntity<R> resumeAnalyze(
@@ -147,7 +147,7 @@ public class ResumeController {
      * @return 任务信息
      */
     @GetMapping("/queryResumeAsyncAnalyzeResult/{taskId}/{resumeId}")
-    @ResponseEntityExceptionHandler(
+    @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_SUMMARIZE_FAIL,
             errorMessagePrefix = "异步获取简历分析结果失败")
     public ResponseEntity<R> queryResumeAsyncAnalyzeResult(
