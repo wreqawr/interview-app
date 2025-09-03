@@ -2,8 +2,8 @@ package cn.minglg.interview.ai.advisor;
 
 import cn.minglg.ai.advisors.CommonAdvisorRepository;
 import cn.minglg.ai.advisors.ReactiveRoundLimitManager;
+import cn.minglg.commons.constant.task.TaskType;
 import cn.minglg.interview.ai.properties.InterviewRoundLimitProperties;
-import cn.minglg.interview.constant.TaskType;
 import lombok.AllArgsConstructor;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;

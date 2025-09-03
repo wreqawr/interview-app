@@ -1,11 +1,11 @@
-package cn.minglg.interview.constant;
+package cn.minglg.commons.constant.task;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * ClassName:TaskType
- * Package:cn.minglg.interview.constant
+ * Package:cn.minglg.interview.common.constant
  * Description:任务类型
  *
  * @Author kfzx-minglg
@@ -18,7 +18,8 @@ public enum TaskType {
     /**
      * 任务类型枚举
      */
-
+    RESUME_SUMMARIZE("简历结构化"),
+    RESUME_ANALYZE("简历分析"),
     SKILL_EVALUATION("能力评估"),
     COMPREHENSIVE_ASSESSMENT("综合评估"),
     RESUME_METADATA_UPDATE("简历元数据更新"),
@@ -58,3 +59,4 @@ public enum TaskType {
     }
 
 }
+

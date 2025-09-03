@@ -2,8 +2,8 @@ package cn.minglg.interview.interview.chat.service;
 
 import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.utils.JsonUtils;
+import cn.minglg.commons.constant.task.TaskType;
 import cn.minglg.interview.ai.service.AssistantService;
-import cn.minglg.interview.constant.TaskType;
 import cn.minglg.interview.interview.pojo.Job;
 import cn.minglg.interview.interview.pojo.ResumeDetail;
 import cn.minglg.interview.interview.repository.CandidateJobsRepository;

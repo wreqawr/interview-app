@@ -6,7 +6,7 @@ import cn.minglg.authentication.pojo.User;
 import cn.minglg.authentication.response.R;
 import cn.minglg.authentication.service.RsaService;
 import cn.minglg.authentication.utils.JsonUtils;
-import cn.minglg.interview.common.constant.response.ResponseCode;
+import cn.minglg.commons.constant.response.ResponseCode;
 import cn.minglg.interview.common.properties.RegisterProperties;
 import cn.minglg.interview.user.mapper.*;
 import cn.minglg.interview.user.service.UserService;

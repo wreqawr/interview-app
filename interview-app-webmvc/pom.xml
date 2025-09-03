@@ -137,6 +137,12 @@
             <artifactId>ai-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>cn.minglg.interview</groupId>
+            <artifactId>interview-app-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -2,10 +2,10 @@ package cn.minglg.interview.common.aspects;
 
 import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.response.R;
+import cn.minglg.commons.constant.response.ResponseCode;
+import cn.minglg.commons.constant.task.TaskStatus;
+import cn.minglg.commons.constant.task.TaskType;
 import cn.minglg.interview.common.annotation.TaskHandler;
-import cn.minglg.interview.common.constant.response.ResponseCode;
-import cn.minglg.interview.common.constant.task.TaskStatus;
-import cn.minglg.interview.common.constant.task.TaskType;
 import cn.minglg.interview.common.exception.NoSuchTaskException;
 import cn.minglg.interview.common.mapper.TaskMapper;
 import cn.minglg.interview.common.pojo.Task;

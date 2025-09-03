@@ -1,7 +1,7 @@
 package cn.minglg.interview.ai.controller;
 
+import cn.minglg.commons.constant.task.TaskType;
 import cn.minglg.interview.ai.service.AssistantService;
-import cn.minglg.interview.constant.TaskType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;

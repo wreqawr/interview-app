@@ -1,6 +1,6 @@
 package cn.minglg.interview.ai.core.interview;
 
-import cn.minglg.interview.common.constant.task.TaskType;
+import cn.minglg.commons.constant.task.TaskType;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.repository.ResumeDetailRepository;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * ClassName:AiInterviewCoreServiceTest
@@ -30,52 +29,9 @@ public class AiInterviewCoreServiceTest {
     @Autowired
     private Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
 
-
-    @Test
-    public void testMemory() {
-        String conversationId = "12345";
-        while (true) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("Q:");
-            String question = scanner.nextLine();
-            System.out.println("========================");
-            //String answer = aiInterviewCoreService.chatOnline(conversationId, question);
-            System.out.print("A:");
-            //System.out.println(answer);
-            System.out.println("======================");
-        }
-
-    }
-
     @Test
     public void test1() {
 
-    }
-
-    @Test
-    public void testInterview() {
-        String resumeId = "1754907901498844a54e68bfa434";
-        String conversationId = "88888888";
-        ResumeDetail resumeDetail = resumeDetailRepository.findByResumeId(resumeId);
-        Map<String, Object> variables = getVariables(resumeDetail);
-        int currentRound = 1;
-        String firstRoundQuestion = systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW_START).render(variables);
-        //String answer = aiInterviewCoreService.chatOnline(conversationId, firstRoundQuestion);
-        //System.out.println(answer);
-        int totalRound = (int) variables.get("totalRounds");
-        while (currentRound++ <= totalRound) {
-            System.out.println("========================");
-            Scanner scanner = new Scanner(System.in);
-            String question = scanner.nextLine();
-            System.out.println("========================");
-            if (currentRound == totalRound + 1) {
-                String lastRoundQuestion = systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW_STOP).render(variables);
-                //answer = aiInterviewCoreService.chatOnline(conversationId, lastRoundQuestion);
-            } //else {
-            //answer = aiInterviewCoreService.chatOnline(conversationId, question);
-            //}
-            //System.out.println(answer);
-        }
     }
 
     @NotNull

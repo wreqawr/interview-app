@@ -2,8 +2,8 @@ package cn.minglg.interview.user.controller;
 
 import cn.minglg.authentication.pojo.User;
 import cn.minglg.authentication.response.R;
+import cn.minglg.commons.constant.response.ResponseCode;
 import cn.minglg.interview.common.annotation.ExceptionHandler;
-import cn.minglg.interview.common.constant.response.ResponseCode;
 import cn.minglg.interview.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

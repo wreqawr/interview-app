@@ -23,6 +23,7 @@
     <modules>
         <module>interview-app-webmvc</module>
         <module>interview-app-webflux</module>
+        <module>interview-app-commons</module>
     </modules>
 
     <!-- 项目信息 -->
@@ -72,6 +73,12 @@
             <dependency>
                 <groupId>cn.minglg.interview</groupId>
                 <artifactId>interview-app-webflux</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.minglg.interview</groupId>
+                <artifactId>interview-app-commons</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
