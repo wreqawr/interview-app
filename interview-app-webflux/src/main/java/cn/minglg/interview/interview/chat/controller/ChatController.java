@@ -44,4 +44,20 @@ public class ChatController {
         return chatService.prepareChat(conversationId, jobId, resumeId);
     }
 
+    /**
+     * 处理聊天请求的接口
+     *
+     * @param chatParamMap 包含聊天参数的Map，包含conversationId(会话ID)、userMessage(用户消息)、taskType(任务类型)
+     * @return Flux<String> 返回服务端流式响应的数据流
+     */
+    @PostMapping(value = "/progress", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> inProgress(@RequestBody Map<String, Object> chatParamMap) {
+        // 从参数Map中提取聊天所需的基本信息
+        String conversationId = (String) chatParamMap.get("conversationId");
+        String userMessage = (String) chatParamMap.get("userMessage");
+        // 调用聊天服务处理聊天逻辑并返回响应流
+        return chatService.chat(conversationId, userMessage);
+    }
+
+
 }

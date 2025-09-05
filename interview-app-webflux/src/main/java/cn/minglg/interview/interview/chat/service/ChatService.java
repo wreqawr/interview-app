@@ -8,6 +8,7 @@ import cn.minglg.interview.interview.pojo.Job;
 import cn.minglg.interview.interview.pojo.ResumeDetail;
 import cn.minglg.interview.interview.repository.CandidateJobsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -36,6 +37,7 @@ public class ChatService {
     private final CandidateJobsRepository candidateJobsRepository;
     private final RequestScopedUserContext userContext;
     private final AssistantService assistantService;
+    private final Map<TaskType, PromptTemplate> promptTemplateMap;
 
     /**
      * 准备聊天会话，用于模拟面试场景
@@ -58,11 +60,22 @@ public class ChatService {
                                     "resumeText", resumeDetail.getRawText(),
                                     "techFocusAreas", job.getTags()
                             );
-                            String userMessage = "面试官你好，我是候选人" + params.get("candidateName") + "，在开始之前请先简单介绍一下你自己，然后再开始提问";
+                            String userMessage = promptTemplateMap.get(TaskType.MOCK_INTERVIEW_START).render(params);
 
                             // 调用AssistantService的chat方法并返回Flux<String>
-                            return assistantService.chat(conversationId, userMessage, TaskType.MOCK_INTERVIEW, params);
+                            return assistantService.chat(conversationId, userMessage, TaskType.MOCK_INTERVIEW, null);
                         }));
+    }
+
+    /**
+     * 与助手服务进行聊天交互
+     *
+     * @param conversationId 会话ID，用于标识特定的对话上下文
+     * @param userMessage    用户发送的消息内容
+     * @return 返回一个Flux流，包含助手的回复消息
+     */
+    public Flux<String> chat(String conversationId, String userMessage) {
+        return assistantService.chat(conversationId, userMessage, TaskType.MOCK_INTERVIEW, null);
     }
 
 

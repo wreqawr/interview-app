@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * ClassName:AssistantService
@@ -45,7 +46,7 @@ public class AssistantService {
         return Mono.fromCallable(() -> {
                     // 构建聊天请求对象，包含聊天客户端、提示模板和参数
                     PromptTemplate systemPrompt = systemPromptDynamicTemplate.get(taskType);
-                    return new ChatRequest(chatClient, systemPrompt, params);
+                    return new ChatRequest(chatClient, systemPrompt, Objects.requireNonNullElseGet(params, Map::of));
                 })
                 // 切换到专门的线程池
                 .publishOn(properties.getScheduler())
@@ -60,16 +61,20 @@ public class AssistantService {
                             for (CommonAdvisor advisor : commonAdvisors) {
                                 promptSpec = promptSpec.advisors(advisor);
                             }
-
+                            String systemPrompt;
+                            try {
+                                systemPrompt = chatRequest.promptTemplate.render(chatRequest.params);
+                            } catch (Exception e) {
+                                systemPrompt = systemPromptDynamicTemplate.get(TaskType.GENERAL_CHAT).render(chatRequest.params);
+                            }
                             return promptSpec
-                                    .system(chatRequest.promptTemplate.render(chatRequest.params))
+                                    .system(systemPrompt)
                                     .user(userMessage)
                                     .stream()
                                     .content();
                         }
                 );
     }
-
 
 
     /**

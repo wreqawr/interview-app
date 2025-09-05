@@ -23,9 +23,9 @@ spring:
 
   # r2dbc配置
   r2dbc:
-      url: ${MYSQL_R2DBC_URL}
-      username: ${MYSQL_USERNAME}
-      password: ${MYSQL_PASSWORD}
+    url: ${MYSQL_R2DBC_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
 
   # redis配置
   data:
@@ -72,4 +72,4 @@ interview:
     chat-memory-repository: mongodb
     advisor:
       round:
-        max-rounds: 3
+        max-rounds: 5

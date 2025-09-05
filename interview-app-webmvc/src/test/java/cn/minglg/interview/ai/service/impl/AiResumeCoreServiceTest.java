@@ -68,7 +68,7 @@ public class AiResumeCoreServiceTest {
         ResumeDetail resumeDetail = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId);
         if (resumeDetail != null && StringUtils.hasText(resumeDetail.getRawText())) {
             System.out.println("==========================");
-            aiResumeCoreService.resumeAnalyzeAndSave(userId, taskId, resumeId);
+            aiResumeCoreService.resumeAnalyzeAndSave(taskId, resumeId);
             System.out.println("==========================");
         }
     }

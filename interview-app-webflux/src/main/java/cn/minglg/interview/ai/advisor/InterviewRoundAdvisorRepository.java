@@ -53,18 +53,30 @@ public class InterviewRoundAdvisorRepository implements CommonAdvisorRepository 
         // 第二步：获取当前的轮次
         Integer currentRound = repository.getCurrentRound(conversationId).block();
         currentRound = currentRound == null ? 1 : currentRound + 1;
-        // 判断当前对话类型是否需要被拦截，且轮次是否超出限制，超出限制则修改请求
-        if (taskType == TaskType.MOCK_INTERVIEW && currentRound > properties.getMaxRounds()) {
+        // 判断当前对话类型是否是面试
+        if (taskType == TaskType.MOCK_INTERVIEW) {
+            // 当前请求是否超出最大会话轮数限制
             // 第三步：获得用户输入文本，并构建提示词模板
             String currentUserMessage = chatClientRequest.prompt().getUserMessage().getText();
-            Map<String, Object> templateParams = Map.of("currentUserMessage", currentUserMessage);
-            String renderedTemplate = promptTemplate.render(templateParams);
-
-            // 第四步：修改请求(只修改prompt，不修改context)
-            return ChatClientRequest.builder()
-                    .prompt(Prompt.builder().content(renderedTemplate).build())
-                    .context(context)
-                    .build();
+            if (currentRound > properties.getMaxRounds()) {
+                Map<String, Object> templateParams = Map.of("currentUserMessage", currentUserMessage);
+                String renderedTemplate = promptTemplate.render(templateParams);
+                // 第四步：修改请求(只修改prompt，不修改context)
+                return ChatClientRequest.builder()
+                        .prompt(Prompt.builder().content(renderedTemplate).build())
+                        .context(context)
+                        .build();
+            }
+            // 如果没有超过最大轮数限制，则要求ai对上一个回答进行点评
+            // 非首轮才需要点评
+            if (currentRound > 1) {
+                String renderedAnswer = "以下是我的回答：\n" + currentUserMessage + "\n请先对以上回答进行点评，并给出建议。然后接着问下一个问题";
+                return ChatClientRequest.builder()
+                        .prompt(Prompt.builder().content(renderedAnswer).build())
+                        .context(context)
+                        .build();
+            }
+            return chatClientRequest;
         }
         return chatClientRequest;
     }

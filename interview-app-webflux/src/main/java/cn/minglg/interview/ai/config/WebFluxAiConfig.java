@@ -66,15 +66,17 @@ public class WebFluxAiConfig {
 
         // 定义各类任务对应的系统提示词文件路径
         String systemPromptForComprehensiveAssessment = "/prompt/resume/综合评估-HR.st";
-        String systemPromptForMockInterview = "/prompt/interview/基于简历内容的模拟面试问答（开始）.st";
+        String systemPromptForMockInterviewStart = "/prompt/interview/基于简历内容的模拟面试问答（开始）.st";
         String systemPromptForMockInterviewStop = "/prompt/interview/基于简历内容的模拟面试问答（结束）.st";
+        String systemPromptForMockInterview = "/prompt/interview/面试官角色预设.st";
         String systemPromptForGeneralChat = "/prompt/general/通用聊天.st";
 
 
         // 将任务类型与对应的提示词资源进行映射
         map.put(TaskType.COMPREHENSIVE_ASSESSMENT, new ClassPathResource(systemPromptForComprehensiveAssessment));
-        map.put(TaskType.MOCK_INTERVIEW, new ClassPathResource(systemPromptForMockInterview));
+        map.put(TaskType.MOCK_INTERVIEW_START, new ClassPathResource(systemPromptForMockInterviewStart));
         map.put(TaskType.MOCK_INTERVIEW_STOP, new ClassPathResource(systemPromptForMockInterviewStop));
+        map.put(TaskType.MOCK_INTERVIEW, new ClassPathResource(systemPromptForMockInterview));
         map.put(TaskType.GENERAL_CHAT, new ClassPathResource(systemPromptForGeneralChat));
         return map;
     }
