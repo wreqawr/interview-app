@@ -31,9 +31,9 @@ public interface JobMapper extends BaseMapper<Job> {
             INNER JOIN t_company tc
             ON tj.company_id=tc.company_id
             WHERE     tj.job_id IN (
-                      SELECT    tcj.job_id
-                      FROM      t_candidate_jobs tcj
-                      WHERE     tcj.candidate_id = #{userId}
+                      SELECT    tir.job_id
+                      FROM      t_interview_record tir
+                      WHERE     tir.candidate_id = #{userId}
                       )
             """)
     List<Job> getJobListByUserId(@Param("userId") Long userId);

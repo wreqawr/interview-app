@@ -4,14 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- 直接继承Spring Boot父项目 -->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.6</version>
-        <relativePath/>
-    </parent>
-
     <groupId>cn.minglg.interview</groupId>
     <artifactId>interview-app-starters</artifactId>
     <version>1.0.0</version>
@@ -34,6 +26,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hutool.version>5.8.39</hutool.version>
         <jwt.tool.version>4.5.0</jwt.tool.version>
+        <spring.boot.version>3.5.6</spring.boot.version>
     </properties>
 
     <dependencies>
@@ -47,6 +40,14 @@
     <!-- 依赖管理 -->
     <dependencyManagement>
         <dependencies>
+            <!--springboot版本管理-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!--hutool工具包管理-->
             <dependency>
                 <groupId>cn.hutool</groupId>
@@ -79,4 +80,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-</project> 
+</project>
