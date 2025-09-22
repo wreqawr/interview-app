@@ -1,8 +1,6 @@
 # 项目运行端口
 server:
   port: 8081
-#  tomcat:
-#    max-http-response-header-size: 16KB
 
 # actuator观测指标
 management:
@@ -13,179 +11,24 @@ management:
       exposure:
         include: '*'
 
-#logging:
-#  level:
-#    org.springframework.boot.autoconfigure: DEBUG
-#    org.springframework.context.annotation: DEBUG
-#    org.springframework.beans.factory: DEBUG
-#    cn.minglg.authentication: DEBUG
-#    org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: debug
-
-
 spring:
   application:
     name: interview-app-webmvc
   banner:
     location: classpath:banner/banner.txt
+  profiles:
+    active: dev
 
-  #jackson进行json转换时使用指定的时区和格式进行转换
-  jackson:
-    time-zone: GMT+8
-    date-format: yyyy-MM-dd HH:mm:ss
+  # nacos配置中心
+  cloud:
+    nacos:
+      server-addr: minglg.cn:10845
+      discovery:
+        server-addr: ${spring.cloud.nacos.server-addr}
+  config:
+    import:
+      - nacos:nacos-${spring.application.name}-${spring.profiles.active}.yml?refreshEnabled=true
 
-  #   数据源配置
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${MYSQL_JDBC_URL}
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
-    type: com.alibaba.druid.pool.DruidDataSource
-  #    druid:
-  #      #       连接池核心配置
-  #      #       最大连接数
-  #      max-active: 10
-  #      #       初始连接数
-  #      initial-size: 5
-  #      #       最小空闲连接
-  #      min-idle: 5
-
-  # redis配置
-  data:
-    #    基本配置
-    redis:
-      cluster:
-        nodes:
-          - ${REDIS_NODE_1}
-          - ${REDIS_NODE_2}
-          - ${REDIS_NODE_3}
-          - ${REDIS_NODE_4}
-          - ${REDIS_NODE_5}
-          - ${REDIS_NODE_6}
-        max-redirects: 3
-      #      超时时间（毫秒）
-      connect-timeout: 5000
-      #      密码
-      password: ${REDIS_PASSWORD}
-      #      连接池配置
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          max-wait: -1ms
-    #        cluster:
-    #          refresh:
-    #            adaptive: true
-    #            period: 2000
-    #            dynamic-refresh-sources: true
-
-    # mongodb配置
-    mongodb:
-      host: ${MONGODB_HOST}
-      port: ${MONGODB_PORT}
-      username: ${MONGODB_USERNAME}
-      password: ${MONGODB_PASSWORD}
-      database: interview
-
-  # 文件上传参数
-  servlet:
-    multipart:
-      # 单个文件最大大小为5MB
-      max-file-size: 5MB
-      # 单次请求最大总大小（多个文件）
-      max-request-size: 20MB
-
-  # ai-alibaba配置
-  ai:
-    dashscope:
-      api-key: ${ALIYUN_API_KEY}
-      chat:
-        options:
-          model: qwen-plus
-
-
-#mybatis配置
-#mybatis:
-#  configuration:
-#    map-underscore-to-camel-case: true
-#    # 开启懒加载配置
-#    lazy-loading-enabled: true
-#    aggressive-lazy-loading: false
-#  mapper-locations: classpath:mapper/**/*.xml
-
-# mybatis-plus配置
-mybatis-plus:
-  global-config:
-    banner: false
-
-
-# 安全配置
-interview:
-  webmvc:
-    security:
-      white-list-patterns:
-        - /api/auth/login         # 登录页
-        - /api/auth/register      # 注册页
-        - /api/auth/publicKey     # 获取公钥
-        - /api/auth/captcha       # 验证码
-        - /actuator/**            # 可观测性监控
-      captcha:
-        effective-patterns:
-          - /api/auth/login
-          - /api/auth/register
-
-    # 注册相关
-    register:
-      # redis中保存的所有角色字典信息的key前缀
-      role-redis-key-prefix: role:list
-      # 不允许注册的角色列表
-      not-allow-roles:
-        - ROLE_ADMIN
-
-    # 简历相关
-    resume:
-      # 文件类型白名单（仅允许以下类型的文件上传）
-      allow-file-types:
-        - .pdf
-        - .doc
-        - .docx
-        - .txt
-      # 支持预览的文件类型（不配置默认仅支持pdf）
-      #    allow-preview-types:
-      #      - .pdf
-      # 预览url有效时间（单位：秒，不配置默认10）
-      preview-expired: 5
-      # 下载url有效时间（单位：秒，不配置默认10）
-      download-expired: 60
-      # 简历分析结果保存在redis中的key前缀
-      redis-key-prefix-for-analyze: resume:analyze
-
-    # minio文件存储相关
-    minio:
-      # minio服务API地址
-      endpoint: ${MINIO_ENDPOINT}
-      # 管理员账户
-      access-key: ${MINIO_ACCESS_KEY}
-      # 管理员密码
-      secret-key: ${MINIO_SECRET_KEY}
-      # 桶信息（map集合）
-      bucket-name-prefix:
-        resumeUpload: resume-upload-
-
-    # 线程池相关
-    async:
-      # 核心线程数：线程池长期保持的线程数
-      core-pool-size: 5
-      # 最大线程数：线程池允许创建的最大线程数
-      max-pool-size: 10
-      # 队列容量：当核心线程都在忙时，新任务进入队列等待，这里设置队列容量为100
-      queue-capacity: 100
-      # 线程名前缀：线程名称的前缀，方便日志追踪（如：AsyncTask-1, AsyncTask-2...）
-      thread-name-prefix: AsyncTask-
-
-  # ai相关配置
-  ai:
-    chat-memory-repository: mongodb
 
 
 
