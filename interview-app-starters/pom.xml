@@ -27,6 +27,7 @@
         <hutool.version>5.8.39</hutool.version>
         <jwt.tool.version>4.5.0</jwt.tool.version>
         <spring.boot.version>3.5.6</spring.boot.version>
+        <ai.alibaba.version>1.0.0.3</ai.alibaba.version>
     </properties>
 
     <dependencies>
@@ -57,6 +58,23 @@
                 <!-- 注意这里是import -->
                 <scope>import</scope>
             </dependency>
+
+            <!-- 阿里云AI依赖管理 -->
+            <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-bom</artifactId>
+                <version>${ai.alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!--jwt相关依赖-->
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>${jwt.tool.version}</version>
+            </dependency>
+
             <!-- 子模块依赖管理 -->
             <dependency>
                 <groupId>cn.minglg.interview</groupId>
