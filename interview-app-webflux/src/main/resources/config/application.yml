@@ -15,61 +15,14 @@ spring:
     name: interview-app-webflux
   banner:
     location: classpath:banner/banner.txt
-
-  security:
-    user:
-      name: disabled
-      password: disabled
-
-  # r2dbc配置
-  r2dbc:
-    url: ${MYSQL_R2DBC_URL}
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
-
-  # redis配置
-  data:
-    #    基本配置
-    redis:
-      cluster:
-        nodes:
-          - ${REDIS_NODE_1}
-          - ${REDIS_NODE_2}
-          - ${REDIS_NODE_3}
-          - ${REDIS_NODE_4}
-          - ${REDIS_NODE_5}
-          - ${REDIS_NODE_6}
-        max-redirects: 3
-      #      超时时间（毫秒）
-      connect-timeout: 5000
-      #      密码
-      password: ${REDIS_PASSWORD}
-      #      连接池配置
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          max-wait: -1ms
-
-    # mongodb配置
-    mongodb:
-      host: ${MONGODB_HOST}
-      port: ${MONGODB_PORT}
-      username: ${MONGODB_USERNAME}
-      password: ${MONGODB_PASSWORD}
-      database: interview
-
-  # ai-alibaba配置
-  ai:
-    dashscope:
-      api-key: ${ALIYUN_API_KEY}
-      chat:
-        options:
-          model: qwen-plus
-interview:
-  ai:
-    chat-memory-repository: mongodb
-    advisor:
-      round:
-        max-rounds: 5
+  profiles:
+    active: dev
+  # nacos配置中心
+  cloud:
+    nacos:
+      server-addr: minglg.cn:10845
+      discovery:
+        server-addr: ${spring.cloud.nacos.server-addr}
+  config:
+    import:
+      - nacos:nacos-${spring.application.name}-${spring.profiles.active}.yml?refreshEnabled=true

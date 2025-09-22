@@ -28,8 +28,3 @@ spring:
   config:
     import:
       - nacos:nacos-${spring.application.name}-${spring.profiles.active}.yml?refreshEnabled=true
-
-
-
-
-
