@@ -17,8 +17,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(exclude = {
         DashScopeImageAutoConfiguration.class,
-        DashScopeVideoAutoConfiguration.class
+        DashScopeVideoAutoConfiguration.class,
+//        WebFluxSecurityAutoConfiguration.class
 })
+//@EnableDiscoveryClient
 public class WebFluxApplication {
     public static void main(String[] args) {
         SpringApplication.run(WebFluxApplication.class, args);

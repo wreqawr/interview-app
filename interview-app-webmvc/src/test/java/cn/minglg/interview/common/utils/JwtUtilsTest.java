@@ -6,6 +6,9 @@ import cn.minglg.interview.user.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.UUID;
 
 /**
  * ClassName:JwtUtilsTest
@@ -22,6 +25,8 @@ public class JwtUtilsTest {
     String secret = "123456";
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @Test
@@ -46,5 +51,14 @@ public class JwtUtilsTest {
         User verified = JwtUtils.verifyJwt(token, secret);
         System.out.println(verified);
 
+    }
+
+    @Test
+    public void test4() {
+        System.out.println("加密结果：" + passwordEncoder.encode("MLG997917MCYZ@"));
+        String a = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+        String b = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+
+        System.out.println("随机串：" + a + b);
     }
 }

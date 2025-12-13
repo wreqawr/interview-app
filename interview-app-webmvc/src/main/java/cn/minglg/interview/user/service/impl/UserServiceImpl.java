@@ -106,11 +106,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 根据用户名定位用户。在实际实现中，搜索
-     * 可能区分大小写或不区分大小写，具体取决于
-     * 已配置 implementation 实例。在这种情况下，
-     * 返回的对象可能具有与 What 不同的 username 大小写
-     * 实际上是被请求的..
+     * 根据用户名获取用户信息。
      *
      * @param userName 标识需要其数据的用户的用户名。
      * @return 完全填充的用户记录（永不为空）

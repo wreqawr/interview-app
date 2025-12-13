@@ -16,6 +16,11 @@
         <module>interview-app-webmvc</module>
         <module>interview-app-webflux</module>
         <module>interview-app-commons</module>
+        <module>interview-app-gateway</module>
+        <module>interview-app-user</module>
+        <module>interview-app-resume</module>
+        <module>interview-app-ai</module>
+        <module>interview-app-models</module>
     </modules>
 
     <!-- 全局属性 -->
@@ -36,7 +41,7 @@
         <hutool.version>5.8.39</hutool.version>
         <spring.boot.version>3.5.6</spring.boot.version>
         <spring.cloud.version>2025.0.0</spring.cloud.version>
-        <spring.cloud.alibaba.version>2025.0.0.0-preview</spring.cloud.alibaba.version>
+        <spring.cloud.alibaba.version>2025.0.0.0</spring.cloud.alibaba.version>
     </properties>
 
 
@@ -59,6 +64,12 @@
             <dependency>
                 <groupId>cn.minglg.interview</groupId>
                 <artifactId>interview-app-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.minglg.interview</groupId>
+                <artifactId>interview-app-user</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
