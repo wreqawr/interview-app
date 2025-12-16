@@ -126,7 +126,7 @@
 
         <dependency>
             <groupId>cn.minglg.interview</groupId>
-            <artifactId>interview-app-commons</artifactId>
+            <artifactId>commons</artifactId>
             <version>${project.version}</version>
         </dependency>
 

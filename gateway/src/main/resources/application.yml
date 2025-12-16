@@ -14,7 +14,7 @@ spring:
 
     gateway:
       server:
-        webflux:
+        webmvc:
           routes:
             - id: interview-app-user
               uri: lb://interview-app-webmvc

@@ -9,7 +9,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>interview-app-gateway</artifactId>
+    <artifactId>gateway</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -20,14 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
-        </dependency>
-        <!--适用于macOS的netty补丁-->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-resolver-dns-native-macos</artifactId>
-            <version>4.1.75.Final</version>
-            <classifier>osx-aarch_64</classifier>
+            <artifactId>spring-cloud-starter-gateway-server-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -39,10 +32,16 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
-        <!--接入loacbalancer负载均衡-->
+        <!--接入loadbalancer负载均衡-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+        <!--通用模块引入-->
+        <dependency>
+            <groupId>cn.minglg.interview</groupId>
+            <artifactId>interview-app-models</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

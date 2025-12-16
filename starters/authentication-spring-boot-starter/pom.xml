@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.minglg.interview</groupId>
-        <artifactId>interview-app</artifactId>
+        <artifactId>starters</artifactId>
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>interview-app-models</artifactId>
+    <artifactId>authentication-spring-boot-starter</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -19,10 +19,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <groupId>cn.minglg.interview</groupId>
+            <artifactId>authentication-spring-boot-autoconfigure</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
-
-</project>
+</project> 

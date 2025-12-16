@@ -15,12 +15,9 @@
     <modules>
         <module>interview-app-webmvc</module>
         <module>interview-app-webflux</module>
-        <module>interview-app-commons</module>
-        <module>interview-app-gateway</module>
-        <module>interview-app-user</module>
-        <module>interview-app-resume</module>
-        <module>interview-app-ai</module>
-        <module>interview-app-models</module>
+        <module>commons</module>
+        <module>gateway</module>
+        <module>service</module>
     </modules>
 
     <!-- 全局属性 -->
@@ -63,13 +60,7 @@
 
             <dependency>
                 <groupId>cn.minglg.interview</groupId>
-                <artifactId>interview-app-commons</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.minglg.interview</groupId>
-                <artifactId>interview-app-user</artifactId>
+                <artifactId>commons</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.minglg.interview</groupId>
-    <artifactId>interview-app-starters</artifactId>
+    <artifactId>starters</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
-    <name>interview-app-starters</name>
+    <name>starters</name>
     <description>AI模拟面试系统 - Starter模块集合</description>
 
     <modules>
