@@ -1,14 +1,15 @@
 package cn.minglg.interview.resume.controller;
 
 import cn.minglg.authentication.context.RequestScopedUserContext;
-import cn.minglg.authentication.pojo.User;
-import cn.minglg.authentication.response.R;
-import cn.minglg.commons.constant.response.ResponseCode;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.response.ResponseCode;
+import cn.minglg.commons.model.user.pojo.User;
 import cn.minglg.interview.common.annotation.ExceptionHandler;
 import cn.minglg.interview.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,8 +40,8 @@ public class ResumeController {
     @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_UPLOAD_FAIL,
             errorMessagePrefix = "简历上传失败")
-    public ResponseEntity<R> resumeUpload(@RequestParam("resume") MultipartFile file) {
-        R result = resumeService.resumeUpload(file);
+    public ResponseEntity<GenericResponse<?>> resumeUpload(@RequestParam("resume") MultipartFile file) {
+        GenericResponse<?> result = resumeService.resumeUpload(file);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -54,8 +55,8 @@ public class ResumeController {
     @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_DOWNLOAD_FAIL,
             errorMessagePrefix = "简历下载失败")
-    public ResponseEntity<R> resumeDownload(@RequestParam("resumeIds") String[] resumeIds) {
-        R result = resumeService.resumeDownload(resumeIds);
+    public ResponseEntity<GenericResponse<?>> resumeDownload(@RequestParam("resumeIds") String[] resumeIds) {
+        GenericResponse<?> result = resumeService.resumeDownload(resumeIds);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -69,8 +70,8 @@ public class ResumeController {
     @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_DELETE_FAIL,
             errorMessagePrefix = "简历删除失败")
-    public ResponseEntity<R> resumeDelete(@RequestBody String[] resumeIds) {
-        R result = resumeService.resumeDelete(resumeIds);
+    public ResponseEntity<GenericResponse<?>> resumeDelete(@RequestBody String[] resumeIds) {
+        GenericResponse<?> result = resumeService.resumeDelete(resumeIds);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -79,12 +80,13 @@ public class ResumeController {
      *
      * @return 简历元信息列表
      */
+    @PreAuthorize("hasRole('JOB_SEEKER')")
     @GetMapping("/getMyResume")
     @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_QUERY_FAIL,
             errorMessagePrefix = "简历查询失败")
-    public ResponseEntity<R> resumeMetadataDisplay() {
-        R result = resumeService.resumeMetadataDisplay();
+    public ResponseEntity<GenericResponse<?>> resumeMetadataDisplay() {
+        GenericResponse<?> result = resumeService.resumeMetadataDisplay();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -99,11 +101,11 @@ public class ResumeController {
     @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_SUMMARIZE_FAIL,
             errorMessagePrefix = "简历结果提取失败")
-    public ResponseEntity<R> queryResumeSummarizeResult(
+    public ResponseEntity<GenericResponse<?>> queryResumeSummarizeResult(
             @PathVariable("taskId") String taskId,
             @PathVariable("resumeId") String resumeId) {
         User currentUser = userContext.getUser();
-        R result = resumeService.getResumeAsyncUploadResult(currentUser.getUserId(), taskId, resumeId);
+        GenericResponse<?> result = resumeService.getResumeAsyncUploadResult(currentUser.getUserId(), taskId, resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -117,9 +119,9 @@ public class ResumeController {
     @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_PREVIEW_FAIL,
             errorMessagePrefix = "简历预览失败")
-    public ResponseEntity<R> getPreviewUrl(
+    public ResponseEntity<GenericResponse<?>> getPreviewUrl(
             @PathVariable("resumeId") String resumeId) {
-        R result = resumeService.resumePreview(resumeId);
+        GenericResponse<?> result = resumeService.resumePreview(resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -133,9 +135,9 @@ public class ResumeController {
     @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_PREVIEW_FAIL,
             errorMessagePrefix = "简历分析失败")
-    public ResponseEntity<R> resumeAnalyze(
+    public ResponseEntity<GenericResponse<?>> resumeAnalyze(
             @PathVariable("resumeId") String resumeId) {
-        R result = resumeService.resumeAnalyze(resumeId);
+        GenericResponse<?> result = resumeService.resumeAnalyze(resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -150,11 +152,11 @@ public class ResumeController {
     @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_SUMMARIZE_FAIL,
             errorMessagePrefix = "异步获取简历分析结果失败")
-    public ResponseEntity<R> queryResumeAsyncAnalyzeResult(
+    public ResponseEntity<GenericResponse<?>> queryResumeAsyncAnalyzeResult(
             @PathVariable("taskId") String taskId,
             @PathVariable("resumeId") String resumeId) {
         User currentUser = userContext.getUser();
-        R result = resumeService.getResumeAsyncAnalyzeResult(currentUser.getUserId(), taskId, resumeId);
+        GenericResponse<?> result = resumeService.getResumeAsyncAnalyzeResult(currentUser.getUserId(), taskId, resumeId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

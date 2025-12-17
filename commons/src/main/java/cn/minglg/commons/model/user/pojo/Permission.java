@@ -1,4 +1,4 @@
-package cn.minglg.authentication.pojo;
+package cn.minglg.commons.model.user.pojo;
 
 import lombok.Data;
 

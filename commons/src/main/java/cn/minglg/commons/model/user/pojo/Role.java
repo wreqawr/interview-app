@@ -1,11 +1,7 @@
-package cn.minglg.authentication.pojo;
+package cn.minglg.commons.model.user.pojo;
 
-import cn.minglg.authentication.constant.user.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -28,4 +24,18 @@ public class Role {
     private String description;
     @JsonIgnore
     private List<Permission> permissions;
+
+    @Getter
+    @AllArgsConstructor
+    public enum UserRole {
+        // 管理员
+        ROLE_ADMIN("管理员"),
+        // 求职者
+        ROLE_JOB_SEEKER("求职者"),
+        // ROLE_HR
+        ROLE_HR("企业招聘方");
+
+        private final String displayName;
+
+    }
 }

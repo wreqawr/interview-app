@@ -1,6 +1,6 @@
 package cn.minglg.interview.ai.core.interview;
 
-import cn.minglg.commons.constant.task.TaskType;
+import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.repository.ResumeDetailRepository;
 import org.jetbrains.annotations.NotNull;

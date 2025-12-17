@@ -2,8 +2,8 @@ package cn.minglg.interview.ai.core.resume;
 
 import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.utils.JsonUtils;
-import cn.minglg.commons.constant.task.TaskStatus;
-import cn.minglg.commons.constant.task.TaskType;
+import cn.minglg.commons.model.task.TaskStatus;
+import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.interview.ai.exception.AiResumeAnalyzeAndSaveException;
 import cn.minglg.interview.common.annotation.TaskHandler;
 import cn.minglg.interview.common.properties.ResumeProperties;

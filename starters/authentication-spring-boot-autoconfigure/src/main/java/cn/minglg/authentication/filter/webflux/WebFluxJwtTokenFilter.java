@@ -1,11 +1,11 @@
 package cn.minglg.authentication.filter.webflux;
 
-import cn.minglg.authentication.constant.response.ResponseCode;
 import cn.minglg.authentication.context.RequestScopedUserContext;
-import cn.minglg.authentication.pojo.User;
+import cn.minglg.authentication.pojo.SecurityUser;
 import cn.minglg.authentication.properties.WebFluxSecurityProperties;
 import cn.minglg.authentication.utils.JwtUtils;
 import cn.minglg.authentication.utils.WebFluxResponseUtils;
+import cn.minglg.commons.model.response.ResponseCode;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.http.HttpMethod;
@@ -75,7 +75,7 @@ public class WebFluxJwtTokenFilter implements WebFilter {
             }
 
             // 验证JWT token的有效性
-            User user;
+            SecurityUser user;
             try {
                 String secretKey = securityProperties.getJwtSecretKey();
                 user = JwtUtils.verifyJwt(token, secretKey);

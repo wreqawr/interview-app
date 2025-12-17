@@ -1,6 +1,6 @@
 package cn.minglg.authentication.utils;
 
-import cn.minglg.authentication.pojo.User;
+import cn.minglg.authentication.pojo.SecurityUser;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -30,7 +30,7 @@ public class JwtUtils {
      * @return 生成的JWT令牌字符串
      * @throws JWTCreationException 当JWT令牌创建失败时抛出此异常
      */
-    public static String createJwt(User user, Integer expiration, String secret) {
+    public static String createJwt(SecurityUser user, Integer expiration, String secret) {
         // 将用户对象转换为JSON字符串
         String userJson = JsonUtils.toJsonStr(user);
         try {
@@ -54,7 +54,7 @@ public class JwtUtils {
     }
 
 
-    public static User verifyJwt(String token, String secret) {
+    public static SecurityUser verifyJwt(String token, String secret) {
         DecodedJWT decoder;
         String claims;
         try {
@@ -68,6 +68,6 @@ public class JwtUtils {
         } catch (JWTVerificationException e) {
             throw new JWTVerificationException("JWT认证失败：" + e.getMessage(), e);
         }
-        return JsonUtils.toBean(claims, User.class);
+        return JsonUtils.toBean(claims, SecurityUser.class);
     }
 }

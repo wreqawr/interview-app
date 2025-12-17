@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.minglg.interview.user.mapper.RoleMapper">
 
-    <resultMap id="roleMap" type="cn.minglg.authentication.pojo.Role">
+    <resultMap id="roleMap" type="cn.minglg.commons.model.user.pojo.Role">
         <id property="roleId" column="role_id"/>
         <result property="roleName" column="role_name"/>
         <result property="description" column="description"/>

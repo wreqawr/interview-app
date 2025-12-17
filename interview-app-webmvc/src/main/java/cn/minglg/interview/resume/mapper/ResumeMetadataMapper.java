@@ -1,6 +1,6 @@
 package cn.minglg.interview.resume.mapper;
 
-import cn.minglg.commons.constant.task.TaskType;
+import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.interview.common.annotation.TaskHandler;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

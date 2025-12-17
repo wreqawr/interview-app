@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.minglg.interview.user.mapper.PermissionMapper">
 
-    <resultMap id="permissionMap" type="cn.minglg.authentication.pojo.Permission">
+    <resultMap id="permissionMap" type="cn.minglg.commons.model.user.pojo.Permission">
         <id property="permissionId" column="permission_id"/>
         <result property="permissionCode" column="permission_code"/>
         <result property="description" column="description"/>

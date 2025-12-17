@@ -1,6 +1,6 @@
 package cn.minglg.interview.common.aspects;
 
-import cn.minglg.authentication.response.R;
+import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.interview.common.annotation.ExceptionHandler;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -34,7 +34,7 @@ public class ResponseEntityAspect {
         try {
             return (ResponseEntity<?>) pjp.proceed();
         } catch (Throwable e) {
-            R exceptionResult = R.builder()
+            GenericResponse<?> exceptionResult = GenericResponse.builder()
                     .code(errorCode)
                     .message(errorMessagePrefix + e.getMessage())
                     .build();

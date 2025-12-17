@@ -1,6 +1,6 @@
 package cn.minglg.interview.render;
 
-import cn.minglg.commons.constant.task.TaskType;
+import cn.minglg.commons.model.task.TaskType;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Autowired;

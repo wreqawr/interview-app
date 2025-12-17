@@ -1,6 +1,6 @@
 package cn.minglg.interview.ai.core.resume;
 
-import cn.minglg.commons.constant.task.TaskStatus;
+import cn.minglg.commons.model.task.TaskStatus;
 import cn.minglg.interview.common.mapper.TaskMapper;
 import cn.minglg.interview.common.pojo.Task;
 import org.junit.jupiter.api.Test;

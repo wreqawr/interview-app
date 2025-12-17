@@ -1,6 +1,6 @@
 package cn.minglg.authentication.context;
 
-import cn.minglg.authentication.pojo.User;
+import cn.minglg.commons.model.user.pojo.User;
 import lombok.Data;
 import org.springframework.web.context.annotation.RequestScope;
 

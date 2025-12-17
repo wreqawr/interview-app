@@ -1,7 +1,8 @@
 package cn.minglg.interview.common.utils;
 
-import cn.minglg.authentication.pojo.User;
+import cn.minglg.authentication.pojo.SecurityUser;
 import cn.minglg.authentication.utils.JwtUtils;
+import cn.minglg.commons.model.user.pojo.User;
 import cn.minglg.interview.user.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class JwtUtilsTest {
 
     @Test
     public void test2() {
-        User silence = userMapper.getUserWithDetailsByUserName("silence");
+        SecurityUser silence = (SecurityUser) userMapper.getUserWithDetailsByUserName("silence");
         System.out.println("=========================");
         System.out.println(silence);
         String token = JwtUtils.createJwt(silence, 100, secret);
@@ -43,7 +44,7 @@ public class JwtUtilsTest {
 
     @Test
     public void test3() {
-        User silence = userMapper.getUserWithDetailsByUserName("silence");
+        SecurityUser silence = (SecurityUser) userMapper.getUserWithDetailsByUserName("silence");
         System.out.println("======================");
         System.out.println(silence);
         String token = JwtUtils.createJwt(silence, 1000, secret);

@@ -1,6 +1,6 @@
 package cn.minglg.interview.ai.properties;
 
-import cn.minglg.commons.constant.task.TaskType;
+import cn.minglg.commons.model.task.TaskType;
 import lombok.Data;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;

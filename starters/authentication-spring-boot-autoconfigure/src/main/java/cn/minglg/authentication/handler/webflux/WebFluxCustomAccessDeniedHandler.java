@@ -1,7 +1,7 @@
 package cn.minglg.authentication.handler.webflux;
 
-import cn.minglg.authentication.constant.response.ResponseCode;
 import cn.minglg.authentication.utils.WebFluxResponseUtils;
+import cn.minglg.commons.model.response.ResponseCode;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
 import org.springframework.web.server.ServerWebExchange;

@@ -1,4 +1,4 @@
-package cn.minglg.authentication.response;
+package cn.minglg.commons.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class R {
+public class GenericResponse<T> {
     private Integer code;
     private String message;
-    private Object data;
+    private T data;
 }

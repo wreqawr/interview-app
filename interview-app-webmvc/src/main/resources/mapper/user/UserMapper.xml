@@ -4,7 +4,7 @@
 <mapper namespace="cn.minglg.interview.user.mapper.UserMapper">
 
     <!-- 基本用户结果映射 -->
-    <resultMap id="baseUserMap" type="cn.minglg.authentication.pojo.User">
+    <resultMap id="baseUserMap" type="cn.minglg.commons.model.user.pojo.User">
         <id property="userId" column="user_id"/>
         <result property="username" column="username"/>
         <result property="password" column="password"/>
@@ -15,7 +15,7 @@
     </resultMap>
 
     <!-- 完整用户结果映射（使用嵌套查询） -->
-    <resultMap id="fullUserMap" type="cn.minglg.authentication.pojo.User" extends="baseUserMap">
+    <resultMap id="fullUserMap" type="cn.minglg.commons.model.user.pojo.User" extends="baseUserMap">
         <!-- 关联公司信息 -->
         <association property="company" column="user_id"
                      select="cn.minglg.interview.user.mapper.CompanyMapper.getCompanyByUserId"/>
@@ -40,7 +40,7 @@
     </select>
 
     <!-- 添加用户 -->
-    <insert id="addUser" parameterType="cn.minglg.authentication.pojo.User">
+    <insert id="addUser" parameterType="cn.minglg.commons.model.user.pojo.User">
         INSERT INTO t_user (
         username,
         password,

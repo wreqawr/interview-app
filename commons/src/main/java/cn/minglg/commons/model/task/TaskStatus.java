@@ -1,4 +1,4 @@
-package cn.minglg.commons.constant.task;
+package cn.minglg.commons.model.task;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

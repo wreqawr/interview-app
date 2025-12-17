@@ -1,12 +1,12 @@
 package cn.minglg.authentication.filter.webmvc;
 
-import cn.minglg.authentication.constant.response.ResponseCode;
 import cn.minglg.authentication.context.RequestScopedUserContext;
-import cn.minglg.authentication.pojo.User;
+import cn.minglg.authentication.pojo.SecurityUser;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
-import cn.minglg.authentication.response.R;
 import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.authentication.utils.JwtUtils;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.response.ResponseCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,7 +49,7 @@ public class WebMvcJwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        R checkResult = R.builder().code(ResponseCode.JWT_VERIFY_FAIL.getCode()).message("请先登录！").build();
+        GenericResponse<?> checkResult = GenericResponse.builder().code(ResponseCode.JWT_VERIFY_FAIL.getCode()).message("请先登录！").build();
         // 绿色通道或者预检请求直接放行
         RequestMatcher requestMatcher = this.securityProperties.getWhiteListPatternsAsRequestMatcher();
         if (RequestMethod.OPTIONS.name().equals(request.getMethod())) {
@@ -64,7 +64,7 @@ public class WebMvcJwtTokenFilter extends OncePerRequestFilter {
         try {
             // 解析token，获取userId，和redis比较
             String secretKey = securityProperties.getJwtSecretKey();
-            User user = JwtUtils.verifyJwt(token, secretKey);
+            SecurityUser user = JwtUtils.verifyJwt(token, secretKey);
             String authKey = securityProperties.getAuthKeyPrefix() + ":" + user.getUserId();
             String redisToken = redisTemplate.opsForValue().get(authKey);
             // 验证通过放行
@@ -81,6 +81,7 @@ public class WebMvcJwtTokenFilter extends OncePerRequestFilter {
                 response.getWriter().write(JsonUtils.toJsonStr(checkResult));
             }
         } catch (Exception e) {
+            checkResult.setMessage(this.getClass() + ":" + e.getMessage());
             response.getWriter().write(JsonUtils.toJsonStr(checkResult));
         }
     }

@@ -1,6 +1,6 @@
 package cn.minglg.interview.common.annotation;
 
-import cn.minglg.commons.constant.response.ResponseCode;
+import cn.minglg.commons.model.response.ResponseCode;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.ElementType;

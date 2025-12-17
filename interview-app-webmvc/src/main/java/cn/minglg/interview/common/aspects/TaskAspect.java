@@ -1,10 +1,10 @@
 package cn.minglg.interview.common.aspects;
 
 import cn.minglg.authentication.context.RequestScopedUserContext;
-import cn.minglg.authentication.response.R;
-import cn.minglg.commons.constant.response.ResponseCode;
-import cn.minglg.commons.constant.task.TaskStatus;
-import cn.minglg.commons.constant.task.TaskType;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.response.ResponseCode;
+import cn.minglg.commons.model.task.TaskStatus;
+import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.interview.common.annotation.TaskHandler;
 import cn.minglg.interview.common.exception.NoSuchTaskException;
 import cn.minglg.interview.common.mapper.TaskMapper;
@@ -99,17 +99,17 @@ public class TaskAspect {
             }
 
             if (taskStatus == TaskStatus.FAILED) {
-                return R.builder()
+                return GenericResponse.builder()
                         .code(ResponseCode.ASYNC_TASK_FAIL.getCode())
                         .message(task.getErrorMessage())
                         .build();
             }
-            return R.builder()
+            return GenericResponse.builder()
                     .code(ResponseCode.ASYNC_TASK_RUNNING.getCode())
                     .message(task.getTaskStatus().getDescription())
                     .build();
         } catch (Throwable throwable) {
-            return R.builder()
+            return GenericResponse.builder()
                     .code(ResponseCode.ASYNC_TASK_FAIL.getCode())
                     .message(throwable.getMessage())
                     .build();

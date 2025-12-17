@@ -1,7 +1,7 @@
 package cn.minglg.interview.common.annotation;
 
 
-import cn.minglg.commons.constant.task.TaskType;
+import cn.minglg.commons.model.task.TaskType;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.ElementType;

@@ -4,11 +4,11 @@ package cn.minglg.interview.resume.service.impl;
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
 import cn.minglg.authentication.context.RequestScopedUserContext;
-import cn.minglg.authentication.pojo.User;
-import cn.minglg.authentication.response.R;
-import cn.minglg.commons.constant.response.ResponseCode;
-import cn.minglg.commons.constant.resume.ResumeStatus;
-import cn.minglg.commons.constant.task.TaskStatus;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.response.ResponseCode;
+import cn.minglg.commons.model.resume.ResumeStatus;
+import cn.minglg.commons.model.task.TaskStatus;
+import cn.minglg.commons.model.user.pojo.User;
 import cn.minglg.interview.ai.core.resume.AiResumeCoreService;
 import cn.minglg.interview.common.annotation.AsyncTaskQuery;
 import cn.minglg.interview.common.exception.NoSuchResumeException;
@@ -69,7 +69,7 @@ public class ResumeServiceImpl implements ResumeService {
      * @return 上传结果
      */
     @Override
-    public R resumeUpload(MultipartFile file) {
+    public GenericResponse<?> resumeUpload(MultipartFile file) {
         List<String> allowFileTypes = resumeProperties.getAllowFileTypes();
         User currentUser = userContext.getUser();
 
@@ -126,12 +126,12 @@ public class ResumeServiceImpl implements ResumeService {
             // 第八步：构建响应
             Map<String, ? extends Serializable> data = Map.of("taskId", taskId, "resumeId", resumeId);
 
-            return R.builder().code(ResponseCode.OK.getCode())
+            return GenericResponse.<Map<String, ? extends Serializable>>builder().code(ResponseCode.OK.getCode())
                     .message("简历上传成功，请等待后台解析！")
                     .data(data)
                     .build();
         } catch (Exception e) {
-            return R.builder().code(ResponseCode.RESUME_UPLOAD_FAIL.getCode())
+            return GenericResponse.builder().code(ResponseCode.RESUME_UPLOAD_FAIL.getCode())
                     .message("简历上传失败，原因为：" + e.getMessage())
                     .build();
         }
@@ -145,7 +145,7 @@ public class ResumeServiceImpl implements ResumeService {
      */
 
     @Override
-    public R resumeDownload(String[] resumeIds) {
+    public GenericResponse<?> resumeDownload(String[] resumeIds) {
         User currentUser = userContext.getUser();
         List<String> resumeIdList = Arrays.stream(resumeIds).toList();
         List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeIdList(currentUser.getUserId(), resumeIdList);
@@ -170,7 +170,7 @@ public class ResumeServiceImpl implements ResumeService {
                 throw new ResumeDownloadException(e.getMessage());
             }
         }
-        return R.builder()
+        return GenericResponse.builder()
                 .code(ResponseCode.OK.getCode())
                 .message("下载链接获取成功！")
                 .data(data)
@@ -185,8 +185,8 @@ public class ResumeServiceImpl implements ResumeService {
      */
 
     @Override
-    public R resumeDelete(String[] resumeIds) {
-        R result;
+    public GenericResponse<?> resumeDelete(String[] resumeIds) {
+        GenericResponse<?> result;
         User currentUser = userContext.getUser();
         if (resumeIds == null || resumeIds.length == 0) {
             throw new ResumeDeleteException("简历信息不能为空！");
@@ -212,11 +212,11 @@ public class ResumeServiceImpl implements ResumeService {
             List<String> redisKeyList = resumeIdList.stream().map(resumeId -> resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId).toList();
             redisTemplate.delete(redisKeyList);
             // 第五步：构建响应
-            result = R.builder()
+            result = GenericResponse.builder()
                     .code(ResponseCode.OK.getCode())
                     .message("简历删除成功！").build();
         } catch (Exception e) {
-            result = R.builder()
+            result = GenericResponse.builder()
                     .code(ResponseCode.RESUME_DELETE_FAIL.getCode())
                     .message("简历删除失败，原因为：" + e.getMessage()).build();
 
@@ -230,11 +230,11 @@ public class ResumeServiceImpl implements ResumeService {
      * @return 简历信息列表
      */
     @Override
-    public R resumeMetadataDisplay() {
+    public GenericResponse<?> resumeMetadataDisplay() {
         User currentUser = userContext.getUser();
         List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserId(currentUser.getUserId());
         String message = resumeMetadataList == null ? "未查询到当前用户的简历信息！" : "简历信息获取成功！";
-        return R.builder()
+        return GenericResponse.builder()
                 .code(ResponseCode.OK.getCode())
                 .data(resumeMetadataList)
                 .message(message)
@@ -251,9 +251,9 @@ public class ResumeServiceImpl implements ResumeService {
      */
     @Override
     @AsyncTaskQuery
-    public R getResumeAsyncUploadResult(Long userId, String taskId, String resumeId) {
+    public GenericResponse<ResumeMetadata> getResumeAsyncUploadResult(Long userId, String taskId, String resumeId) {
         ResumeMetadata resumeMetadata = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(userId, resumeId);
-        return R.builder()
+        return GenericResponse.<ResumeMetadata>builder()
                 .code(ResponseCode.OK.getCode())
                 .data(resumeMetadata)
                 .message("简历信息提取成功")
@@ -267,7 +267,7 @@ public class ResumeServiceImpl implements ResumeService {
      * @return 简历预览url
      */
     @Override
-    public R resumePreview(String resumeId) {
+    public GenericResponse<?> resumePreview(String resumeId) {
         User currentUser = userContext.getUser();
         ResumeMetadata resumeMetadata = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeId(currentUser.getUserId(), resumeId);
         if (resumeMetadata == null) {
@@ -285,7 +285,7 @@ public class ResumeServiceImpl implements ResumeService {
             String taskId = TaskUtils.generateTaskId();
             resumeMetadata.setViewCount(resumeMetadata.getViewCount() + 1);
             resumeMetadataMapper.updateResumeMetadata(taskId, currentUser.getUserId(), resumeMetadata);
-            return R.builder().code(ResponseCode.OK.getCode())
+            return GenericResponse.builder().code(ResponseCode.OK.getCode())
                     .data(Map.of("previewUrl", fileUrl))
                     .message("预览地址获取成功！")
                     .build();
@@ -301,7 +301,7 @@ public class ResumeServiceImpl implements ResumeService {
      * @return 同步查询直接返回查询结果，异步查询则返回taskId
      */
     @Override
-    public R resumeAnalyze(String resumeId) {
+    public GenericResponse<?> resumeAnalyze(String resumeId) {
         User currentUser = userContext.getUser();
         Long userId = currentUser.getUserId();
         String redisKey = resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
@@ -312,7 +312,7 @@ public class ResumeServiceImpl implements ResumeService {
         String status = (String) redisTemplate.opsForHash().get(redisKey, hashKeyForAnalyzeStatus);
         String runningTaskId = (String) redisTemplate.opsForHash().get(redisKey, hashKeyForAnalyzeTaskId);
         if (TaskStatus.RUNNING.toString().equals(status) && runningTaskId != null) {
-            return R.builder()
+            return GenericResponse.builder()
                     .code(ResponseCode.ASYNC_TASK_RUNNING.getCode())
                     .data(Map.of("taskId", runningTaskId))
                     .message("简历正在分析中，请勿重复提交！")
@@ -323,7 +323,7 @@ public class ResumeServiceImpl implements ResumeService {
 
         String analyzeResult = (String) redisTemplate.opsForHash().get(redisKey, hashKeyForAnalyze);
         if (StringUtils.hasText(analyzeResult)) {
-            return R.builder()
+            return GenericResponse.builder()
                     .code(ResponseCode.OK.getCode())
                     .data(analyzeResult)
                     .message("简历分析完毕！")
@@ -337,7 +337,7 @@ public class ResumeServiceImpl implements ResumeService {
         analyzeResult = resumeDetail.getResumeAnalyzeHtmlContentForJobSeekers();
         if (StringUtils.hasText(analyzeResult)) {
             redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyze, analyzeResult);
-            return R.builder()
+            return GenericResponse.builder()
                     .code(ResponseCode.OK.getCode())
                     .data(analyzeResult)
                     .message("简历分析结果获取成功！")
@@ -346,7 +346,7 @@ public class ResumeServiceImpl implements ResumeService {
         // 三级缓存从ai获取，触发异步任务
         String taskId = TaskUtils.generateTaskId();
         aiResumeCoreService.resumeAnalyzeAndSave(taskId, resumeId);
-        return R.builder()
+        return GenericResponse.builder()
                 .code(ResponseCode.ASYNC_TASK_RUNNING.getCode())
                 .data(Map.of("taskId", taskId))
                 .message("正在后台分析中，请稍后！")
@@ -363,19 +363,19 @@ public class ResumeServiceImpl implements ResumeService {
      */
     @Override
     @AsyncTaskQuery
-    public R getResumeAsyncAnalyzeResult(Long userId, String taskId, String resumeId) {
+    public GenericResponse<String> getResumeAsyncAnalyzeResult(Long userId, String taskId, String resumeId) {
         String redisKey = resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId;
         String hashKey = "analyzeHtmlContent";
         String analyzeResult = ((String) redisTemplate.opsForHash().get(redisKey, hashKey));
         if (StringUtils.hasText(analyzeResult)) {
-            return R.builder()
+            return GenericResponse.<String>builder()
                     .code(ResponseCode.OK.getCode())
                     .data(analyzeResult)
                     .message("简历分析完毕！")
                     .build();
         }
         String result = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId).getResumeAnalyzeHtmlContentForJobSeekers();
-        return R.builder()
+        return GenericResponse.<String>builder()
                 .code(ResponseCode.OK.getCode())
                 .data(result)
                 .message("简历分析完毕！")

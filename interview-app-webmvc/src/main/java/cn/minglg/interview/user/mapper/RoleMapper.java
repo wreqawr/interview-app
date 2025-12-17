@@ -1,6 +1,6 @@
 package cn.minglg.interview.user.mapper;
 
-import cn.minglg.authentication.pojo.Role;
+import cn.minglg.commons.model.user.pojo.Role;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

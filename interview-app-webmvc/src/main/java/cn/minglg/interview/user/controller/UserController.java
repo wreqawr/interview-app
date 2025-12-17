@@ -1,8 +1,8 @@
 package cn.minglg.interview.user.controller;
 
-import cn.minglg.authentication.pojo.User;
-import cn.minglg.authentication.response.R;
-import cn.minglg.commons.constant.response.ResponseCode;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.response.ResponseCode;
+import cn.minglg.commons.model.user.pojo.User;
 import cn.minglg.interview.common.annotation.ExceptionHandler;
 import cn.minglg.interview.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +27,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/publicKey")
-    public ResponseEntity<R> getPublicKey() {
-        R result = R.builder().code(ResponseCode.OK.getCode())
+    public ResponseEntity<GenericResponse<?>> getPublicKey() {
+        GenericResponse<?> result = GenericResponse.builder().code(ResponseCode.OK.getCode())
                 .data(publicKeyPem)
                 .message("获取公钥成功")
                 .build();
@@ -45,7 +45,7 @@ public class UserController {
     @ExceptionHandler(
             errResponseCode = ResponseCode.RESUME_UPLOAD_FAIL,
             errorMessagePrefix = "用户注册失败")
-    public ResponseEntity<R> register(@RequestBody User user) {
+    public ResponseEntity<GenericResponse<?>> register(@RequestBody User user) {
         /*
           必填项：
             用户名、密码、邮箱、角色
@@ -54,7 +54,7 @@ public class UserController {
           默认项：
             状态、注册时间
          */
-        R result = userService.register(user);
+        GenericResponse<?> result = userService.register(user);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

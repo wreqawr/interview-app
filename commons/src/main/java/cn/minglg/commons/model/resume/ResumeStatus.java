@@ -1,4 +1,4 @@
-package cn.minglg.commons.constant.resume;
+package cn.minglg.commons.model.resume;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

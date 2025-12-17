@@ -1,6 +1,6 @@
 package cn.minglg.interview.ai.controller;
 
-import cn.minglg.commons.constant.task.TaskType;
+import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.interview.ai.service.AssistantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

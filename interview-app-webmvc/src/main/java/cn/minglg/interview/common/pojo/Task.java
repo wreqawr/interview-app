@@ -1,7 +1,7 @@
 package cn.minglg.interview.common.pojo;
 
-import cn.minglg.commons.constant.task.TaskStatus;
-import cn.minglg.commons.constant.task.TaskType;
+import cn.minglg.commons.model.task.TaskStatus;
+import cn.minglg.commons.model.task.TaskType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

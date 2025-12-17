@@ -1,11 +1,11 @@
 package cn.minglg.authentication.handler.webmvc;
 
-import cn.minglg.authentication.constant.response.ResponseCode;
-import cn.minglg.authentication.pojo.User;
+import cn.minglg.authentication.pojo.SecurityUser;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
-import cn.minglg.authentication.response.R;
 import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.authentication.utils.JwtUtils;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.response.ResponseCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -42,17 +42,17 @@ public class WebMvcCustomLogoutSuccessHandler implements LogoutSuccessHandler {
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         // 获取当前登录用户信息
         String authorization = request.getHeader("Authorization");
-        R result = null;
+        GenericResponse<?> result = null;
         try {
             String secretKey = securityProperties.getJwtSecretKey();
-            User user = JwtUtils.verifyJwt(authorization, secretKey);
+            SecurityUser user = JwtUtils.verifyJwt(authorization, secretKey);
             String authKey = securityProperties.getAuthKeyPrefix() + ":" + user.getUserId();
             // 删除redis中的登录信息
             redisTemplate.delete(authKey);
             response.setContentType("application/json;charset=UTF-8");
-            result = R.builder().code(ResponseCode.OK.getCode()).message("账号：" + user.getUsername() + "退出成功！").build();
+            result = GenericResponse.builder().code(ResponseCode.OK.getCode()).message("账号：" + user.getUsername() + "退出成功！").build();
         } catch (Exception e) {
-            result = R.builder().code(ResponseCode.LOGOUT_FAIL.getCode()).message("账号退出失败，原因为：" + e.getMessage()).build();
+            result = GenericResponse.builder().code(ResponseCode.LOGOUT_FAIL.getCode()).message("账号退出失败，原因为：" + e.getMessage()).build();
         } finally {
             response.getWriter().write(JsonUtils.toJsonStr(result));
         }

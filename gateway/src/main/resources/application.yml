@@ -14,12 +14,18 @@ spring:
 
     gateway:
       server:
-        webmvc:
+        webflux:
           routes:
-            - id: interview-app-user
+            - id: interview-app-webmvc
               uri: lb://interview-app-webmvc
               predicates:
-                - Path=/api/auth/**
+                - Path=/api/resume/getMyResume
+#                - Path=/test/**
+
+            - id: interview-app-webflux
+              uri: lb://interview-app-webflux
+              predicates:
+                  - Path=/api/ai/assistant
 
 
 #logging:

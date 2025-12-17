@@ -1,11 +1,11 @@
-package cn.minglg.authentication.constant.response;
+package cn.minglg.commons.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * ClassName:ResponseCode
- * Package:cn.minglg.authentication.constant.response
+ * Package:cn.minglg.interview.auth.constant
  * Description:
  *
  * @Author kfzx-minglg

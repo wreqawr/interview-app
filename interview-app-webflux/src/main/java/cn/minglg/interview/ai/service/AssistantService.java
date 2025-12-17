@@ -1,7 +1,7 @@
 package cn.minglg.interview.ai.service;
 
 import cn.minglg.ai.advisors.CommonAdvisor;
-import cn.minglg.commons.constant.task.TaskType;
+import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.interview.ai.properties.InterviewRoundLimitProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;

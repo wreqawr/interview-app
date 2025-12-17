@@ -1,21 +1,15 @@
 package cn.minglg.authentication.pojo;
 
-import cn.minglg.authentication.constant.user.UserStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import cn.minglg.commons.model.user.pojo.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * ClassName:User
@@ -26,30 +20,21 @@ import java.util.List;
  * @Create 2025/6/13
  * @Version 1.0
  */
-@Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @JsonIgnoreProperties({"handler", "authorities"})
-public class User implements UserDetails, Serializable {
-    /**
-     * 核心字段
-     */
-    private Long userId;
-    private String username;
-    @JsonIgnore
-    private String password;
-    private String nickname;
-    private String email;
-    private UserStatus status;
-    @JsonIgnore
-    private LocalDateTime createdAt;
+public class SecurityUser extends User implements UserDetails, Serializable {
 
-    /**
-     * 复合字段
-     */
-    private Company company;
-    private List<Role> roles;
+    public SecurityUser(User user) {
+        super(user.getUserId(),
+                user.getUsername(),
+                user.getPassword(),
+                user.getNickname(),
+                user.getEmail(),
+                user.getStatus(),
+                user.getCreatedAt(),
+                user.getCompany(),
+                user.getRoles());
+    }
 
     /**
      * 返回授予用户的权限。。
@@ -69,7 +54,7 @@ public class User implements UserDetails, Serializable {
      */
     @Override
     public boolean isEnabled() {
-        return "NORMAL".equalsIgnoreCase(this.status.toString());
+        return "NORMAL".equalsIgnoreCase(this.getStatus().toString());
     }
 
 }

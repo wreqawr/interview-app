@@ -1,7 +1,7 @@
 package cn.minglg.authentication.utils;
 
-import cn.minglg.authentication.constant.response.ResponseCode;
-import cn.minglg.authentication.response.R;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.response.ResponseCode;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -36,7 +36,7 @@ public class WebFluxResponseUtils {
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         response.getHeaders().set(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
         // 构建未授权访问的响应结果
-        R result = R.builder()
+        GenericResponse<Object> result = GenericResponse.builder()
                 .code(responseCode.getCode())
                 .message(message)
                 .build();

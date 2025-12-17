@@ -1,7 +1,7 @@
 package cn.minglg.interview.user.service;
 
-import cn.minglg.authentication.pojo.User;
-import cn.minglg.authentication.response.R;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.user.pojo.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
@@ -21,5 +21,5 @@ public interface UserService extends UserDetailsService {
      * @param user 用户信息
      * @return 执行结果
      */
-    R register(User user);
+    GenericResponse<?> register(User user);
 }

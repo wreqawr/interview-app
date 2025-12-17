@@ -1,10 +1,10 @@
 package cn.minglg.authentication.filter.webmvc;
 
-import cn.minglg.authentication.constant.response.ResponseCode;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
-import cn.minglg.authentication.response.R;
 import cn.minglg.authentication.utils.CaptchaUtils;
 import cn.minglg.authentication.utils.JsonUtils;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.response.ResponseCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +37,7 @@ public class WebMvcCaptchaFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
-        R checkResult = R.builder().code(ResponseCode.CAPTCHA_VERIFY_FAIL.getCode()).message("验证码认证失败！").build();
+        GenericResponse<?> checkResult = GenericResponse.builder().code(ResponseCode.CAPTCHA_VERIFY_FAIL.getCode()).message("验证码认证失败！").build();
         RequestMatcher requestMatcher = securityProperties.getCaptcha().getEffectivePatternsAsRequestMatcher();
         String captchaRedisKey = null;
         try {
@@ -60,7 +60,7 @@ public class WebMvcCaptchaFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             }
         } catch (Exception e) {
-            checkResult.setMessage(e.getMessage());
+            checkResult.setMessage(this.getClass() + ":" + e.getMessage());
             response.getWriter().write(JsonUtils.toJsonStr(checkResult));
         } finally {
             // 无论验证成功与否，redis中的验证码信息都要失效

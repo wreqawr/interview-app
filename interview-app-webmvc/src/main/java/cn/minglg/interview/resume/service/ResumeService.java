@@ -1,6 +1,7 @@
 package cn.minglg.interview.resume.service;
 
-import cn.minglg.authentication.response.R;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.interview.resume.pojo.ResumeMetadata;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public interface ResumeService {
      * @param file 文件对象
      * @return 上传结果
      */
-    R resumeUpload(MultipartFile file);
+    GenericResponse<?> resumeUpload(MultipartFile file);
 
     /**
      * 简历下载接口
@@ -30,7 +31,7 @@ public interface ResumeService {
      * @param resumeIds 文件id列表
      * @return 统一响应结构
      */
-    R resumeDownload(String[] resumeIds);
+    GenericResponse<?> resumeDownload(String[] resumeIds);
 
     /**
      * 简历删除接口
@@ -38,14 +39,14 @@ public interface ResumeService {
      * @param resumeIds 简历id列表
      * @return 操作结果
      */
-    R resumeDelete(String[] resumeIds);
+    GenericResponse<?> resumeDelete(String[] resumeIds);
 
     /**
      * 简历元信息展示接口，获取当前用户的所有简历元信息
      *
      * @return 简历元信息列表
      */
-    R resumeMetadataDisplay();
+    GenericResponse<?> resumeMetadataDisplay();
 
     /**
      * 简历信息提取结果查询接口
@@ -55,7 +56,7 @@ public interface ResumeService {
      * @param resumeId 简历id
      * @return 查询结果
      */
-    R getResumeAsyncUploadResult(Long userId, String taskId, String resumeId);
+    GenericResponse<ResumeMetadata> getResumeAsyncUploadResult(Long userId, String taskId, String resumeId);
 
     /**
      * 获取简历预览url
@@ -64,7 +65,7 @@ public interface ResumeService {
      * @return 简历预览url
      */
 
-    R resumePreview(String resumeId);
+    GenericResponse<?> resumePreview(String resumeId);
 
     /**
      * 简历分析（面向求职者）
@@ -72,7 +73,7 @@ public interface ResumeService {
      * @param resumeId 简历id
      * @return 同步查询直接返回查询结果，异步查询则返回taskId
      */
-    R resumeAnalyze(String resumeId);
+    GenericResponse<?> resumeAnalyze(String resumeId);
 
     /**
      * 获取简历分析异步结果
@@ -82,7 +83,7 @@ public interface ResumeService {
      * @param resumeId 简历id
      * @return 结果信息
      */
-    R getResumeAsyncAnalyzeResult(Long userId, String taskId, String resumeId);
+    GenericResponse<String> getResumeAsyncAnalyzeResult(Long userId, String taskId, String resumeId);
 
 
     /**

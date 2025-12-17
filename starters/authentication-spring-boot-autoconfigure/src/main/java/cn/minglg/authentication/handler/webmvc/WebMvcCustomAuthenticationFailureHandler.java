@@ -1,8 +1,8 @@
 package cn.minglg.authentication.handler.webmvc;
 
-import cn.minglg.authentication.constant.response.ResponseCode;
-import cn.minglg.authentication.response.R;
 import cn.minglg.authentication.utils.JsonUtils;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.response.ResponseCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
@@ -30,7 +30,7 @@ public class WebMvcCustomAuthenticationFailureHandler implements AuthenticationF
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
-        R result = R.builder().code(ResponseCode.AUTH_FAIL.getCode()).message("登录失败：" + exception.getMessage()).build();
+        GenericResponse<?> result = GenericResponse.builder().code(ResponseCode.AUTH_FAIL.getCode()).message("登录失败：" + exception.getMessage()).build();
         response.getWriter().write(JsonUtils.toJsonStr(result));
     }
 }

@@ -1,6 +1,6 @@
 package cn.minglg.interview.candidate.controller;
 
-import cn.minglg.authentication.response.R;
+import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.interview.candidate.service.CandidateService;
 import cn.minglg.interview.job.pojo.JobDTO;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +34,12 @@ public class CandidateController {
      * @return ResponseEntity<R> 包含岗位列表信息的响应实体
      */
     @GetMapping("/getJobList")
-    public ResponseEntity<R> getCandidateList() {
+    public ResponseEntity<GenericResponse<Object>> getCandidateList() {
         // 获取当前用户投递的岗位列表
         List<JobDTO> jobList = candidateService.getJobListByUserId();
 
         // 构建成功响应结果
-        R result = R.builder()
+        GenericResponse<Object> result = GenericResponse.builder()
                 .code(200)
                 .message("获取面试者投递的岗位成功")
                 .data(jobList)

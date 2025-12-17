@@ -1,12 +1,13 @@
 package cn.minglg.interview.user.service.impl;
 
-import cn.minglg.authentication.pojo.Company;
-import cn.minglg.authentication.pojo.Role;
-import cn.minglg.authentication.pojo.User;
-import cn.minglg.authentication.response.R;
+import cn.minglg.authentication.pojo.SecurityUser;
 import cn.minglg.authentication.service.RsaService;
 import cn.minglg.authentication.utils.JsonUtils;
-import cn.minglg.commons.constant.response.ResponseCode;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.response.ResponseCode;
+import cn.minglg.commons.model.user.pojo.Company;
+import cn.minglg.commons.model.user.pojo.Role;
+import cn.minglg.commons.model.user.pojo.User;
 import cn.minglg.interview.common.properties.RegisterProperties;
 import cn.minglg.interview.user.mapper.*;
 import cn.minglg.interview.user.service.UserService;
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R register(User user) {
+    public GenericResponse<?> register(User user) {
         String registerRoleName = user.getRoles().get(0).getRoleName().toString();
         // 首先获取所有的角色列表（优先从redis获取，如果获取不到再从mysql获取）
         // 防止添加无效角色
@@ -64,7 +65,7 @@ public class UserServiceImpl implements UserService {
         // 角色不存在或者是不允许注册的角色
         List<String> notAllowRoles = registerProperties.getNotAllowRoles();
         if (roleStr == null || notAllowRoles.contains(registerRoleName)) {
-            return R.builder()
+            return GenericResponse.builder()
                     .code(ResponseCode.REGISTER_FAIL.getCode())
                     .message("注册失败，无效的角色：" + registerRoleName).build();
         }
@@ -97,7 +98,7 @@ public class UserServiceImpl implements UserService {
                     userCompanyMapper.addUserCompany(userId, companyId);
                 }
             }
-            return R.builder().code(ResponseCode.OK.getCode()).message("注册成功！").build();
+            return GenericResponse.builder().code(ResponseCode.OK.getCode()).message("注册成功！").build();
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -114,11 +115,11 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        User user = userMapper.getUserWithDetailsByUserName(userName);
+        User user =  userMapper.getUserWithDetailsByUserName(userName);
         if (user == null) {
             throw new UsernameNotFoundException("登录账号不存在！");
         }
-        return user;
+        return new SecurityUser(user);
     }
 
 }
