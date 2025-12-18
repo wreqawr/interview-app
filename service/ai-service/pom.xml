@@ -23,4 +23,12 @@
 
     <packaging>pom</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.minglg.interview</groupId>
+            <artifactId>ai-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>

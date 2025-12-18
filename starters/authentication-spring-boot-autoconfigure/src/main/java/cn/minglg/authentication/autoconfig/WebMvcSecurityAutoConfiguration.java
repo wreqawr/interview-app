@@ -15,7 +15,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,9 +25,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.util.List;
@@ -57,36 +53,13 @@ import java.util.List;
 @AutoConfiguration
 public class WebMvcSecurityAutoConfiguration {
 
-    /**
-     * 配置跨域资源共享(CORS)配置源
-     *
-     * @return CorsConfigurationSource 跨域配置源对象，用于处理跨域请求
-     */
-    @Bean
-    @Primary
-    public CorsConfigurationSource configurationSource() {
-        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-
-        // 跨域配置
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("*"));
-        corsConfiguration.setAllowedMethods(List.of("*"));
-        corsConfiguration.setAllowedHeaders(List.of("*"));
-        // 暴露响应头
-        corsConfiguration.setExposedHeaders(List.of("captchaId", "Authorization"));
-
-        // 注册跨域配置
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-        return urlBasedCorsConfigurationSource;
-    }
-
 
     /**
      * 配置WebMvc安全过滤器链，用于处理认证、授权、跨域、会话管理等安全相关逻辑。
      *
      * @param http                             Spring Security的HttpSecurity对象，用于构建安全配置
      * @param webMvcCustomAuthenticationFilter 自定义认证过滤器，替换默认的用户名密码认证逻辑
-     * @param configurationSource              CORS配置源，用于处理跨域请求
+     *                                         //     * @param configurationSource              CORS配置源，用于处理跨域请求
      * @param webMvcCustomAccessDeniedHandler  权限不足时的自定义处理逻辑
      * @param webMvcCustomLogoutSuccessHandler 登出成功后的自定义处理逻辑
      * @param securityProperties               安全相关配置属性，如白名单、登出路径等
@@ -99,7 +72,6 @@ public class WebMvcSecurityAutoConfiguration {
     @Bean("webMvcSecurityFilterChain")
     public SecurityFilterChain webMvcSecurityFilterChain(HttpSecurity http,
                                                          WebMvcCustomAuthenticationFilter webMvcCustomAuthenticationFilter,
-                                                         CorsConfigurationSource configurationSource,
                                                          WebMvcCustomAccessDeniedHandler webMvcCustomAccessDeniedHandler,
                                                          WebMvcCustomLogoutSuccessHandler webMvcCustomLogoutSuccessHandler,
                                                          WebMvcSecurityProperties securityProperties,
@@ -110,9 +82,6 @@ public class WebMvcSecurityAutoConfiguration {
         return http
                 // 关闭CSRF防护
                 .csrf(AbstractHttpConfigurer::disable)
-                // 配置跨域资源共享(CORS)
-                .cors(cors ->
-                        cors.configurationSource(configurationSource))
                 .authorizeHttpRequests(auth -> {
                             // 显式放行所有OPTIONS请求
                             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();

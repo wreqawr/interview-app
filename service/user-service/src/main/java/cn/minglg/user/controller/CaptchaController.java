@@ -6,6 +6,7 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -22,10 +23,11 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/user")
 public class CaptchaController {
     private final CaptchaService captchaService;
 
-    @GetMapping("/api/auth/captcha")
+    @GetMapping("/captcha")
     public void getCaptcha(HttpServletResponse response) throws IOException {
         response.setContentType("image/jpeg");
         Map<String, Object> captcha = captchaService.generateCaptcha();

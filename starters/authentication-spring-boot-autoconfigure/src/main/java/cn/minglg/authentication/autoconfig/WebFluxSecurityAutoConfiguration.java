@@ -20,9 +20,6 @@ import org.springframework.security.web.server.authorization.ServerAccessDeniedH
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.DispatcherHandler;
 
 import java.util.List;
@@ -47,27 +44,6 @@ import java.util.List;
 public class WebFluxSecurityAutoConfiguration {
 
     /**
-     * 配置WebFlux跨域
-     */
-    @Bean
-    public CorsConfigurationSource webfluxCorsConfigurationSource() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        // 允许任何来源
-        corsConfiguration.setAllowedOrigins(List.of("*"));
-        // 允许任何请求方法
-        corsConfiguration.setAllowedMethods(List.of("*"));
-        // 允许任何请求头
-        corsConfiguration.setAllowedHeaders(List.of("*"));
-        // 暴露响应头
-        corsConfiguration.setExposedHeaders(List.of("Authorization"));
-
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return source;
-    }
-
-    /**
      * 配置WebFlux安全过滤器链
      * 轻量级配置：只包含基础认证、权限拒绝处理和跨域
      */
@@ -85,10 +61,6 @@ public class WebFluxSecurityAutoConfiguration {
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 // 关闭登出
                 .logout(ServerHttpSecurity.LogoutSpec::disable)
-
-                // 配置跨域
-                .cors(cors -> cors.configurationSource(webfluxCorsConfigurationSource()))
-
                 // 配置无状态会话管理，适用于前后端分离架构
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .requestCache(cache -> cache.requestCache(NoOpServerRequestCache.getInstance()))

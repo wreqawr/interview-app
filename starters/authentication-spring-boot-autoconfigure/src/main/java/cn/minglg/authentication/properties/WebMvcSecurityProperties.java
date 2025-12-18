@@ -3,7 +3,7 @@ package cn.minglg.authentication.properties;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -38,11 +38,11 @@ public class WebMvcSecurityProperties {
     /**
      * 登录页
      */
-    private String loginUri = "/api/auth/login";
+    private String loginUri = "/api/user/login";
     /**
      * 退出页
      */
-    private String logoutUri = "/api/auth/logout";
+    private String logoutUri = "/api/user/logout";
     /**
      * 登录认证信息存储在redis中的key前缀
      */
@@ -106,10 +106,11 @@ public class WebMvcSecurityProperties {
 
         public void initEffectivePatternsAsRequestMatcher() {
             effectivePatterns = effectivePatterns == null ? Collections.emptyList() : effectivePatterns;
+            PathPatternRequestMatcher.Builder builder = PathPatternRequestMatcher.withDefaults();
             this.effectivePatternsAsRequestMatcher =
                     new OrRequestMatcher(this.getEffectivePatterns()
                             .stream()
-                            .map(AntPathRequestMatcher::new)
+                            .map(builder::matcher)
                             .collect(Collectors.toList()));
         }
     }
@@ -128,10 +129,11 @@ public class WebMvcSecurityProperties {
             this.whiteListPatternsAsRequestMatcher = null;
         } else {
             // 将白名单模式列表转换为AntPathRequestMatcher对象列表，并包装为OrRequestMatcher
+            PathPatternRequestMatcher.Builder builder = PathPatternRequestMatcher.withDefaults();
             this.whiteListPatternsAsRequestMatcher =
                     new OrRequestMatcher(this.getWhiteListPatterns()
                             .stream()
-                            .map(AntPathRequestMatcher::new)
+                            .map(builder::matcher)
                             .collect(Collectors.toList()));
         }
     }

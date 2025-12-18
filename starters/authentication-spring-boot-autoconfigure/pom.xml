@@ -61,6 +61,7 @@
             <groupId>cn.minglg.interview</groupId>
             <artifactId>commons</artifactId>
             <version>${project.version}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project> 

@@ -9,23 +9,27 @@ spring:
       server-addr: ${NACOS_SERVER_ADDR}
       discovery:
         server-addr: ${spring.cloud.nacos.server-addr}
-        namespace: public
+        namespace: interview
         group: dev
 
     gateway:
       server:
         webflux:
           routes:
-            - id: interview-app-webmvc
-              uri: lb://interview-app-webmvc
+            - id: user-service
+              uri: lb://user-service
               predicates:
-                - Path=/api/resume/getMyResume
-#                - Path=/test/**
+                - Path=/api/user/**
 
-            - id: interview-app-webflux
-              uri: lb://interview-app-webflux
+            - id: resume-service
+              uri: lb://resume-service
               predicates:
-                  - Path=/api/ai/assistant
+                - Path=/api/resume/**
+
+            - id: ai-flux-service
+              uri: lb://ai-flux-service
+              predicates:
+                  - Path=/api/ai/flux/**
 
 
 #logging:
