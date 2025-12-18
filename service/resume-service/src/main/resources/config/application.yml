@@ -1,9 +1,9 @@
 server:
-  port: 20000
+  port: 30000
 
 spring:
   application:
-    name: user-service
+    name: resume-service
   banner:
     location: classpath:banner/banner.txt
 

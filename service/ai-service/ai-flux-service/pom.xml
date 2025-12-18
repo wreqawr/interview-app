@@ -5,22 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.minglg.interview</groupId>
-        <artifactId>service</artifactId>
+        <artifactId>ai-service</artifactId>
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>ai-service</artifactId>
-    <modules>
-        <module>ai-flux-service</module>
-        <module>ai-servlet-service</module>
-    </modules>
+    <artifactId>ai-flux-service</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
 </project>

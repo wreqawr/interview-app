@@ -1,9 +1,9 @@
 server:
-  port: 20000
+  port: 40001
 
 spring:
   application:
-    name: user-service
+    name: ai-flux-service
   banner:
     location: classpath:banner/banner.txt
 
