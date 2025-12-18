@@ -1,10 +1,11 @@
 package cn.minglg.authentication.config.webflux;
 
-import cn.minglg.authentication.context.RequestScopedUserContext;
 import cn.minglg.authentication.filter.webflux.WebFluxJwtTokenFilter;
 import cn.minglg.authentication.properties.WebFluxSecurityProperties;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
@@ -20,6 +21,7 @@ import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
  */
 @Configuration
 @ConditionalOnClass({ReactiveStringRedisTemplate.class})
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 public class WebFluxFilterConfig {
 
     /**

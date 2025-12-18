@@ -2,7 +2,6 @@ package cn.minglg.interview.ai.service.impl;
 
 import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.interview.ai.core.resume.AiResumeCoreService;
-import cn.minglg.interview.common.utils.TaskUtils;
 import cn.minglg.interview.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.interview.resume.pojo.ResumeDetail;
 import cn.minglg.interview.resume.pojo.ResumeMetadata;

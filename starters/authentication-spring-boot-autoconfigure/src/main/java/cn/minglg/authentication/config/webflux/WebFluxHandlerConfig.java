@@ -1,7 +1,9 @@
 package cn.minglg.authentication.config.webflux;
 
 import cn.minglg.authentication.handler.webflux.WebFluxCustomAccessDeniedHandler;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @Version 1.0
  */
 @Configuration
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 public class WebFluxHandlerConfig {
     /**
      * 创建自定义访问拒绝处理器的Bean

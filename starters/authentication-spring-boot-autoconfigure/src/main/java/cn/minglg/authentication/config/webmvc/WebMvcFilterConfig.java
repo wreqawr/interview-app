@@ -1,6 +1,6 @@
 package cn.minglg.authentication.config.webmvc;
 
-import cn.minglg.authentication.context.RequestScopedUserContext;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.authentication.filter.webmvc.WebMvcCaptchaFilter;
 import cn.minglg.authentication.filter.webmvc.WebMvcCustomAuthenticationFilter;
 import cn.minglg.authentication.filter.webmvc.WebMvcJwtTokenFilter;

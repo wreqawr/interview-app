@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/ai")
+@RequestMapping("/api/ai/flux")
 public class AssistantController {
     private final AssistantService assistantService;
 

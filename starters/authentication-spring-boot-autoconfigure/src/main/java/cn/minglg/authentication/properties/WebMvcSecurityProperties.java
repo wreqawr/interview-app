@@ -145,6 +145,8 @@ public class WebMvcSecurityProperties {
     @PostConstruct
     public void initProperties() {
         this.initWhiteListPatternsAsRequestMatcher();
-        this.getCaptcha().initEffectivePatternsAsRequestMatcher();
+        if (this.getCaptcha() != null) {
+            this.getCaptcha().initEffectivePatternsAsRequestMatcher();
+        }
     }
 }

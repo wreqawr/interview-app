@@ -7,10 +7,12 @@ import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -35,10 +37,22 @@ public class WebMvcCaptchaFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         GenericResponse<?> checkResult = GenericResponse.builder().code(ResponseCode.CAPTCHA_VERIFY_FAIL.getCode()).message("验证码认证失败！").build();
-        RequestMatcher requestMatcher = securityProperties.getCaptcha().getEffectivePatternsAsRequestMatcher();
+        WebMvcSecurityProperties.Captcha captcha = securityProperties.getCaptcha();
+        if (captcha==null){
+            try {
+                filterChain.doFilter(request, response);
+            } catch (ServletException e) {
+                throw new RuntimeException(e);
+            }
+            return;
+        }
+        RequestMatcher requestMatcher = captcha.getEffectivePatternsAsRequestMatcher();
         String captchaRedisKey = null;
         try {
             // 只有需要验证码的请求才会拦截，不需要验证码的请求路径直接放行

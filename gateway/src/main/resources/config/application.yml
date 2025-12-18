@@ -1,0 +1,42 @@
+server:
+  port: 10000
+spring:
+  application:
+    name: interview-app-gateway
+  banner:
+    location: classpath:banner/banner.txt
+
+  # nacos配置中心
+  cloud:
+    nacos:
+      server-addr: ${NACOS_SERVER_ADDR}
+      discovery:
+        server-addr: ${spring.cloud.nacos.server-addr}
+        namespace: interview
+        group: dev
+
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/api/user/**
+
+            - id: resume-service
+              uri: lb://resume-service
+              predicates:
+                - Path=/api/resume/**
+
+            - id: ai-flux-service
+              uri: lb://ai-flux-service
+              predicates:
+                  - Path=/api/ai/flux/**
+
+
+#logging:
+#  level:
+#    org.springframework.boot.autoconfigure: DEBUG
+#    org.springframework.cloud.commons.config: DEBUG
+#    com.alibaba.cloud.nacos: DEBUG

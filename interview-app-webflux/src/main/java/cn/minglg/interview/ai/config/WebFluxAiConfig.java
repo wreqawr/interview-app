@@ -2,7 +2,7 @@ package cn.minglg.interview.ai.config;
 
 import cn.minglg.ai.advisors.ReactiveRoundLimitManager;
 import cn.minglg.ai.context.UserContextProvider;
-import cn.minglg.authentication.context.RequestScopedUserContext;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.authentication.exception.UnKnowUserException;
 import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.interview.ai.advisor.InterviewRoundAdvisorRepository;

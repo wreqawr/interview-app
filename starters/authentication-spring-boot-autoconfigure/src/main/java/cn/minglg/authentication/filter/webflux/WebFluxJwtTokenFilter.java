@@ -1,6 +1,6 @@
 package cn.minglg.authentication.filter.webflux;
 
-import cn.minglg.authentication.context.RequestScopedUserContext;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.authentication.pojo.SecurityUser;
 import cn.minglg.authentication.properties.WebFluxSecurityProperties;
 import cn.minglg.authentication.utils.JwtUtils;

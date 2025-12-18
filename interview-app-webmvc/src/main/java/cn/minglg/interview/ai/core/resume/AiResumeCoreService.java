@@ -1,6 +1,6 @@
 package cn.minglg.interview.ai.core.resume;
 
-import cn.minglg.authentication.context.RequestScopedUserContext;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.commons.model.task.TaskStatus;
 import cn.minglg.commons.model.task.TaskType;

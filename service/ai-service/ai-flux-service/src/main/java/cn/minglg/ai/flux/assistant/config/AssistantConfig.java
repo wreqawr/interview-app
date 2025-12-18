@@ -4,7 +4,7 @@ import cn.minglg.ai.advisors.ReactiveRoundLimitManager;
 import cn.minglg.ai.context.UserContextProvider;
 import cn.minglg.ai.flux.assistant.advisor.InterviewRoundAdvisorRepository;
 import cn.minglg.ai.flux.assistant.properties.InterviewRoundLimitProperties;
-import cn.minglg.authentication.context.RequestScopedUserContext;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.authentication.exception.UnKnowUserException;
 import cn.minglg.commons.model.task.TaskType;
 import org.springframework.ai.chat.prompt.PromptTemplate;

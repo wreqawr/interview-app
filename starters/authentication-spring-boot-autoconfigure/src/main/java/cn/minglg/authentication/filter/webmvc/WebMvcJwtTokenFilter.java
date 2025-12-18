@@ -1,6 +1,6 @@
 package cn.minglg.authentication.filter.webmvc;
 
-import cn.minglg.authentication.context.RequestScopedUserContext;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.authentication.pojo.SecurityUser;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
 import cn.minglg.authentication.utils.JsonUtils;

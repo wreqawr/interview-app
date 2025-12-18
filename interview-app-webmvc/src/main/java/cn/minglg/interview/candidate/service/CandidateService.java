@@ -1,6 +1,6 @@
 package cn.minglg.interview.candidate.service;
 
-import cn.minglg.authentication.context.RequestScopedUserContext;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.interview.job.mapper.JobMapper;
 import cn.minglg.interview.job.pojo.Job;
