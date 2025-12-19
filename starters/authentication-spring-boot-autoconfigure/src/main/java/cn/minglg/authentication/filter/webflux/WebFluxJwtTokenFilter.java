@@ -1,14 +1,15 @@
 package cn.minglg.authentication.filter.webflux;
 
-import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.authentication.pojo.SecurityUser;
 import cn.minglg.authentication.properties.WebFluxSecurityProperties;
 import cn.minglg.authentication.utils.JwtUtils;
 import cn.minglg.authentication.utils.WebFluxResponseUtils;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.commons.model.response.ResponseCode;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.http.HttpMethod;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
@@ -45,7 +46,8 @@ public class WebFluxJwtTokenFilter implements WebFilter {
      * @return Mono<Void> 异步处理结果
      */
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+    @NonNull
+    public Mono<Void> filter(ServerWebExchange exchange, @NonNull WebFilterChain chain) {
         // 预检请求直接放行
         if (exchange.getRequest().getMethod() == HttpMethod.OPTIONS) {
             return chain.filter(exchange);

@@ -1,6 +1,5 @@
 package cn.minglg.authentication.config.webmvc;
 
-import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.authentication.filter.webmvc.WebMvcCaptchaFilter;
 import cn.minglg.authentication.filter.webmvc.WebMvcCustomAuthenticationFilter;
 import cn.minglg.authentication.filter.webmvc.WebMvcJwtTokenFilter;
@@ -8,6 +7,7 @@ import cn.minglg.authentication.filter.webmvc.WebMvcRequestBodyCacheFilter;
 import cn.minglg.authentication.handler.webmvc.WebMvcCustomAuthenticationFailureHandler;
 import cn.minglg.authentication.handler.webmvc.WebMvcCustomAuthenticationSuccessHandler;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

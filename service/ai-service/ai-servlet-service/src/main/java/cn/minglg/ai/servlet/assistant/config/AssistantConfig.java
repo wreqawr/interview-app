@@ -1,8 +1,8 @@
 package cn.minglg.ai.servlet.assistant.config;
 
 import cn.minglg.ai.context.UserContextProvider;
-import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.authentication.exception.UnKnowUserException;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.commons.model.task.TaskType;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.template.TemplateRenderer;

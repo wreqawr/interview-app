@@ -11,7 +11,6 @@ import cn.minglg.commons.model.resume.ResumeStatus;
 import cn.minglg.commons.model.task.TaskStatus;
 import cn.minglg.commons.model.user.pojo.User;
 import cn.minglg.commons.utils.TaskUtils;
-import cn.minglg.resume.service.MinioService;
 import cn.minglg.resume.exception.*;
 import cn.minglg.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.resume.pojo.ResumeDetail;
@@ -19,6 +18,8 @@ import cn.minglg.resume.pojo.ResumeMetadata;
 import cn.minglg.resume.properties.MinioProperties;
 import cn.minglg.resume.properties.ResumeProperties;
 import cn.minglg.resume.repository.ResumeDetailRepository;
+import cn.minglg.resume.service.AsyncService;
+import cn.minglg.resume.service.MinioService;
 import cn.minglg.resume.service.ResumeService;
 import cn.minglg.resume.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -52,9 +53,9 @@ public class ResumeServiceImpl implements ResumeService {
     private final AutoDetectParser autoDetectParser;
     private final ResumeMetadataMapper resumeMetadataMapper;
     private final ResumeDetailRepository resumeDetailRepository;
-    //    private final AiResumeCoreService aiResumeCoreService;
     private final StringRedisTemplate redisTemplate;
     private final RequestScopedUserContext userContext;
+    private final AsyncService asyncService;
 
 
     /**
@@ -117,8 +118,7 @@ public class ResumeServiceImpl implements ResumeService {
             String content = FileUtils.getContentFromFile(autoDetectParser, is2);
             // 第七步：调用异步方法，分析提取简历信息，并持久化保存
             String taskId = TaskUtils.generateTaskId();
-            // TODO: 远程调用ai服务解析并保存简历信息
-//            aiResumeCoreService.resumeSummarizeAndSave(taskId, resumeId, content, resumeMetadata);
+            asyncService.resumeSummarizeAndSave(userId, taskId, resumeId, content, resumeMetadataMapper, resumeDetailRepository, resumeMetadata);
             // 第八步：构建响应
             Map<String, ? extends Serializable> data = Map.of("taskId", taskId, "resumeId", resumeId);
 
@@ -341,8 +341,7 @@ public class ResumeServiceImpl implements ResumeService {
         }
         // 三级缓存从ai获取，触发异步任务
         String taskId = TaskUtils.generateTaskId();
-        // TODO 远程调用ai服务评估简历
-//        aiResumeCoreService.resumeAnalyzeAndSave(taskId, resumeId);
+        asyncService.resumeAnalyzeAndSave(userId, taskId, resumeId, resumeProperties, redisTemplate, resumeMetadataMapper, resumeDetailRepository);
         return GenericResponse.builder()
                 .code(ResponseCode.ASYNC_TASK_RUNNING.getCode())
                 .data(Map.of("taskId", taskId))

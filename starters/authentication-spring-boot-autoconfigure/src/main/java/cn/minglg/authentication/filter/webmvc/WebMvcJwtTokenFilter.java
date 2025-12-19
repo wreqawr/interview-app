@@ -1,10 +1,10 @@
 package cn.minglg.authentication.filter.webmvc;
 
-import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.authentication.pojo.SecurityUser;
 import cn.minglg.authentication.properties.WebMvcSecurityProperties;
 import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.authentication.utils.JwtUtils;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
 import jakarta.servlet.FilterChain;

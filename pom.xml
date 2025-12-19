@@ -13,7 +13,6 @@
 
     <!-- 子模块 -->
     <modules>
-        <module>interview-app-webmvc</module>
         <module>interview-app-webflux</module>
         <module>commons</module>
         <module>gateway</module>
@@ -46,12 +45,6 @@
     <dependencyManagement>
         <dependencies>
             <!-- 子模块依赖管理 -->
-            <dependency>
-                <groupId>cn.minglg.interview</groupId>
-                <artifactId>interview-app-webmvc</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>cn.minglg.interview</groupId>
                 <artifactId>interview-app-webflux</artifactId>

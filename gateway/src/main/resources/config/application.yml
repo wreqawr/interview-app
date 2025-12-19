@@ -32,7 +32,22 @@ spring:
             - id: ai-flux-service
               uri: lb://ai-flux-service
               predicates:
-                  - Path=/api/ai/flux/**
+                - Path=/api/ai/flux/**
+
+            - id: ai-servlet-service
+              uri: lb://ai-servlet-service
+              predicates:
+                - Path=/api/ai/servlet/**
+
+            - id: candidate-service
+              uri: lb://candidate-service
+              predicates:
+                - Path=/api/candidate/**
+
+            - id: interview-service
+              uri: lb://interview-service
+              predicates:
+                - Path=/api/interview/**
 
 
 #logging:

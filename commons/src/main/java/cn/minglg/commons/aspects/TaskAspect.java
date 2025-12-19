@@ -11,6 +11,7 @@ import cn.minglg.commons.model.task.TaskStatus;
 import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.commons.utils.TaskUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 @Aspect
 @Component
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
+@Slf4j
 public class TaskAspect {
     private final TaskMapper taskMapper;
     private final RequestScopedUserContext userContext;
@@ -50,7 +52,7 @@ public class TaskAspect {
         // 第一步：获取初始化参数
         Object[] args = pjp.getArgs();
         Long userId = userContext.getUser().getUserId();
-        String taskId = (String) args[0];
+        String taskId = (String) args[1];
         TaskType taskType = handler.taskType();
         TaskStatus taskStatus = TaskStatus.RUNNING;
         String methodName = pjp.getSignature().toLongString();
@@ -65,6 +67,7 @@ public class TaskAspect {
                 .startTime(startTime)
                 .build();
         Object result = null;
+        log.info("TaskAspect开始记录执行日志：{}", taskId);
         try {
             // 第二步：初始化任务状态表
             taskMapper.initTask(task);
@@ -79,6 +82,7 @@ public class TaskAspect {
             task.setErrorMessage(throwable.getMessage());
         }
         taskMapper.updateTask(task);
+        log.info("TaskAspect执行日志结束记录：{}", taskId);
         return result;
 
     }

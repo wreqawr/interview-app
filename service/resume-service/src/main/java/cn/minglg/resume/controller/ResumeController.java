@@ -1,11 +1,11 @@
 package cn.minglg.resume.controller;
 
-import cn.minglg.resume.service.ResumeService;
 import cn.minglg.commons.annotation.ExceptionHandler;
 import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
 import cn.minglg.commons.model.user.pojo.User;
+import cn.minglg.resume.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

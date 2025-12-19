@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>ai-flux-service</artifactId>
+    <description>ai流式微服务模块</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
