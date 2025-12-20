@@ -1,9 +1,9 @@
 server:
-  port: 50000
+  port: 60000
 
 spring:
   application:
-    name: candidate-service
+    name: interview-service
   banner:
     location: classpath:banner/banner.txt
 

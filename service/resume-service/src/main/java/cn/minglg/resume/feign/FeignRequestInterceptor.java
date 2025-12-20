@@ -1,13 +1,11 @@
 package cn.minglg.resume.feign;
 
-import cn.minglg.resume.config.AsyncConfig;
+import cn.minglg.commons.async.AsyncContextHolder;
+import cn.minglg.commons.model.constants.Constants;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * ClassName:FeignRequestInterceptor
@@ -30,29 +28,8 @@ public class FeignRequestInterceptor implements RequestInterceptor {
      */
     @Override
     public void apply(RequestTemplate requestTemplate) {
-        // 获取当前请求的RequestAttributes
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        String token = null;
-
-        if (requestAttributes != null) {
-            // 优先从RequestAttributes的attribute中获取toke（适用于异步线程场景）
-            Object tokenObj = requestAttributes.getAttribute(
-                    AsyncConfig.AUTHORIZATION_TOKEN_KEY,
-                    RequestAttributes.SCOPE_REQUEST
-            );
-            if (tokenObj instanceof String) {
-                token = (String) tokenObj;
-            }
-
-            // 如果从 attribute 中获取不到，尝试从 HttpServletRequest 中获取（适用于同步请求场景）
-            if (token == null && requestAttributes instanceof ServletRequestAttributes attributes) {
-                try {
-                    token = attributes.getRequest().getHeader("Authorization");
-                } catch (IllegalStateException e) {
-                    log.warn("HttpServletRequest可能已被回收（异步线程场景），忽略异常：{}", e.getMessage());
-                }
-            }
-        }
+        String token = AsyncContextHolder.getAttribute(Constants.AUTHORIZATION_TOKEN_KEY);
+        log.info("子线程接收到的token是: {}", token);
 
         // 如果获取到 token，添加到请求头
         if (token != null) {

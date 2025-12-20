@@ -161,7 +161,7 @@ public class ResumeServiceImpl implements ResumeService {
                         "downloadFileName", downloadFileName,
                         "sha256", sha256));
                 resumeMetadata.setDownloadCount(resumeMetadata.getDownloadCount() + 1);
-                resumeMetadataMapper.updateResumeMetadata(TaskUtils.generateTaskId(), currentUser.getUserId(), resumeMetadata);
+                resumeMetadataMapper.updateResumeMetadata(currentUser.getUserId(), TaskUtils.generateTaskId(), resumeMetadata);
             } catch (Exception e) {
                 throw new ResumeDownloadException(e.getMessage());
             }
@@ -280,7 +280,7 @@ public class ResumeServiceImpl implements ResumeService {
             String fileUrl = minioService.getFileUrl(bucketName, objectName, expired);
             String taskId = TaskUtils.generateTaskId();
             resumeMetadata.setViewCount(resumeMetadata.getViewCount() + 1);
-            resumeMetadataMapper.updateResumeMetadata(taskId, currentUser.getUserId(), resumeMetadata);
+            resumeMetadataMapper.updateResumeMetadata(currentUser.getUserId(), taskId, resumeMetadata);
             return GenericResponse.builder().code(ResponseCode.OK.getCode())
                     .data(Map.of("previewUrl", fileUrl))
                     .message("预览地址获取成功！")

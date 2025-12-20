@@ -86,7 +86,7 @@ public interface ResumeMetadataMapper extends BaseMapper<ResumeMetadata> {
      * @param resumeMetadata 简历元信息
      */
     @TaskHandler(taskType = TaskType.RESUME_METADATA_UPDATE)
-    default void updateResumeMetadata(String taskId, Long userId, ResumeMetadata resumeMetadata) {
+    default void updateResumeMetadata(Long userId, String taskId, ResumeMetadata resumeMetadata) {
         LambdaUpdateWrapper<ResumeMetadata> wrapper = new LambdaUpdateWrapper<ResumeMetadata>()
                 .set(ResumeMetadata::getDownloadCount, resumeMetadata.getDownloadCount())
                 .set(ResumeMetadata::getViewCount, resumeMetadata.getViewCount())
