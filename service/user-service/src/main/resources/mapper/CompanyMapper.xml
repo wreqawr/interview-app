@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.minglg.user.mapper.CompanyMapper">
 
-    <resultMap id="companyMap" type="cn.minglg.commons.model.user.pojo.Company">
+    <resultMap id="companyMap" type="cn.minglg.commons.model.user.Company">
         <id property="companyId" column="company_id"/>
         <result property="companyName" column="company_name"/>
     </resultMap>
@@ -15,7 +15,7 @@
         WHERE tuc.user_id = #{userId}
     </select>
 
-    <insert id="upsertCompany" parameterType="cn.minglg.commons.model.user.pojo.Company" useGeneratedKeys="true"
+    <insert id="upsertCompany" parameterType="cn.minglg.commons.model.user.Company" useGeneratedKeys="true"
             keyProperty="company.companyId">
         INSERT INTO t_company (company_name)
         VALUES (#{company.companyName})

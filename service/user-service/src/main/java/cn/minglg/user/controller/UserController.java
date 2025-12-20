@@ -3,7 +3,7 @@ package cn.minglg.user.controller;
 import cn.minglg.commons.annotation.ExceptionHandler;
 import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
-import cn.minglg.commons.model.user.pojo.User;
+import cn.minglg.commons.model.user.User;
 import cn.minglg.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

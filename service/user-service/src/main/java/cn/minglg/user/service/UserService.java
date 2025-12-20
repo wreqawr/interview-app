@@ -1,7 +1,7 @@
 package cn.minglg.user.service;
 
 import cn.minglg.commons.model.response.GenericResponse;
-import cn.minglg.commons.model.user.pojo.User;
+import cn.minglg.commons.model.user.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**

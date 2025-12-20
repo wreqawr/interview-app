@@ -1,6 +1,6 @@
 package cn.minglg.user.mapper;
 
-import cn.minglg.commons.model.user.pojo.Role;
+import cn.minglg.commons.model.user.Role;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

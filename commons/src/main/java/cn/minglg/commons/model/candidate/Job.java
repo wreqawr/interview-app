@@ -1,4 +1,4 @@
-package cn.minglg.candidate.pojo;
+package cn.minglg.commons.model.candidate;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

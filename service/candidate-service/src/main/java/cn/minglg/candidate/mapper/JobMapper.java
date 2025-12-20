@@ -1,6 +1,6 @@
 package cn.minglg.candidate.mapper;
 
-import cn.minglg.candidate.pojo.Job;
+import cn.minglg.commons.model.candidate.Job;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

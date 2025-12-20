@@ -1,6 +1,15 @@
 server:
   port: 10000
 
+# actuator观测指标
+management:
+  endpoints:
+    web:
+      discovery:
+        enabled: true
+      exposure:
+        include: '*'
+
 spring:
   application:
     name: user-service

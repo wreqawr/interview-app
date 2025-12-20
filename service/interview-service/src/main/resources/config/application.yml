@@ -21,6 +21,6 @@ spring:
   config:
     import:
       - nacos:nacos-${spring.application.name}.yml?refreshEnabled=true
-#      - nacos:nacos-mysql.yml?refreshEnabled=true
-#      - nacos:nacos-redis.yml?refreshEnabled=true
+      #      - nacos:nacos-mysql.yml?refreshEnabled=true
+      - nacos:nacos-redis.yml?refreshEnabled=true
 #      - nacos:nacos-mongo.yml?refreshEnabled=true

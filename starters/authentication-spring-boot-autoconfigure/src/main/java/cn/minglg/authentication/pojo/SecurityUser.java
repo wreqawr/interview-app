@@ -1,6 +1,6 @@
 package cn.minglg.authentication.pojo;
 
-import cn.minglg.commons.model.user.pojo.User;
+import cn.minglg.commons.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

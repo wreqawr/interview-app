@@ -9,7 +9,7 @@ import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
 import cn.minglg.commons.model.resume.ResumeStatus;
 import cn.minglg.commons.model.task.TaskStatus;
-import cn.minglg.commons.model.user.pojo.User;
+import cn.minglg.commons.model.user.User;
 import cn.minglg.commons.utils.TaskUtils;
 import cn.minglg.resume.exception.*;
 import cn.minglg.resume.mapper.ResumeMetadataMapper;

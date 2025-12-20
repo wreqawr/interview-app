@@ -1,6 +1,6 @@
 package cn.minglg.user.mapper;
 
-import cn.minglg.commons.model.user.pojo.Permission;
+import cn.minglg.commons.model.user.Permission;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

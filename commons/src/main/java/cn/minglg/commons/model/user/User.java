@@ -1,4 +1,4 @@
-package cn.minglg.commons.model.user.pojo;
+package cn.minglg.commons.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

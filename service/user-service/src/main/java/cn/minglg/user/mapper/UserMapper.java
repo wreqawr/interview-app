@@ -1,6 +1,6 @@
 package cn.minglg.user.mapper;
 
-import cn.minglg.commons.model.user.pojo.User;
+import cn.minglg.commons.model.user.User;
 import org.apache.ibatis.annotations.Param;
 
 /**

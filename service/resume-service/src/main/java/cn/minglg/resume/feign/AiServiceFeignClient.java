@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Map;
 
 /**
- * ClassName:AiServletServiceFeignClient
+ * ClassName:AiServiceFeignClient
  * Package:cn.minglg.resume.feign
  * Description:
  *
@@ -18,7 +18,7 @@ import java.util.Map;
  * @Version 1.0
  */
 @FeignClient("ai-service")
-public interface AiServletServiceFeignClient {
+public interface AiServiceFeignClient {
     @PostMapping("/api/ai/assistant")
     ResponseEntity<GenericResponse<String>> chat(@RequestBody Map<String, Object> chatParamMap);
 }

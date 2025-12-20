@@ -6,7 +6,7 @@ import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.task.TaskStatus;
 import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.resume.exception.ResumeAnalyzeAndSaveException;
-import cn.minglg.resume.feign.AiServletServiceFeignClient;
+import cn.minglg.resume.feign.AiServiceFeignClient;
 import cn.minglg.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.resume.pojo.ResumeDetail;
 import cn.minglg.resume.pojo.ResumeMetadata;
@@ -35,7 +35,7 @@ import java.util.Map;
 @Service
 @Slf4j
 public class AsyncServiceImpl implements AsyncService {
-    private final AiServletServiceFeignClient aiServletServiceFeignClient;
+    private final AiServiceFeignClient aiServiceFeignClient;
 
     @Override
     @Async("taskExecutor")
@@ -49,7 +49,7 @@ public class AsyncServiceImpl implements AsyncService {
                                        ResumeMetadata resumeMetadata) {
         log.info("开始实际执行异步任务resumeSummarizeAndSave，taskId：{}", taskId);
         // 第一步：获取ai解析结果
-        ResponseEntity<GenericResponse<String>> chatResponse = aiServletServiceFeignClient.chat(Map.of("userMessage", userMessage, "taskType", TaskType.RESUME_SUMMARIZE));
+        ResponseEntity<GenericResponse<String>> chatResponse = aiServiceFeignClient.chat(Map.of("userMessage", userMessage, "taskType", TaskType.RESUME_SUMMARIZE));
         String chatResult = null;
         if (chatResponse.getBody() != null) {
             chatResult = chatResponse.getBody().getData();
@@ -91,7 +91,7 @@ public class AsyncServiceImpl implements AsyncService {
             redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyzeStatus, TaskStatus.RUNNING.toString());
             redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyzeTaskId, taskId);
             // 远程调用ai服务
-            ResponseEntity<GenericResponse<String>> chatResponse = aiServletServiceFeignClient.chat(Map.of("userMessage", resumeDetail.getRawText(), "taskType", TaskType.RESUME_ANALYZE));
+            ResponseEntity<GenericResponse<String>> chatResponse = aiServiceFeignClient.chat(Map.of("userMessage", resumeDetail.getRawText(), "taskType", TaskType.RESUME_ANALYZE));
             String analyzeResult = null;
             if (chatResponse.getBody() != null) {
                 analyzeResult = chatResponse.getBody().getData();
