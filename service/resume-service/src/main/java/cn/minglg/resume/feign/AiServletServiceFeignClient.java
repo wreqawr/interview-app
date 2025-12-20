@@ -17,8 +17,8 @@ import java.util.Map;
  * @Create 2025/12/19
  * @Version 1.0
  */
-@FeignClient("ai-servlet-service")
+@FeignClient("ai-service")
 public interface AiServletServiceFeignClient {
-    @PostMapping("/api/ai/servlet/chat")
+    @PostMapping("/api/ai/assistant")
     ResponseEntity<GenericResponse<String>> chat(@RequestBody Map<String, Object> chatParamMap);
 }

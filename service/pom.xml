@@ -14,9 +14,9 @@
     <modules>
         <module>user-service</module>
         <module>resume-service</module>
-        <module>ai-service</module>
         <module>candidate-service</module>
         <module>interview-service</module>
+        <module>ai-service</module>
     </modules>
 
     <properties>

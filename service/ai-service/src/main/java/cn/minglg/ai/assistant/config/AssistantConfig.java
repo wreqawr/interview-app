@@ -1,0 +1,155 @@
+package cn.minglg.ai.assistant.config;
+
+import cn.minglg.ai.advisors.RoundLimitManager;
+import cn.minglg.ai.assistant.advisor.RoundAdvisorRepository;
+import cn.minglg.ai.assistant.properties.RoundLimitProperties;
+import cn.minglg.ai.context.UserContextProvider;
+import cn.minglg.authentication.exception.UnKnowUserException;
+import cn.minglg.commons.model.context.RequestScopedUserContext;
+import cn.minglg.commons.model.task.TaskType;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.template.TemplateRenderer;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * ClassName:AiAssistantConfig
+ * Package:cn.minglg.interview.ai.config
+ * Description:
+ *
+ * @Author kfzx-minglg
+ * @Create 2025/8/24
+ * @Version 1.0
+ */
+@Configuration
+public class AssistantConfig {
+    /**
+     * 创建并返回一个UserContextProvider实例
+     * 该Provider用于获取当前用户的用户ID
+     *
+     * @return UserContextProvider 返回一个Lambda表达式实现的UserContextProvider，
+     * 其getContext方法返回当前用户的用户ID
+     */
+    @Bean
+    public UserContextProvider userContextProvider(RequestScopedUserContext userContext) {
+        return () -> {
+            Long userId = userContext.getUser().getUserId();
+            if (userId != null) {
+                return userId;
+            }
+            throw new UnKnowUserException("未知用户！");
+        };
+    }
+
+    /**
+     * 系统提示词资源（当前对话有效）
+     *
+     * @return 提示词集合
+     */
+    @Bean
+    public Map<TaskType, Resource> resourceMap() {
+        // 创建任务类型与资源映射关系
+        Map<TaskType, Resource> map = new HashMap<>(16);
+
+        // 定义各类任务对应的系统提示词文件路径
+        String systemPromptForMockInterviewStart = "/prompt/interview/基于简历内容的模拟面试问答（开始）.st";
+        String systemPromptForMockInterviewStop = "/prompt/interview/基于简历内容的模拟面试问答（结束）.st";
+        String systemPromptForMockInterview = "/prompt/interview/面试官角色预设.st";
+        String systemPromptForGeneralChat = "/prompt/general/通用聊天.st";
+        String systemPromptForResumeSummarize = "/prompt/resume/简历关键信息提取.st";
+        String systemPromptForResumeAnalyze = "/prompt/resume/简历分析-求职者.st";
+        String systemPromptForComprehensiveAssessment = "/prompt/resume/综合评估-HR.st";
+
+
+        // 将任务类型与对应的提示词资源进行映射
+        map.put(TaskType.MOCK_INTERVIEW_START, new ClassPathResource(systemPromptForMockInterviewStart));
+        map.put(TaskType.MOCK_INTERVIEW_STOP, new ClassPathResource(systemPromptForMockInterviewStop));
+        map.put(TaskType.MOCK_INTERVIEW, new ClassPathResource(systemPromptForMockInterview));
+        map.put(TaskType.GENERAL_CHAT, new ClassPathResource(systemPromptForGeneralChat));
+        map.put(TaskType.RESUME_SUMMARIZE, new ClassPathResource(systemPromptForResumeSummarize));
+        map.put(TaskType.RESUME_ANALYZE, new ClassPathResource(systemPromptForResumeAnalyze));
+        map.put(TaskType.COMPREHENSIVE_ASSESSMENT, new ClassPathResource(systemPromptForComprehensiveAssessment));
+        return map;
+    }
+
+
+    /**
+     * 提示词模板（动态提示词，支持占位符）
+     *
+     * @param resourceMap      资源对象集合
+     * @param templateRenderer 模板渲染器
+     * @return 动态提示词集合
+     */
+    @Bean
+    public Map<TaskType, PromptTemplate> systemPromptDynamicTemplate(Map<TaskType, Resource> resourceMap, @Qualifier("stTemplateRenderer") TemplateRenderer templateRenderer) {
+        // 创建提示词模板映射表
+        Map<TaskType, PromptTemplate> map = new HashMap<>(16);
+        // 遍历资源对象集合，为每种任务类型构建对应的提示词模板
+        for (TaskType taskType : resourceMap.keySet()) {
+            Resource resource = resourceMap.get(taskType);
+            PromptTemplate promptTemplate = PromptTemplate.builder()
+                    .resource(resource)
+                    .renderer(templateRenderer)
+                    .build();
+            map.put(taskType, promptTemplate);
+        }
+        return map;
+    }
+
+    /**
+     * 创建RoundAdvisorRepository Bean实例
+     * 该Bean依赖于RoundLimitProperties和RoundLimitManager Bean的存在
+     *
+     * @param promptTemplateMap 任务类型与提示模板的映射关系，用于获取Mock面试停止的提示模板
+     * @param properties        面试轮次限制配置属性
+     * @param roundLimitManager 响应式轮次限制管理器
+     * @return RoundAdvisorRepository实例
+     */
+    @Bean
+    @ConditionalOnBean({RoundLimitProperties.class, RoundLimitManager.class})
+    public RoundAdvisorRepository roundAdvisorRepository(Map<TaskType, PromptTemplate> promptTemplateMap,
+                                                         RoundLimitProperties properties,
+                                                         RoundLimitManager roundLimitManager) {
+        // 从提示模板映射中获取面试停止任务对应的提示模板
+        PromptTemplate promptTemplate = promptTemplateMap.get(TaskType.MOCK_INTERVIEW_STOP);
+        // 创建并返回RoundAdvisorRepository实例
+        return new RoundAdvisorRepository(promptTemplate, properties, roundLimitManager);
+    }
+
+    /**
+     * 创建RedisTemplate实例，用于处理String类型键和Integer类型值的Redis操作
+     *
+     * @param factory RedisConnectionFactory连接工厂实例
+     * @return 配置好的RedisTemplate<String, Integer>实例
+     */
+    @Bean
+    public RedisTemplate<String, Integer> integerRedisTemplate(RedisConnectionFactory factory) {
+
+        StringRedisSerializer keySerializer = new StringRedisSerializer();
+        // 数值序列化，使用字符串表示，简单直观
+        GenericToStringSerializer<Integer> valueSerializer = new GenericToStringSerializer<>(Integer.class);
+
+        RedisTemplate<String, Integer> template = new RedisTemplate<>();
+        template.setConnectionFactory(factory);
+        template.setKeySerializer(keySerializer);
+        template.setHashKeySerializer(keySerializer);
+        template.setValueSerializer(valueSerializer);
+        template.setHashValueSerializer(valueSerializer);
+        template.afterPropertiesSet();
+
+        return template;
+    }
+
+
+}

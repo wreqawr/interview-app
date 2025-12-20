@@ -1,5 +1,5 @@
 server:
-  port: 10000
+  port: 80
 spring:
   application:
     name: interview-app-gateway
@@ -29,15 +29,10 @@ spring:
               predicates:
                 - Path=/api/resume/**
 
-            - id: ai-flux-service
-              uri: lb://ai-flux-service
+            - id: ai-service
+              uri: lb://ai-service
               predicates:
-                - Path=/api/ai/flux/**
-
-            - id: ai-servlet-service
-              uri: lb://ai-servlet-service
-              predicates:
-                - Path=/api/ai/servlet/**
+                - Path=/api/ai/**
 
             - id: candidate-service
               uri: lb://candidate-service
