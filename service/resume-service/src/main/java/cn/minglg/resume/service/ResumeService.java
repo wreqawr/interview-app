@@ -1,6 +1,7 @@
 package cn.minglg.resume.service;
 
 import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.resume.ResumeDetail;
 import cn.minglg.resume.pojo.ResumeMetadata;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -85,6 +86,13 @@ public interface ResumeService {
      */
     GenericResponse<String> getResumeAsyncAnalyzeResult(Long userId, String taskId, String resumeId);
 
+    /**
+     * 获取简历详细信息
+     *
+     * @param resumeId 简历ID
+     * @return 包含简历详细信息的通用响应对象
+     */
+    GenericResponse<ResumeDetail> getResumeDetail(String resumeId);
 
     /**
      * 获取文件扩展名

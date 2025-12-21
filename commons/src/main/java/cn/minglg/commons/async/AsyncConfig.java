@@ -1,8 +1,6 @@
-package cn.minglg.resume.config;
+package cn.minglg.commons.async;
 
-import cn.minglg.commons.async.AsyncContextHolder;
 import cn.minglg.commons.model.constants.Constants;
-import cn.minglg.resume.properties.AsyncProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +15,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.concurrent.Executor;
 
 /**
- * ClassName:cn.minglg.resume.config.AsyncConfig
+ * ClassName:cn.minglg.commons.async.AsyncConfig
  * Package:cn.minglg.interview.common.config
  * Description:
  *
@@ -27,6 +25,7 @@ import java.util.concurrent.Executor;
  */
 @RequiredArgsConstructor
 @Configuration
+//@ConditionalOnProperty(name = "interview.async")
 @Slf4j
 public class AsyncConfig {
     /**

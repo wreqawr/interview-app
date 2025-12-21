@@ -3,12 +3,12 @@ package cn.minglg.resume.service.impl;
 import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.commons.annotation.TaskHandler;
 import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.resume.ResumeDetail;
 import cn.minglg.commons.model.task.TaskStatus;
 import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.resume.exception.ResumeAnalyzeAndSaveException;
 import cn.minglg.resume.feign.AiServiceFeignClient;
 import cn.minglg.resume.mapper.ResumeMetadataMapper;
-import cn.minglg.resume.pojo.ResumeDetail;
 import cn.minglg.resume.pojo.ResumeMetadata;
 import cn.minglg.resume.properties.ResumeProperties;
 import cn.minglg.resume.repository.ResumeDetailRepository;
@@ -48,24 +48,29 @@ public class AsyncServiceImpl implements AsyncService {
                                        ResumeDetailRepository resumeDetailRepository,
                                        ResumeMetadata resumeMetadata) {
         log.info("开始实际执行异步任务resumeSummarizeAndSave，taskId：{}", taskId);
-        // 第一步：获取ai解析结果
-        ResponseEntity<GenericResponse<String>> chatResponse = aiServiceFeignClient.chat(Map.of("userMessage", userMessage, "taskType", TaskType.RESUME_SUMMARIZE));
-        String chatResult = null;
-        if (chatResponse.getBody() != null) {
-            chatResult = chatResponse.getBody().getData();
+        try {
+            // 第一步：获取ai解析结果
+            ResponseEntity<GenericResponse<String>> chatResponse = aiServiceFeignClient.chat(Map.of("userMessage", userMessage, "taskType", TaskType.RESUME_SUMMARIZE));
+            String chatResult = null;
+            if (chatResponse.getBody() != null) {
+                chatResult = chatResponse.getBody().getData();
+            }
+            ResumeDetail resumeDetail = JsonUtils.toBean(chatResult, ResumeDetail.class);
+
+            // 第二步：mongodb保存解析结果
+            resumeDetail.setUserId(userId);
+            resumeDetail.setResumeId(resumeId);
+            resumeDetail.setRawText(userMessage);
+            resumeDetailRepository.save(resumeDetail);
+
+            // 第三步：mysql保存简历元信息
+            String resumeTitle = resumeDetail.getBasicInfo().getTargetTitle();
+            resumeMetadata.setResumeTitle(resumeTitle);
+            resumeMetadataMapper.addResumeMetadata(resumeMetadata);
+        } catch (Exception e) {
+            log.error("异步任务resumeSummarizeAndSave执行异常，taskId：{}", taskId);
+            throw new ResumeAnalyzeAndSaveException(e.getMessage());
         }
-        ResumeDetail resumeDetail = JsonUtils.toBean(chatResult, ResumeDetail.class);
-
-        // 第二步：mongodb保存解析结果
-        resumeDetail.setUserId(userId);
-        resumeDetail.setResumeId(resumeId);
-        resumeDetail.setRawText(userMessage);
-        resumeDetailRepository.save(resumeDetail);
-
-        // 第三步：mysql保存简历元信息
-        String resumeTitle = resumeDetail.getBasicInfo().getTargetTitle();
-        resumeMetadata.setResumeTitle(resumeTitle);
-        resumeMetadataMapper.addResumeMetadata(resumeMetadata);
         log.info("异步任务resumeSummarizeAndSave已全部执行完毕，taskId：{}", taskId);
     }
 
@@ -104,6 +109,7 @@ public class AsyncServiceImpl implements AsyncService {
             }
         } catch (Exception e) {
             redisTemplate.opsForHash().put(redisKey, hashKeyForAnalyzeStatus, TaskStatus.FAILED.toString());
+            log.error("异步任务resumeAnalyzeAndSave执行异常，taskId：{}", taskId);
             throw new ResumeAnalyzeAndSaveException(e.getMessage());
         }
         log.info("异步任务resumeAnalyzeAndSave已全部执行完毕，taskId：{}", taskId);

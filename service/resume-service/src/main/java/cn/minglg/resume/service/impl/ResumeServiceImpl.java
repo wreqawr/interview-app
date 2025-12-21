@@ -7,13 +7,13 @@ import cn.minglg.commons.annotation.AsyncTaskQuery;
 import cn.minglg.commons.model.context.RequestScopedUserContext;
 import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
+import cn.minglg.commons.model.resume.ResumeDetail;
 import cn.minglg.commons.model.resume.ResumeStatus;
 import cn.minglg.commons.model.task.TaskStatus;
 import cn.minglg.commons.model.user.User;
 import cn.minglg.commons.utils.TaskUtils;
 import cn.minglg.resume.exception.*;
 import cn.minglg.resume.mapper.ResumeMetadataMapper;
-import cn.minglg.resume.pojo.ResumeDetail;
 import cn.minglg.resume.pojo.ResumeMetadata;
 import cn.minglg.resume.properties.MinioProperties;
 import cn.minglg.resume.properties.ResumeProperties;
@@ -127,9 +127,10 @@ public class ResumeServiceImpl implements ResumeService {
                     .data(data)
                     .build();
         } catch (Exception e) {
-            return GenericResponse.builder().code(ResponseCode.RESUME_UPLOAD_FAIL.getCode())
-                    .message("简历上传失败，原因为：" + e.getMessage())
-                    .build();
+            if (e instanceof ResumeAnalyzeAndSaveException) {
+                throw new ResumeAnalyzeAndSaveException(e.getMessage());
+            }
+            throw new ResumeUploadException(e.getMessage());
         }
     }
 
@@ -212,10 +213,7 @@ public class ResumeServiceImpl implements ResumeService {
                     .code(ResponseCode.OK.getCode())
                     .message("简历删除成功！").build();
         } catch (Exception e) {
-            result = GenericResponse.builder()
-                    .code(ResponseCode.RESUME_DELETE_FAIL.getCode())
-                    .message("简历删除失败，原因为：" + e.getMessage()).build();
-
+            throw new ResumeDeleteException(e.getMessage());
         }
         return result;
     }
@@ -377,4 +375,27 @@ public class ResumeServiceImpl implements ResumeService {
                 .message("简历分析完毕！")
                 .build();
     }
+
+    /**
+     * 获取简历详细信息
+     *
+     * @param resumeId 简历ID
+     * @return 包含简历详细信息的通用响应对象
+     */
+    @Override
+    public GenericResponse<ResumeDetail> getResumeDetail(String resumeId) {
+        // 获取当前登录用户ID
+        Long userId = userContext.getUser().getUserId();
+
+        // 根据用户ID和简历ID查询简历详情
+        ResumeDetail resumeDetail = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId);
+
+        // 构建成功响应结果
+        return GenericResponse.<ResumeDetail>builder()
+                .code(ResponseCode.OK.getCode())
+                .data(resumeDetail)
+                .message("获取简历详细信息成功")
+                .build();
+    }
+
 }

@@ -1,6 +1,5 @@
-package cn.minglg.resume.pojo;
+package cn.minglg.commons.model.resume;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,13 +34,13 @@ public class ResumeDetail {
     /**
      * 用户id
      */
-    @JsonIgnore
+//    @JsonIgnore
     private Long userId;
 
     /**
      * Tika提取后的简历文件原始纯文本
      */
-    @JsonIgnore
+//    @JsonIgnore
     private String rawText;
 
     /**

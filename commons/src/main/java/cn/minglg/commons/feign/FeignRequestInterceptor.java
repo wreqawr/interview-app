@@ -1,12 +1,11 @@
-package cn.minglg.interview.feign;
+package cn.minglg.commons.feign;
 
+import cn.minglg.commons.async.AsyncContextHolder;
+import cn.minglg.commons.model.constants.Constants;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * ClassName:FeignRequestInterceptor
@@ -29,10 +28,11 @@ public class FeignRequestInterceptor implements RequestInterceptor {
      */
     @Override
     public void apply(RequestTemplate requestTemplate) {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        if (requestAttributes instanceof ServletRequestAttributes attributes) {
-            String token = attributes.getRequest().getHeader("Authorization");
-            log.info("给feign请求添加token: {}", token);
+        String token = AsyncContextHolder.getAttribute(Constants.AUTHORIZATION_TOKEN_KEY);
+        log.info("子线程接收到的token是: {}", token);
+
+        // 如果获取到 token，添加到请求头
+        if (token != null) {
             requestTemplate.header("Authorization", token);
         }
     }
