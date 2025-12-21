@@ -107,6 +107,20 @@ public class AssistantService {
         }
     }
 
+    /**
+     * 准备聊天会话，用于模拟面试开始场景
+     *
+     * @param conversationId 会话ID，用于标识唯一的对话上下文
+     * @param params         动态模板参数，用于渲染系统提示词
+     * @return GenericResponse<String> 包含聊天响应结果的通用响应对象
+     */
+    public GenericResponse<String> prepareChat(String conversationId, Map<String, Object> params) {
+        // 渲染模拟面试开始的系统提示词模板
+        String userMessage = systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW_START).render(params);
+        // 调用聊天接口处理模拟面试任务
+        return chat(conversationId, userMessage, TaskType.MOCK_INTERVIEW, null);
+    }
+
 
     /**
      * 内部类封装请求参数

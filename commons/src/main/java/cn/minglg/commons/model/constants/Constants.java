@@ -10,5 +10,5 @@ package cn.minglg.commons.model.constants;
  * @Version 1.0
  */
 public class Constants {
-    public static String AUTHORIZATION_TOKEN_KEY = "async.authorization.token";
+    public static String AUTHORIZATION_TOKEN_KEY = "Authorization";
 }

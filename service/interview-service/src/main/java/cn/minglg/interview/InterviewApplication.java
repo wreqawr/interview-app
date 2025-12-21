@@ -14,7 +14,11 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @Create 2025/12/20
  * @Version 1.0
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+        "cn.minglg.interview",
+        "cn.minglg.commons.async",
+        "cn.minglg.commons.feign"
+})
 @EnableDiscoveryClient
 @EnableFeignClients
 public class InterviewApplication {

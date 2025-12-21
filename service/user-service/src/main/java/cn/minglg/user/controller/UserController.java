@@ -1,6 +1,5 @@
 package cn.minglg.user.controller;
 
-import cn.minglg.commons.annotation.ExceptionHandler;
 import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
 import cn.minglg.commons.model.user.User;
@@ -42,9 +41,6 @@ public class UserController {
      * @return 注册结果通知
      */
     @PostMapping("/register")
-    @ExceptionHandler(
-            errResponseCode = ResponseCode.RESUME_UPLOAD_FAIL,
-            errorMessagePrefix = "用户注册失败")
     public ResponseEntity<GenericResponse<?>> register(@RequestBody User user) {
         /*
           必填项：

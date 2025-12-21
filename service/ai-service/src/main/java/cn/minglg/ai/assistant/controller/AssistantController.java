@@ -21,6 +21,7 @@ import java.util.Map;
  * @Create 2025/8/24
  * @Version 1.0
  */
+@SuppressWarnings("unchecked")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/ai")
@@ -38,7 +39,6 @@ public class AssistantController {
      * @return ResponseEntity<GenericResponse<String>> 包含聊天结果的响应实体
      */
     @PostMapping(value = "/chat")
-    @SuppressWarnings("unchecked")
     public ResponseEntity<GenericResponse<String>> chat(@RequestBody Map<String, Object> chatParamMap) {
         // 从参数Map中提取聊天所需的基本信息
         String conversationId = (String) chatParamMap.get("conversationId");
@@ -74,6 +74,14 @@ public class AssistantController {
         TaskType taskType = TaskType.fromString((String) chatParamMap.get("taskType"), TaskType.GENERAL_CHAT);
         GenericResponse<String> result = assistantService.assistant(userMessage, taskType);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/prepareChat")
+    public ResponseEntity<GenericResponse<String>> prepareChat(@RequestBody Map<String, Object> chatParamMap) {
+        String conversationId = (String) chatParamMap.get("conversationId");
+        Map<String, Object> params = (Map<String, Object>) chatParamMap.get("params");
+        // 调用助手服务准备聊天会话，并将结果包装成响应实体返回
+        return ResponseEntity.ok(assistantService.prepareChat(conversationId, params));
     }
 
 

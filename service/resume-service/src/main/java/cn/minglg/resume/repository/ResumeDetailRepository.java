@@ -1,6 +1,6 @@
 package cn.minglg.resume.repository;
 
-import cn.minglg.resume.pojo.ResumeDetail;
+import cn.minglg.commons.model.resume.ResumeDetail;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
