@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.minglg.interview</groupId>
+    <groupId>org.minglg.interview</groupId>
     <artifactId>starters</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
@@ -77,24 +77,24 @@
 
             <!-- 子模块依赖管理 -->
             <dependency>
-                <groupId>cn.minglg.interview</groupId>
+                <groupId>org.minglg.interview</groupId>
                 <artifactId>authentication-spring-boot-autoconfigure</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
-                <groupId>cn.minglg.interview</groupId>
+                <groupId>org.minglg.interview</groupId>
                 <artifactId>authentication-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
-                <groupId>cn.minglg.interview</groupId>
+                <groupId>org.minglg.interview</groupId>
                 <artifactId>ai-spring-boot-autoconfigure</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
-                <groupId>cn.minglg.interview</groupId>
+                <groupId>org.minglg.interview</groupId>
                 <artifactId>ai-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

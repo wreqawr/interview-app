@@ -53,7 +53,7 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
         <dependency>
-            <groupId>cn.minglg.interview</groupId>
+            <groupId>org.minglg.interview</groupId>
             <artifactId>authentication-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>

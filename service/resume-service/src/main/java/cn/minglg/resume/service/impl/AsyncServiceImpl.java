@@ -1,11 +1,11 @@
 package cn.minglg.resume.service.impl;
 
-import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.commons.annotation.TaskHandler;
 import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.resume.ResumeDetail;
 import cn.minglg.commons.model.task.TaskStatus;
 import cn.minglg.commons.model.task.TaskType;
+import cn.minglg.commons.utils.JsonUtils;
 import cn.minglg.resume.exception.ResumeAnalyzeAndSaveException;
 import cn.minglg.resume.feign.AiServiceFeignClient;
 import cn.minglg.resume.mapper.ResumeMetadataMapper;

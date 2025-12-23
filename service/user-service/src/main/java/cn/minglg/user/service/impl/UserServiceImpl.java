@@ -1,17 +1,17 @@
 package cn.minglg.user.service.impl;
 
-import cn.minglg.authentication.pojo.SecurityUser;
-import cn.minglg.authentication.service.RsaService;
-import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
 import cn.minglg.commons.model.user.Company;
 import cn.minglg.commons.model.user.Role;
 import cn.minglg.commons.model.user.User;
+import cn.minglg.commons.utils.JsonUtils;
 import cn.minglg.user.mapper.*;
 import cn.minglg.user.properties.RegisterProperties;
 import cn.minglg.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.minglg.authentication.pojo.SecurityUser;
+import org.minglg.authentication.service.RsaService;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

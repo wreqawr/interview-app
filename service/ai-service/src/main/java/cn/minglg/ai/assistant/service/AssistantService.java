@@ -1,12 +1,12 @@
 package cn.minglg.ai.assistant.service;
 
-import cn.minglg.ai.advisors.CommonAdvisor;
 import cn.minglg.ai.assistant.exception.AssistantCallException;
 import cn.minglg.ai.assistant.properties.RoundLimitProperties;
 import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
 import cn.minglg.commons.model.task.TaskType;
 import lombok.RequiredArgsConstructor;
+import org.minglg.ai.advisors.CommonAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.prompt.PromptTemplate;

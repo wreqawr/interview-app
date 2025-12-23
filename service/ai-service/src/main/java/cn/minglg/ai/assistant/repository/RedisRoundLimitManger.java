@@ -1,8 +1,8 @@
 package cn.minglg.ai.assistant.repository;
 
-import cn.minglg.ai.advisors.RoundLimitManager;
-import cn.minglg.ai.context.UserContextProvider;
 import lombok.RequiredArgsConstructor;
+import org.minglg.ai.advisors.RoundLimitManager;
+import org.minglg.ai.context.UserContextProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;

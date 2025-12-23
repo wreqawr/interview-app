@@ -22,3 +22,18 @@ spring:
     import:
       - nacos:nacos-${spring.application.name}.yml?refreshEnabled=true
       - nacos:nacos-redis.yml?refreshEnabled=true
+interview:
+  ai:
+    agent:
+      enable: true
+      access:
+        key-id: ${AccessKeyID}
+        key-secret: ${AccessKeySecret}
+      live-mic:
+        app-id: 5ac096e7-c300-49b0-b465-97e3e7174968
+        app-key: ed70235da37f3f555d35436b50b1f74b
+
+  webmvc:
+    security:
+      white-list-patterns:
+        - /api/ai/agent/**

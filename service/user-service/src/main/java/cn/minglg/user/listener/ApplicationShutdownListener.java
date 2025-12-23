@@ -1,8 +1,8 @@
 package cn.minglg.user.listener;
 
-import cn.minglg.authentication.properties.WebMvcSecurityProperties;
 import cn.minglg.user.properties.RegisterProperties;
 import lombok.RequiredArgsConstructor;
+import org.minglg.authentication.properties.WebMvcSecurityProperties;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.data.redis.core.Cursor;

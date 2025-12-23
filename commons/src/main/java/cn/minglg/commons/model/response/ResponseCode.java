@@ -48,10 +48,16 @@ public enum ResponseCode {
     // 权限不足
     PERMISSION_DENY(403, "权限不足"),
 
+    // 生成消息会话Token失败
+    GENERATE_MESSAGE_CHAT_TOKEN_ERROR(500, "生成消息会话Token失败"),
+    // 获取AI代理实例信息失败
+    DESCRIBE_AI_AGENT_INSTANCE_ERROR(501, "获取AI代理实例信息失败"),
+
     // 异步任务执行中
     ASYNC_TASK_RUNNING(900, "异步任务执行中"),
     // 异步任务执行失败
     ASYNC_TASK_FAIL(901, "异步任务执行失败"),
+
     // 其它未知错误
     OTHER_EXCEPTION(1000, "其它未知错误");
 

@@ -1,10 +1,10 @@
 package cn.minglg.candidate.service;
 
-import cn.minglg.authentication.utils.JsonUtils;
 import cn.minglg.candidate.dto.JobDTO;
 import cn.minglg.candidate.mapper.JobMapper;
 import cn.minglg.commons.model.candidate.Job;
 import cn.minglg.commons.model.context.RequestScopedUserContext;
+import cn.minglg.commons.utils.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;

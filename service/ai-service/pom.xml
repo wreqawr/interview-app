@@ -16,13 +16,53 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <aliyun-java-sdk-core.version>4.7.8</aliyun-java-sdk-core.version>
+        <aliyun-java-sdk-live.version>3.9.74</aliyun-java-sdk-live.version>
+        <aliyun-java-sdk-vod.version>2.16.34</aliyun-java-sdk-vod.version>
+        <tea-openapi>0.3.11</tea-openapi>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>cn.minglg.interview</groupId>
+            <groupId>org.minglg.interview</groupId>
             <artifactId>ai-spring-boot-starter</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- 阿里云核心SDK -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+            <version>${aliyun-java-sdk-core.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 视频直播SDK -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-live</artifactId>
+            <version>${aliyun-java-sdk-live.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-vod</artifactId>
+            <version>${aliyun-java-sdk-vod.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>tea-openapi</artifactId>
+            <version>${tea-openapi}</version>
         </dependency>
     </dependencies>
 

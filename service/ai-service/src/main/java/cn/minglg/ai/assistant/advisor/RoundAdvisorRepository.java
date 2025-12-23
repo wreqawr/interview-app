@@ -1,10 +1,10 @@
 package cn.minglg.ai.assistant.advisor;
 
-import cn.minglg.ai.advisors.CommonAdvisorRepository;
-import cn.minglg.ai.advisors.RoundLimitManager;
 import cn.minglg.ai.assistant.properties.RoundLimitProperties;
 import cn.minglg.commons.model.task.TaskType;
 import lombok.AllArgsConstructor;
+import org.minglg.ai.advisors.CommonAdvisorRepository;
+import org.minglg.ai.advisors.RoundLimitManager;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.prompt.Prompt;

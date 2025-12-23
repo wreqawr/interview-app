@@ -1,10 +1,10 @@
 package cn.minglg.user.controller;
 
 import cn.hutool.captcha.ICaptcha;
-import cn.minglg.authentication.service.CaptchaService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.minglg.authentication.service.CaptchaService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

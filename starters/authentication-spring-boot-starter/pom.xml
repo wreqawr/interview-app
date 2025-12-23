@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>cn.minglg.interview</groupId>
+        <groupId>org.minglg.interview</groupId>
         <artifactId>starters</artifactId>
         <version>1.0.0</version>
     </parent>
@@ -19,9 +19,21 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.minglg.interview</groupId>
+            <groupId>org.minglg.interview</groupId>
             <artifactId>authentication-spring-boot-autoconfigure</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 显式声明安全版本的 logback-core 以修复 CVE-2025-11226 -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.5.19</version>
         </dependency>
     </dependencies>
 </project> 
