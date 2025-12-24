@@ -5,36 +5,37 @@ import cn.minglg.ai.agent.dto.req.GenerateMessageChatTokenRequestDto;
 import cn.minglg.ai.agent.dto.req.RtcAuthTokenRequestDto;
 import cn.minglg.ai.agent.dto.res.AiAgentInstanceDescribeResponse;
 import cn.minglg.ai.agent.dto.res.GenerateMessageChatTokenResponse;
-import cn.minglg.ai.agent.dto.res.RtcAuthTokenResponse;
+import cn.minglg.commons.model.response.GenericResponse;
 
 
 /**
- * IMS服务接口，提供实时通信、消息聊天和AI代理实例相关的认证令牌生成功能。
+ * IMS服务接口，提供实时通信、消息聊天和AI代理实例相关的功能
  */
 public interface ImsService {
     /**
-     * 获取RTC（实时通信）认证令牌
+     * 获取RTC认证令牌
      *
-     * @param rtcAuthTokenRequestDto RTC认证令牌请求参数对象，包含用户ID、房间ID等信息
-     * @return RtcAuthTokenResponse RTC认证令牌响应对象，包含生成的认证令牌及相关信息
+     * @param rtcAuthTokenRequestDto RTC认证令牌请求数据传输对象，包含获取认证令牌所需的参数
+     * @return GenericResponse<?> 通用响应对象，包含RTC认证令牌相关信息
      */
-    RtcAuthTokenResponse getRtcAuthToken(RtcAuthTokenRequestDto rtcAuthTokenRequestDto);
+    GenericResponse<?> getRtcAuthToken(RtcAuthTokenRequestDto rtcAuthTokenRequestDto);
 
     /**
-     * 生成消息聊天认证令牌
+     * 生成消息聊天令牌
      *
-     * @param requestDto 消息聊天令牌生成请求参数对象，包含聊天相关配置信息
-     * @return GenerateMessageChatTokenResponse 消息聊天令牌生成响应对象，包含生成的聊天认证令牌
+     * @param requestDto 生成消息聊天令牌请求数据传输对象，包含生成聊天令牌所需的参数
+     * @return GenericResponse<GenerateMessageChatTokenResponse> 通用响应对象，包含生成的消息聊天令牌响应数据
      */
-    GenerateMessageChatTokenResponse generateMessageChatToken(GenerateMessageChatTokenRequestDto requestDto);
+    GenericResponse<GenerateMessageChatTokenResponse> generateMessageChatToken(GenerateMessageChatTokenRequestDto requestDto);
 
     /**
-     * 描述AI代理实例信息
+     * 描述AI代理实例
      *
-     * @param aiAgentDescribeRequestDto AI代理实例描述请求参数对象，包含实例ID等查询条件
-     * @return AiAgentInstanceDescribeResponse AI代理实例描述响应对象，包含实例的详细信息
+     * @param aiAgentDescribeRequestDto AI代理实例描述请求数据传输对象，包含描述AI代理实例所需的参数
+     * @return GenericResponse<AiAgentInstanceDescribeResponse> 通用响应对象，包含AI代理实例的描述信息响应数据
      */
-    AiAgentInstanceDescribeResponse describeAiAgentInstance(AiAgentInstanceDescribeRequestDto aiAgentDescribeRequestDto);
+    GenericResponse<AiAgentInstanceDescribeResponse> describeAiAgentInstance(AiAgentInstanceDescribeRequestDto aiAgentDescribeRequestDto);
 }
+
 
 

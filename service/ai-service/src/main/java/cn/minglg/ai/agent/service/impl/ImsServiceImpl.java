@@ -5,10 +5,11 @@ import cn.minglg.ai.agent.dto.req.GenerateMessageChatTokenRequestDto;
 import cn.minglg.ai.agent.dto.req.RtcAuthTokenRequestDto;
 import cn.minglg.ai.agent.dto.res.AiAgentInstanceDescribeResponse;
 import cn.minglg.ai.agent.dto.res.GenerateMessageChatTokenResponse;
-import cn.minglg.ai.agent.dto.res.RtcAuthTokenResponse;
 import cn.minglg.ai.agent.properties.AiAgentProperties;
 import cn.minglg.ai.agent.service.AiAgentService;
 import cn.minglg.ai.agent.service.ImsService;
+import cn.minglg.commons.model.response.GenericResponse;
+import cn.minglg.commons.model.response.ResponseCode;
 import cn.minglg.commons.utils.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -38,12 +40,13 @@ public class ImsServiceImpl implements ImsService {
 
     /**
      * 获取RTC认证令牌
+     * 该方法根据请求参数生成RTC认证令牌，如果频道ID为空则自动生成随机频道ID
      *
-     * @param rtcAuthTokenRequestDto RTC认证令牌请求参数对象，包含频道ID和用户ID等信息
-     * @return RtcAuthTokenResponse 包含认证令牌和时间戳的响应对象
+     * @param rtcAuthTokenRequestDto RTC认证令牌请求DTO，包含频道ID和用户ID等信息
+     * @return GenericResponse<?> 包含RTC认证令牌、时间戳和频道ID的通用响应对象
      */
     @Override
-    public RtcAuthTokenResponse getRtcAuthToken(RtcAuthTokenRequestDto rtcAuthTokenRequestDto) {
+    public GenericResponse<?> getRtcAuthToken(RtcAuthTokenRequestDto rtcAuthTokenRequestDto) {
         String channelId = rtcAuthTokenRequestDto.getChannelId();
         // 如果频道ID为空，则生成一个随机的频道ID
         if (StringUtils.isBlank(channelId)) {
@@ -53,33 +56,73 @@ public class ImsServiceImpl implements ImsService {
         // 生成客户端的rtcAuthToken，基于客户端传的userid
         String rtcAuthToken = createBase64Token(channelId, rtcAuthTokenRequestDto.getUserId(), timestamp);
         log.info("getRtcAuthToken, params: {}, rtcAuthToken:{}", rtcAuthTokenRequestDto, rtcAuthToken);
+        // 构建返回数据映射
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("rtc_auth_token", rtcAuthToken);
+        map.put("timestamp", timestamp);
+        map.put("channel_id", rtcAuthTokenRequestDto.getChannelId());
 
-        return RtcAuthTokenResponse.builder().authToken(rtcAuthToken).timestamp(timestamp).build();
+        return GenericResponse.builder()
+                .code(ResponseCode.OK.getCode())
+                .data(map)
+                .message("获取RTC认证令牌成功！")
+                .build();
     }
 
 
     /**
-     * 生成消息聊天令牌
+     * 生成消息聊天Token
+     * 调用AI代理服务生成聊天会话Token，并根据服务调用结果构建统一响应
      *
-     * @param request 包含生成令牌所需参数的请求对象，包含AI代理ID、角色、用户ID、过期时间和区域信息
-     * @return GenerateMessageChatTokenResponse 生成的消息聊天令牌响应对象
+     * @param request 包含生成Token所需参数的请求对象，包括AI代理ID、角色、用户ID、过期时间、区域等信息
+     * @return GenericResponse<GenerateMessageChatTokenResponse> 统一响应对象，包含响应码、数据和消息
      */
     @Override
-    public GenerateMessageChatTokenResponse generateMessageChatToken(GenerateMessageChatTokenRequestDto request) {
-        return aiAgentService.generateMessageChatToken(request.getAiAgentId(), request.getRole(), request.getUserId(), request.getExpire(), request.getRegion());
+    public GenericResponse<GenerateMessageChatTokenResponse> generateMessageChatToken(GenerateMessageChatTokenRequestDto request) {
+        GenerateMessageChatTokenResponse response = aiAgentService.generateMessageChatToken(request.getAiAgentId(), request.getRole(), request.getUserId(), request.getExpire(), request.getRegion());
+        Integer code;
+        String message;
+
+        // 处理服务调用成功的情况
+        if (response != null && response.getCode() == ResponseCode.OK) {
+            code = ResponseCode.OK.getCode();
+            message = "生成会话Token成功！";
+        } else {
+            code = ResponseCode.GENERATE_MESSAGE_CHAT_TOKEN_ERROR.getCode();
+            message = "生成会话Token失败！";
+        }
+        return GenericResponse.<GenerateMessageChatTokenResponse>builder()
+                .code(code)
+                .data(response)
+                .message(message)
+                .build();
     }
 
-
     /**
-     * 描述AI代理实例的详细信息
+     * 描述AI代理实例信息
+     * 该方法调用AI代理服务获取指定实例的描述信息，并封装成通用响应格式返回
      *
-     * @param request 包含AI代理实例ID和区域信息的请求对象
-     * @return AI代理实例的描述信息响应对象
+     * @param request AI代理实例描述请求DTO，包含实例ID和地区信息
+     * @return GenericResponse<AiAgentInstanceDescribeResponse> 通用响应对象，包含响应码、数据和消息
      */
     @Override
-    public AiAgentInstanceDescribeResponse describeAiAgentInstance(AiAgentInstanceDescribeRequestDto request) {
+    public GenericResponse<AiAgentInstanceDescribeResponse> describeAiAgentInstance(AiAgentInstanceDescribeRequestDto request) {
         // 调用AI代理服务获取实例描述信息
-        return aiAgentService.describeAiAgentInstance(request.getAiAgentInstanceId(), request.getRegion());
+        AiAgentInstanceDescribeResponse response = aiAgentService.describeAiAgentInstance(request.getAiAgentInstanceId(), request.getRegion());
+        Integer code;
+        String message;
+        if (response == null || response.getCode() != ResponseCode.OK) {
+            code = ResponseCode.DESCRIBE_AI_AGENT_INSTANCE_ERROR.getCode();
+            message = "获取AI代理实例信息失败！";
+        } else {
+            code = ResponseCode.OK.getCode();
+            message = "获取AI代理实例信息成功！";
+        }
+        return GenericResponse.<AiAgentInstanceDescribeResponse>builder()
+                .code(code)
+                .data(response)
+                .message(message)
+                .build();
     }
 
 

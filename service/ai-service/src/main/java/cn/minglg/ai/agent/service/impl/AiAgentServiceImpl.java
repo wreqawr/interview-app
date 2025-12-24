@@ -4,6 +4,7 @@ import cn.minglg.ai.agent.dto.res.AiAgentInstanceDescribeResponse;
 import cn.minglg.ai.agent.dto.res.GenerateMessageChatTokenResponse;
 import cn.minglg.ai.agent.properties.AiAgentProperties;
 import cn.minglg.ai.agent.service.AiAgentService;
+import cn.minglg.commons.model.response.ResponseCode;
 import cn.minglg.commons.utils.JsonUtils;
 import com.aliyun.tea.TeaException;
 import com.aliyun.teaopenapi.Client;
@@ -117,7 +118,6 @@ public class AiAgentServiceImpl implements AiAgentService {
         String message = StringUtils.EMPTY;
         String errCode = StringUtils.EMPTY;
 
-        int code = 500;
         try {
             OpenApiRequest request = new OpenApiRequest()
                     .setQuery(com.aliyun.openapiutil.Client.query(queries));
@@ -155,8 +155,7 @@ public class AiAgentServiceImpl implements AiAgentService {
                                 .role(roleResponse)
                                 .timestamp(timestamp)
                                 .appSign(appSign)
-                                .code(200)
-                                .message("success")
+                                .code(ResponseCode.OK)
                                 .requestId(requestId)
                                 .build();
                     }
@@ -166,7 +165,6 @@ public class AiAgentServiceImpl implements AiAgentService {
             log.error("generateMessageChatToken Tea error. e:{}", e.getMessage());
             requestId = e.getData().get("RequestId").toString();
             message = e.getMessage();
-            code = e.getStatusCode();
             errCode = e.getCode();
         } catch (NullPointerException e) {
             message = e.getMessage();
@@ -177,17 +175,21 @@ public class AiAgentServiceImpl implements AiAgentService {
         }
 
         // 构建并返回异常情况下的统一响应结构
-        return GenerateMessageChatTokenResponse.builder().code(code).message(message).requestId(requestId).errorCode(errCode).build();
+        return GenerateMessageChatTokenResponse.builder()
+                .message(message)
+                .requestId(requestId)
+                .errorCode(errCode)
+                .build();
     }
 
 
     /**
-     * 根据实例ID和区域信息查询AI Agent实例的详细信息。
+     * 查询AI智能体实例详情
+     * 通过实例ID和区域信息调用OpenAPI接口获取AI智能体实例的详细信息
      *
-     * @param aiAgentInstanceId AI Agent实例的唯一标识符
-     * @param region            实例所在的区域
-     * @return 返回封装了实例详情的 {@link AiAgentInstanceDescribeResponse} 对象，
-     * 包含调用日志URL、运行时配置、状态、模板配置、用户数据等字段。
+     * @param aiAgentInstanceId AI智能体实例ID
+     * @param region            区域标识符
+     * @return AiAgentInstanceDescribeResponse 包含实例详情的响应对象
      */
     @Override
     public AiAgentInstanceDescribeResponse describeAiAgentInstance(String aiAgentInstanceId, String region) {
@@ -219,11 +221,9 @@ public class AiAgentServiceImpl implements AiAgentService {
         String requestId = StringUtils.EMPTY;
         String message = StringUtils.EMPTY;
         String errCode = StringUtils.EMPTY;
-        int code = 500;
-
         try {
             // 构建OpenAPI请求对象
-            com.aliyun.teaopenapi.models.OpenApiRequest request = new com.aliyun.teaopenapi.models.OpenApiRequest()
+            OpenApiRequest request = new OpenApiRequest()
                     .setQuery(com.aliyun.openapiutil.Client.query(queries));
 
             // 获取指定region的客户端并发起调用
@@ -255,8 +255,7 @@ public class AiAgentServiceImpl implements AiAgentService {
                             .status(status)
                             .templateConfig(template_config)
                             .userData(user_data)
-                            .code(200)
-                            .message("success")
+                            .code(ResponseCode.OK)
                             .requestId(requestId)
                             .build();
                 }
@@ -266,7 +265,6 @@ public class AiAgentServiceImpl implements AiAgentService {
             log.error("describeAiAgentInstance Tea error. e:{}", e.getMessage());
             requestId = e.getData().get("RequestId").toString();
             message = e.getMessage();
-            code = e.getStatusCode();
             errCode = e.getCode();
         } catch (NullPointerException e) {
             // 捕获空指针异常
@@ -280,7 +278,6 @@ public class AiAgentServiceImpl implements AiAgentService {
 
         // 构造失败响应对象
         return AiAgentInstanceDescribeResponse.builder()
-                .code(code)
                 .message(message)
                 .requestId(requestId)
                 .errorCode(errCode)

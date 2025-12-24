@@ -1,5 +1,8 @@
 package cn.minglg.ai.agent.dto.res;
 
+import cn.minglg.commons.model.response.ResponseCode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,10 +13,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AiAgentInstanceDescribeResponse {
 
     @JsonProperty("code")
-    private int code;
+    @JsonIgnore
+    private ResponseCode code;
 
     @JsonProperty("error_code")
     private String errorCode;
