@@ -1,8 +1,7 @@
-package cn.minglg.ai.agent.properties;
+package org.minglg.ai.agent.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * ClassName:AgentProperties
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
  * @Version 1.0
  */
 @ConfigurationProperties(prefix = "interview.ai.agent")
-@Component
 @Data
 public class AiAgentProperties {
     private boolean enable = false;

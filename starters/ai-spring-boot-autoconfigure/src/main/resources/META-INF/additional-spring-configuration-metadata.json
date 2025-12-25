@@ -47,6 +47,36 @@
       "type": "java.lang.String",
       "description": "聊天上下文存储仓库类型。可选值：memory（内存存储）、redis（Redis存储）、mongodb（MongoDB存储）。如果不配置，默认使用基于内存的存储.",
       "defaultValue": "memory"
+    },
+    {
+      "name": "interview.ai.agent.enable",
+      "type": "java.lang.Boolean",
+      "description": "是否启用 AI Agent 智能体功能。设置为 true 时，将自动配置 AiAgentService Bean，提供 AI Agent 相关能力（消息聊天 Token 生成、RTC 认证令牌等）.",
+      "defaultValue": false
+    },
+    {
+      "name": "interview.ai.agent.access.key-id",
+      "type": "java.lang.String",
+      "description": "阿里云 AccessKey ID，用于访问阿里云 ICE（智能通信引擎）服务。需要配置此参数才能使用 AI Agent 功能.",
+      "defaultValue": null
+    },
+    {
+      "name": "interview.ai.agent.access.key-secret",
+      "type": "java.lang.String",
+      "description": "阿里云 AccessKey Secret，用于访问阿里云 ICE（智能通信引擎）服务。需要配置此参数才能使用 AI Agent 功能.",
+      "defaultValue": null
+    },
+    {
+      "name": "interview.ai.agent.live-mic.app-id",
+      "type": "java.lang.String",
+      "description": "LiveMic 应用 ID，用于生成 RTC 认证令牌。如果需要进行音视频面试，需要配置此参数.",
+      "defaultValue": null
+    },
+    {
+      "name": "interview.ai.agent.live-mic.app-key",
+      "type": "java.lang.String",
+      "description": "LiveMic 应用密钥，用于生成 RTC 认证令牌。如果需要进行音视频面试，需要配置此参数.",
+      "defaultValue": null
     }
   ],
   "hints": [
@@ -98,6 +128,19 @@
         {
           "value": 100,
           "description": "较多消息数量，适用于复杂对话场景."
+        }
+      ]
+    },
+    {
+      "name": "interview.ai.agent.enable",
+      "values": [
+        {
+          "value": true,
+          "description": "启用 AI Agent 智能体功能，将自动配置 AiAgentService，提供消息聊天 Token 生成、RTC 认证令牌等功能."
+        },
+        {
+          "value": false,
+          "description": "禁用 AI Agent 智能体功能，不会创建 AiAgentService Bean."
         }
       ]
     }

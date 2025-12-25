@@ -1,9 +1,5 @@
-package cn.minglg.ai.agent.service.impl;
+package org.minglg.ai.agent.service.impl;
 
-import cn.minglg.ai.agent.dto.res.AiAgentInstanceDescribeResponse;
-import cn.minglg.ai.agent.dto.res.GenerateMessageChatTokenResponse;
-import cn.minglg.ai.agent.properties.AiAgentProperties;
-import cn.minglg.ai.agent.service.AiAgentService;
 import cn.minglg.commons.model.response.ResponseCode;
 import cn.minglg.commons.utils.JsonUtils;
 import com.aliyun.tea.TeaException;
@@ -15,7 +11,10 @@ import com.aliyun.teautil.models.RuntimeOptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
+import org.minglg.ai.agent.entity.AiAgentInstanceDescribeResponse;
+import org.minglg.ai.agent.entity.GenerateMessageChatTokenResponse;
+import org.minglg.ai.agent.properties.AiAgentProperties;
+import org.minglg.ai.agent.service.AiAgentService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("unchecked")
 @Slf4j
 @RequiredArgsConstructor
-@Service
 public class AiAgentServiceImpl implements AiAgentService {
 
     private final Map<String, Client> clientByRegion = new ConcurrentHashMap<>();
@@ -75,17 +73,15 @@ public class AiAgentServiceImpl implements AiAgentService {
 
 
     /**
-     * 生成消息聊天令牌（Message Chat Token）
-     * 调用阿里云 OpenAPI 接口 "GenerateMessageChatToken" 来获取用于聊天通信的临时令牌。
-     * 此方法会根据传入的 AI Agent ID、角色、用户 ID 和过期时间等参数发起请求，并返回封装后的响应对象。
+     * 生成消息聊天令牌
+     * 该方法通过调用API接口生成用于消息聊天的认证令牌，支持指定AI代理、角色、用户等参数
      *
-     * @param aiAgentId AI Agent 的唯一标识符，不能为空
-     * @param role      用户在当前对话中的角色，例如 "USER" 或 "ASSISTANT"
-     * @param userId    用户的唯一标识符
-     * @param expire    令牌的有效时间（单位：秒），可为空，默认由服务端决定
-     * @param region    请求的目标区域（Region ID），如 "cn-hangzhou"
-     * @return 返回包含 AppId、Token 等信息的 {@link GenerateMessageChatTokenResponse} 对象，
-     * 若调用失败则返回错误码和错误信息
+     * @param aiAgentId AI代理ID，用于标识特定的AI代理服务
+     * @param role      用户角色，用于权限控制和功能限制
+     * @param userId    用户ID，用于标识调用接口的用户
+     * @param expire    令牌过期时间，单位为秒
+     * @param region    服务区域，用于指定API调用的目标区域
+     * @return GenerateMessageChatTokenResponse 包含生成的令牌信息的响应对象
      */
     @Override
     public GenerateMessageChatTokenResponse generateMessageChatToken(String aiAgentId, String role, String userId, Integer expire, String region) {
@@ -213,7 +209,7 @@ public class AiAgentServiceImpl implements AiAgentService {
                 .setBodyType("json");
 
         // 设置请求参数
-        Map<String, Object> queries = new java.util.HashMap<>();
+        Map<String, Object> queries = new HashMap<>();
         queries.put("InstanceId", aiAgentInstanceId);
 
         // 初始化运行时选项和变量

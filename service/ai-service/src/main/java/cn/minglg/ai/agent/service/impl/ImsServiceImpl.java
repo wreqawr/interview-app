@@ -1,12 +1,8 @@
 package cn.minglg.ai.agent.service.impl;
 
-import cn.minglg.ai.agent.dto.req.AiAgentInstanceDescribeRequestDto;
-import cn.minglg.ai.agent.dto.req.GenerateMessageChatTokenRequestDto;
-import cn.minglg.ai.agent.dto.req.RtcAuthTokenRequestDto;
-import cn.minglg.ai.agent.dto.res.AiAgentInstanceDescribeResponse;
-import cn.minglg.ai.agent.dto.res.GenerateMessageChatTokenResponse;
-import cn.minglg.ai.agent.properties.AiAgentProperties;
-import cn.minglg.ai.agent.service.AiAgentService;
+import cn.minglg.ai.agent.dto.AiAgentInstanceDescribeRequestDto;
+import cn.minglg.ai.agent.dto.GenerateMessageChatTokenRequestDto;
+import cn.minglg.ai.agent.dto.RtcAuthTokenRequestDto;
 import cn.minglg.ai.agent.service.ImsService;
 import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
@@ -14,6 +10,10 @@ import cn.minglg.commons.utils.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.minglg.ai.agent.entity.AiAgentInstanceDescribeResponse;
+import org.minglg.ai.agent.entity.GenerateMessageChatTokenResponse;
+import org.minglg.ai.agent.properties.AiAgentProperties;
+import org.minglg.ai.agent.service.AiAgentService;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -78,7 +78,7 @@ public class ImsServiceImpl implements ImsService {
      * @return GenericResponse<GenerateMessageChatTokenResponse> 统一响应对象，包含响应码、数据和消息
      */
     @Override
-    public GenericResponse<GenerateMessageChatTokenResponse> generateMessageChatToken(GenerateMessageChatTokenRequestDto request) {
+    public GenericResponse<?> generateMessageChatToken(GenerateMessageChatTokenRequestDto request) {
         GenerateMessageChatTokenResponse response = aiAgentService.generateMessageChatToken(request.getAiAgentId(), request.getRole(), request.getUserId(), request.getExpire(), request.getRegion());
         Integer code;
         String message;
@@ -106,7 +106,7 @@ public class ImsServiceImpl implements ImsService {
      * @return GenericResponse<AiAgentInstanceDescribeResponse> 通用响应对象，包含响应码、数据和消息
      */
     @Override
-    public GenericResponse<AiAgentInstanceDescribeResponse> describeAiAgentInstance(AiAgentInstanceDescribeRequestDto request) {
+    public GenericResponse<?> describeAiAgentInstance(AiAgentInstanceDescribeRequestDto request) {
         // 调用AI代理服务获取实例描述信息
         AiAgentInstanceDescribeResponse response = aiAgentService.describeAiAgentInstance(request.getAiAgentInstanceId(), request.getRegion());
         Integer code;

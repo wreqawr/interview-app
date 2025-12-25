@@ -1,4 +1,4 @@
-package cn.minglg.ai.agent.dto.res;
+package org.minglg.ai.agent.entity;
 
 import cn.minglg.commons.model.response.ResponseCode;
 import com.fasterxml.jackson.annotation.JsonIgnore;

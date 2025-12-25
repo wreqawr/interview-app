@@ -1,4 +1,4 @@
-package cn.minglg.ai.agent.dto.req;
+package cn.minglg.ai.agent.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;

@@ -1,8 +1,7 @@
-package cn.minglg.ai.agent.service;
+package org.minglg.ai.agent.service;
 
-import cn.minglg.ai.agent.dto.res.AiAgentInstanceDescribeResponse;
-import cn.minglg.ai.agent.dto.res.GenerateMessageChatTokenResponse;
-
+import org.minglg.ai.agent.entity.AiAgentInstanceDescribeResponse;
+import org.minglg.ai.agent.entity.GenerateMessageChatTokenResponse;
 
 /**
  * AI代理服务接口

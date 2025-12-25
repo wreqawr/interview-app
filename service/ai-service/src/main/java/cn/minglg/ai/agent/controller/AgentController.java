@@ -1,9 +1,8 @@
 package cn.minglg.ai.agent.controller;
 
-import cn.minglg.ai.agent.dto.req.AiAgentInstanceDescribeRequestDto;
-import cn.minglg.ai.agent.dto.req.GenerateMessageChatTokenRequestDto;
-import cn.minglg.ai.agent.dto.req.RtcAuthTokenRequestDto;
-import cn.minglg.ai.agent.dto.res.AiAgentInstanceDescribeResponse;
+import cn.minglg.ai.agent.dto.AiAgentInstanceDescribeRequestDto;
+import cn.minglg.ai.agent.dto.GenerateMessageChatTokenRequestDto;
+import cn.minglg.ai.agent.dto.RtcAuthTokenRequestDto;
 import cn.minglg.ai.agent.service.ImsService;
 import cn.minglg.commons.model.response.GenericResponse;
 import jakarta.validation.Valid;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/ai/agent")
 @Validated
-//@ConditionalOnProperty(name = "interview.ai.agent.enable", havingValue = "true")
 public class AgentController {
     private final ImsService imsService;
 
@@ -72,7 +70,7 @@ public class AgentController {
     @PostMapping("/describeAIAgentInstance")
     public ResponseEntity<?> describeAIAgentInstance(@RequestBody @Valid AiAgentInstanceDescribeRequestDto aiAgentDescribeRequestDto) {
         // 调用服务层方法获取AI代理实例信息
-        GenericResponse<AiAgentInstanceDescribeResponse> response = imsService.describeAiAgentInstance(aiAgentDescribeRequestDto);
+        GenericResponse<?> response = imsService.describeAiAgentInstance(aiAgentDescribeRequestDto);
         return ResponseEntity.ok(response);
     }
 

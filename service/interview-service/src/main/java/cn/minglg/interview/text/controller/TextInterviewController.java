@@ -1,7 +1,7 @@
 package cn.minglg.interview.text.controller;
 
 import cn.minglg.commons.model.task.TaskType;
-import cn.minglg.interview.text.service.TextChatService;
+import cn.minglg.interview.text.service.TextInterviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +25,9 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/interview/textChat")
-public class TextChatController {
-    private final TextChatService textService;
+@RequestMapping("/api/interview/text")
+public class TextInterviewController {
+    private final TextInterviewService textService;
 
     /**
      * 准备聊天接口

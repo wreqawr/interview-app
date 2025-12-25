@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 /**
- * ClassName:TextChatService
+ * ClassName:TextInterviewService
  * Package:cn.minglg.interview.text.service
  * Description:
  *
@@ -31,16 +31,16 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @Service
-public class TextChatService {
+public class TextInterviewService {
     private final CandidateServiceFeignClient candidateServiceFeignClient;
     private final ResumeServiceFeignClient resumeServiceFeignClient;
     private final AiServiceFeignClient aiServiceFeignClient;
     private final Executor taskExecutor;
 
-    public TextChatService(CandidateServiceFeignClient candidateServiceFeignClient,
-                           ResumeServiceFeignClient resumeServiceFeignClient,
-                           AiServiceFeignClient aiServiceFeignClient,
-                           @Qualifier("taskExecutor")
+    public TextInterviewService(CandidateServiceFeignClient candidateServiceFeignClient,
+                                ResumeServiceFeignClient resumeServiceFeignClient,
+                                AiServiceFeignClient aiServiceFeignClient,
+                                @Qualifier("taskExecutor")
                            Executor taskExecutor) {
         this.candidateServiceFeignClient = candidateServiceFeignClient;
         this.resumeServiceFeignClient = resumeServiceFeignClient;
