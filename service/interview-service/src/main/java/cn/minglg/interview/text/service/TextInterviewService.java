@@ -1,8 +1,6 @@
 package cn.minglg.interview.text.service;
 
-import cn.minglg.commons.async.AsyncContextHolder;
 import cn.minglg.commons.model.candidate.Job;
-import cn.minglg.commons.model.constants.Constants;
 import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.resume.ResumeDetail;
 import cn.minglg.interview.feign.AiServiceFeignClient;
@@ -12,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Map;
 import java.util.Objects;
@@ -41,7 +37,7 @@ public class TextInterviewService {
                                 ResumeServiceFeignClient resumeServiceFeignClient,
                                 AiServiceFeignClient aiServiceFeignClient,
                                 @Qualifier("taskExecutor")
-                           Executor taskExecutor) {
+                                Executor taskExecutor) {
         this.candidateServiceFeignClient = candidateServiceFeignClient;
         this.resumeServiceFeignClient = resumeServiceFeignClient;
         this.aiServiceFeignClient = aiServiceFeignClient;
@@ -104,17 +100,18 @@ public class TextInterviewService {
      * @return ResponseEntity<GenericResponse<String>> 返回聊天响应结果，包含处理状态和消息内容
      */
     public ResponseEntity<GenericResponse<String>> textChatInterviewInProgress(Map<String, Object> chatParamMap) {
-        try {
-            // 获取当前请求上下文中的授权令牌并设置到异步上下文中
-            if (RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attributes) {
-                AsyncContextHolder.setAttribute(Constants.AUTHORIZATION_TOKEN_KEY, attributes.getRequest().getHeader(Constants.AUTHORIZATION_TOKEN_KEY));
-            }
-            // 调用AI服务Feign客户端进行聊天处理
-            return aiServiceFeignClient.chat(chatParamMap);
-        } finally {
-            // 清理异步上下文，确保资源释放
-            AsyncContextHolder.clearContext();
-        }
+//        try {
+//            // 获取当前请求上下文中的授权令牌并设置到异步上下文中
+//            if (RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attributes) {
+//                AsyncContextHolder.setAttribute(Constants.AUTHORIZATION_TOKEN_KEY, attributes.getRequest().getHeader(Constants.AUTHORIZATION_TOKEN_KEY));
+//            }
+//            // 调用AI服务Feign客户端进行聊天处理
+//            return aiServiceFeignClient.chat(chatParamMap);
+//        } finally {
+//            // 清理异步上下文，确保资源释放
+//            AsyncContextHolder.clearContext();
+//        }
+        return aiServiceFeignClient.chat(chatParamMap);
     }
 
 

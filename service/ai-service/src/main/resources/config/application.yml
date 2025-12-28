@@ -2,10 +2,10 @@ server:
   port: 50000
 
 interview:
-  webmvc:
-    security:
-      white-list-patterns:
-        - /api/ai/agent/**
+#  webmvc:
+#    security:
+#      white-list-patterns:
+#        - /api/ai/agent/**
   ai:
     agent:
       enable: true

@@ -6,6 +6,8 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * ClassName:FeignRequestInterceptor
@@ -29,12 +31,19 @@ public class FeignRequestInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate requestTemplate) {
         String token = AsyncContextHolder.getAttribute(Constants.AUTHORIZATION_TOKEN_KEY);
-        log.info("子线程接收到的token是: {}", token);
-
         // 如果获取到 token，添加到请求头
         if (token != null) {
+            log.info("子线程接收到的token是: {}", token);
+            requestTemplate.header("Authorization", token);
+            return;
+        }
+        // 从RequestContextHolder中获取请求属性并提取token
+        if (RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attributes) {
+            token = attributes.getRequest().getHeader(Constants.AUTHORIZATION_TOKEN_KEY);
+            log.info("从RequestContextHolder获取到token: {}", token);
             requestTemplate.header("Authorization", token);
         }
     }
+
 
 }
