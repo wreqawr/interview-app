@@ -52,6 +52,8 @@ public enum ResponseCode {
     GENERATE_MESSAGE_CHAT_TOKEN_ERROR(500, "生成消息会话Token失败"),
     // 获取AI代理实例信息失败
     DESCRIBE_AI_AGENT_INSTANCE_ERROR(501, "获取AI代理实例信息失败"),
+    // 生成AI代理会话Token失败
+    GENERATE_AI_AGENT_CALL_ERROR(502, "生成AI代理会话Token失败"),
 
     // 异步任务执行中
     ASYNC_TASK_RUNNING(900, "异步任务执行中"),

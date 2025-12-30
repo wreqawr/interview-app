@@ -11,7 +11,9 @@ import com.aliyun.teautil.models.RuntimeOptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.minglg.ai.agent.entity.AgentConfig;
 import org.minglg.ai.agent.entity.AiAgentInstanceDescribeResponse;
+import org.minglg.ai.agent.entity.GenerateAIAgentCallResponse;
 import org.minglg.ai.agent.entity.GenerateMessageChatTokenResponse;
 import org.minglg.ai.agent.properties.AiAgentProperties;
 import org.minglg.ai.agent.service.AiAgentService;
@@ -277,6 +279,86 @@ public class AiAgentServiceImpl implements AiAgentService {
                 .message(message)
                 .requestId(requestId)
                 .errorCode(errCode)
+                .build();
+    }
+
+    /**
+     * 生成AI智能体调用
+     * 该方法用于创建AI智能体的调用实例，通过OpenAPI接口发起请求并处理响应
+     *
+     * @param aiAgentId   AI智能体ID，用于标识具体的AI智能体实例
+     * @param region      区域信息，指定服务所在的地理区域
+     * @param agentConfig AI智能体配置信息，包含智能体的运行配置参数
+     * @return GenerateAIAgentCallResponse 包含调用结果的响应对象，包含成功时的业务数据或失败时的错误信息
+     */
+    @Override
+    public GenerateAIAgentCallResponse generateAIAgentCall(String aiAgentId, String region, AgentConfig agentConfig) {
+        log.info("generateAIAgentCall, aiAgentId:{}, agentConfig:{}", aiAgentId, agentConfig);
+        // 构造接口请求的基本参数
+        Params params = new Params()
+                // 接口名称
+                .setAction("GenerateAIAgentCall")
+                // 接口版本
+                .setVersion("2020-11-09")
+                // 接口协议
+                .setProtocol("HTTPS")
+                // 接口 HTTP 方法
+                .setMethod("POST")
+                .setAuthType("AK")
+                .setStyle("RPC")
+                // 接口 PATH
+                .setPathname("/")
+                // 接口请求体内容格式
+                .setReqBodyType("json")
+                // 接口响应体内容格式
+                .setBodyType("json");
+
+        // 设置请求参数
+        Map<String, Object> queries = new HashMap<>();
+        queries.put("AIAgentId", aiAgentId);
+        queries.put("Expire", 3600);
+        queries.put("AgentConfig", JsonUtils.toJsonStr(agentConfig));
+        // 初始化运行时选项和变量
+        RuntimeOptions runtime = new RuntimeOptions();
+        String message = StringUtils.EMPTY;
+        String requestId = StringUtils.EMPTY;
+        try {
+            // 构建OpenAPI请求对象
+            OpenApiRequest request = new OpenApiRequest()
+                    .setQuery(com.aliyun.openapiutil.Client.query(queries));
+
+            // 获取指定region的客户端并发起调用
+            Client localClient = getClient(region);
+            long start = System.currentTimeMillis();
+            log.info("generateAIAgentCall, queries:{}, region:{}", JsonUtils.toJsonStr(queries), region);
+            Map<String, ?> response = localClient.callApi(params, request, runtime);
+            log.info("generateAIAgentCall, response:{}, cost:{}ms", JsonUtils.toJsonStr(response), (System.currentTimeMillis() - start));
+
+            // 处理正常响应结果
+            if (response != null && response.containsKey("statusCode")) {
+                Integer statusCode = (Integer) response.get("statusCode");
+                if (200 == statusCode) {
+                    Map<String, Object> body = (Map<String, Object>) response.get("body");
+                    return GenerateAIAgentCallResponse.builder()
+                            .code(ResponseCode.OK)
+                            .requestId(body.get("RequestId").toString())
+                            .instanceId(body.get("InstanceId").toString())
+                            .userId(body.get("UserId").toString())
+                            .workflowType(body.get("WorkflowType").toString())
+                            .token(body.get("Token").toString())
+                            .channelId(body.get("ChannelId").toString())
+                            .aiAgentUserId(body.get("AIAgentUserId").toString())
+                            .build();
+                }
+            }
+        } catch (Exception e) {
+            // 兜底捕获其他所有异常
+            log.error("generateAIAgentCall error. e:{}", e.getMessage());
+            message = e.getMessage();
+        }
+        return GenerateAIAgentCallResponse.builder()
+                .message(message)
+                .requestId(requestId)
                 .build();
     }
 

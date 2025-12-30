@@ -1,5 +1,6 @@
 package cn.minglg.ai.agent.service.impl;
 
+import cn.minglg.ai.agent.dto.AiAgentCallRequestDto;
 import cn.minglg.ai.agent.dto.AiAgentInstanceDescribeRequestDto;
 import cn.minglg.ai.agent.dto.GenerateMessageChatTokenRequestDto;
 import cn.minglg.ai.agent.dto.RtcAuthTokenRequestDto;
@@ -10,7 +11,9 @@ import cn.minglg.commons.utils.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.minglg.ai.agent.entity.AgentConfig;
 import org.minglg.ai.agent.entity.AiAgentInstanceDescribeResponse;
+import org.minglg.ai.agent.entity.GenerateAIAgentCallResponse;
 import org.minglg.ai.agent.entity.GenerateMessageChatTokenResponse;
 import org.minglg.ai.agent.properties.AiAgentProperties;
 import org.minglg.ai.agent.service.AiAgentService;
@@ -119,6 +122,28 @@ public class ImsServiceImpl implements ImsService {
             message = "获取AI代理实例信息成功！";
         }
         return GenericResponse.<AiAgentInstanceDescribeResponse>builder()
+                .code(code)
+                .data(response)
+                .message(message)
+                .build();
+    }
+
+    @Override
+    public GenericResponse<?> generateAIAgentCall(AiAgentCallRequestDto aiAgentCallRequestDto) {
+        String aiAgentId = aiAgentCallRequestDto.getAiAgentId();
+        String region = aiAgentCallRequestDto.getRegion();
+        AgentConfig agentConfig = AgentConfig.builder().greeting("你好，我是小帅！").wakeUpQuery("今天是星期几？天气怎么样？").build();
+        GenerateAIAgentCallResponse response = aiAgentService.generateAIAgentCall(aiAgentId, region, agentConfig);
+        Integer code;
+        String message;
+        if (response == null || response.getCode() != ResponseCode.OK) {
+            code = ResponseCode.GENERATE_AI_AGENT_CALL_ERROR.getCode();
+            message = "生成AI代理会话Token失败！";
+        } else {
+            code = ResponseCode.OK.getCode();
+            message = "生成AI代理会话Token成功！";
+        }
+        return GenericResponse.builder()
                 .code(code)
                 .data(response)
                 .message(message)

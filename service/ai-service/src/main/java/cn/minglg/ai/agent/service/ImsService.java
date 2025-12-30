@@ -1,5 +1,6 @@
 package cn.minglg.ai.agent.service;
 
+import cn.minglg.ai.agent.dto.AiAgentCallRequestDto;
 import cn.minglg.ai.agent.dto.AiAgentInstanceDescribeRequestDto;
 import cn.minglg.ai.agent.dto.GenerateMessageChatTokenRequestDto;
 import cn.minglg.ai.agent.dto.RtcAuthTokenRequestDto;
@@ -33,6 +34,8 @@ public interface ImsService {
      * @return GenericResponse<?> 通用响应对象，包含AI代理实例的详细信息
      */
     GenericResponse<?> describeAiAgentInstance(AiAgentInstanceDescribeRequestDto aiAgentDescribeRequestDto);
+
+    GenericResponse<?> generateAIAgentCall(AiAgentCallRequestDto aiAgentCallRequestDto);
 }
 
 

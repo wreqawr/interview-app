@@ -1,5 +1,6 @@
 package cn.minglg.ai.agent.controller;
 
+import cn.minglg.ai.agent.dto.AiAgentCallRequestDto;
 import cn.minglg.ai.agent.dto.AiAgentInstanceDescribeRequestDto;
 import cn.minglg.ai.agent.dto.GenerateMessageChatTokenRequestDto;
 import cn.minglg.ai.agent.dto.RtcAuthTokenRequestDto;
@@ -71,6 +72,12 @@ public class AgentController {
     public ResponseEntity<?> describeAIAgentInstance(@RequestBody @Valid AiAgentInstanceDescribeRequestDto aiAgentDescribeRequestDto) {
         // 调用服务层方法获取AI代理实例信息
         GenericResponse<?> response = imsService.describeAiAgentInstance(aiAgentDescribeRequestDto);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/generateAIAgentCall")
+    public ResponseEntity<?> generateAIAgentCall(@RequestBody @Valid AiAgentCallRequestDto aiAgentCallRequestDto) {
+        GenericResponse<?> response = imsService.generateAIAgentCall(aiAgentCallRequestDto);
         return ResponseEntity.ok(response);
     }
 
