@@ -77,6 +77,18 @@
       "type": "java.lang.String",
       "description": "LiveMic 应用密钥，用于生成 RTC 认证令牌。如果需要进行音视频面试，需要配置此参数.",
       "defaultValue": null
+    },
+    {
+      "name": "interview.ai.agent.live-mic.voice-agent-id",
+      "type": "java.lang.String",
+      "description": "音频智能体id。如果需要进行音频面试，需要配置此参数.",
+      "defaultValue": null
+    },
+    {
+      "name": "interview.ai.agent.live-mic.region",
+      "type": "java.lang.String",
+      "description": "region，默认cn-shanghai.",
+      "defaultValue": "cn-shanghai"
     }
   ],
   "hints": [

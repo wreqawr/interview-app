@@ -1,10 +1,11 @@
 package cn.minglg.ai.agent.service;
 
-import cn.minglg.ai.agent.dto.AiAgentCallRequestDto;
 import cn.minglg.ai.agent.dto.AiAgentInstanceDescribeRequestDto;
 import cn.minglg.ai.agent.dto.GenerateMessageChatTokenRequestDto;
 import cn.minglg.ai.agent.dto.RtcAuthTokenRequestDto;
 import cn.minglg.commons.model.response.GenericResponse;
+
+import java.util.Map;
 
 
 /**
@@ -35,8 +36,18 @@ public interface ImsService {
      */
     GenericResponse<?> describeAiAgentInstance(AiAgentInstanceDescribeRequestDto aiAgentDescribeRequestDto);
 
-    GenericResponse<?> generateAIAgentCall(AiAgentCallRequestDto aiAgentCallRequestDto);
+    /**
+     * 生成AI代理调用的通用响应
+     * 该方法接收包含聊天参数的映射表，用于构建和执行AI代理的调用请求
+     *
+     * @param chatParamMap 包含AI聊天相关参数的映射表，键为参数名，值为对应的参数值
+     *                     通常包含用户输入、会话ID、模型配置等信息
+     * @return GenericResponse<?> 通用响应对象，封装了AI代理调用的结果
+     * 响应类型为泛型，具体类型取决于AI代理的返回内容
+     */
+    GenericResponse<?> generateAIAgentCall(Map<String, Object> chatParamMap);
 }
+
 
 
 

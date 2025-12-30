@@ -1,6 +1,5 @@
 package cn.minglg.ai.agent.controller;
 
-import cn.minglg.ai.agent.dto.AiAgentCallRequestDto;
 import cn.minglg.ai.agent.dto.AiAgentInstanceDescribeRequestDto;
 import cn.minglg.ai.agent.dto.GenerateMessageChatTokenRequestDto;
 import cn.minglg.ai.agent.dto.RtcAuthTokenRequestDto;
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * ClassName:AgentController
@@ -76,8 +77,8 @@ public class AgentController {
     }
 
     @PostMapping("/generateAIAgentCall")
-    public ResponseEntity<?> generateAIAgentCall(@RequestBody @Valid AiAgentCallRequestDto aiAgentCallRequestDto) {
-        GenericResponse<?> response = imsService.generateAIAgentCall(aiAgentCallRequestDto);
+    public ResponseEntity<?> generateAIAgentCall(@RequestBody Map<String, Object> chatParamMap) {
+        GenericResponse<?> response = imsService.generateAIAgentCall(chatParamMap);
         return ResponseEntity.ok(response);
     }
 

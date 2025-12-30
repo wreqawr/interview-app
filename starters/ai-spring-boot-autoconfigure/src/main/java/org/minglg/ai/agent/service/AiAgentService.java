@@ -35,15 +35,17 @@ public interface AiAgentService {
     AiAgentInstanceDescribeResponse describeAiAgentInstance(String aiAgentInstanceId, String region);
 
     /**
-     * 生成AI智能体调用响应
-     * 该方法用于根据指定的AI智能体ID、区域和智能体配置来生成AI智能体的调用响应
+     * 生成AI智能体调用
+     * 该方法用于创建AI智能体的调用实例，通过调用OpenAPI接口生成相应的调用凭证和配置信息
      *
-     * @param aiAgentId   AI智能体的唯一标识符，用于识别特定的AI智能体实例
-     * @param region      服务区域信息，指定AI智能体服务的地理区域或环境
-     * @param agentConfig AI智能体的配置参数对象，包含智能体的运行配置和参数设置
-     * @return GenerateAIAgentCallResponse 返回AI智能体调用的响应结果，包含调用状态和相关数据
+     * @param userId      用户ID，用于标识调用该接口的用户
+     * @param aiAgentId   AI智能体ID，指定要调用的AI智能体
+     * @param region      地域信息，指定服务所在的区域
+     * @param agentConfig 智能体配置信息，包含AI智能体的具体配置参数
+     * @return GenerateAIAgentCallResponse 包含调用结果的响应对象，包括实例ID、请求ID、令牌等信息
      */
-    GenerateAIAgentCallResponse generateAIAgentCall(String aiAgentId, String region, AgentConfig agentConfig);
+
+    GenerateAIAgentCallResponse generateAIAgentCall(String userId, String aiAgentId, String region, AgentConfig agentConfig);
 }
 
 

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -34,6 +35,7 @@ public class AsyncConfig {
     private final AsyncProperties asyncProperties;
 
     @Bean(name = "taskExecutor")
+    @Primary
     public Executor taskExecutor(TaskDecorator taskDecorator) {
         int corePoolSize = asyncProperties.getCorePoolSize();
         int maxPoolSize = asyncProperties.getMaxPoolSize();

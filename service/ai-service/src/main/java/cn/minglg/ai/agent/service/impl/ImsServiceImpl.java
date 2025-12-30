@@ -1,12 +1,12 @@
 package cn.minglg.ai.agent.service.impl;
 
-import cn.minglg.ai.agent.dto.AiAgentCallRequestDto;
 import cn.minglg.ai.agent.dto.AiAgentInstanceDescribeRequestDto;
 import cn.minglg.ai.agent.dto.GenerateMessageChatTokenRequestDto;
 import cn.minglg.ai.agent.dto.RtcAuthTokenRequestDto;
 import cn.minglg.ai.agent.service.ImsService;
 import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
+import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.commons.utils.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +17,8 @@ import org.minglg.ai.agent.entity.GenerateAIAgentCallResponse;
 import org.minglg.ai.agent.entity.GenerateMessageChatTokenResponse;
 import org.minglg.ai.agent.properties.AiAgentProperties;
 import org.minglg.ai.agent.service.AiAgentService;
+import org.minglg.ai.context.UserContextProvider;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -37,9 +39,13 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@SuppressWarnings("unchecked")
 public class ImsServiceImpl implements ImsService {
     private final AiAgentService aiAgentService;
     private final AiAgentProperties aiAgentProperties;
+    private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
+    private final UserContextProvider userContextProvider;
+
 
     /**
      * 获取RTC认证令牌
@@ -128,14 +134,38 @@ public class ImsServiceImpl implements ImsService {
                 .build();
     }
 
+    /**
+     * 生成AI代理调用
+     * 该方法根据传入的参数创建AI代理会话，包括问候语和唤醒查询的配置
+     *
+     * @param chatParamMap 包含AI代理调用参数的映射表，包含ai_agent_id、region和params等必要参数
+     * @return GenericResponse<?> 包含生成结果的通用响应对象，成功时返回会话token，失败时返回错误信息
+     */
     @Override
-    public GenericResponse<?> generateAIAgentCall(AiAgentCallRequestDto aiAgentCallRequestDto) {
-        String aiAgentId = aiAgentCallRequestDto.getAiAgentId();
-        String region = aiAgentCallRequestDto.getRegion();
-        AgentConfig agentConfig = AgentConfig.builder().greeting("你好，我是小帅！").wakeUpQuery("今天是星期几？天气怎么样？").build();
-        GenerateAIAgentCallResponse response = aiAgentService.generateAIAgentCall(aiAgentId, region, agentConfig);
+    public GenericResponse<?> generateAIAgentCall(Map<String, Object> chatParamMap) {
+        String aiAgentId = aiAgentProperties.getLiveMic().getVoiceAgentId();
+        String region = aiAgentProperties.getLiveMic().getRegion();
+        String greeting = "你好，欢迎来到智能面试系统！";
+        String wakeUpQuery;
+//        log.warn("===============");
+//        log.warn(chatParamMap.toString());
+        // 根据任务类型渲染唤醒查询语句，如果渲染失败则使用默认提示语
+        try {
+            Map<String, Object> params = (Map<String, Object>) chatParamMap.get("params");
+            wakeUpQuery = systemPromptDynamicTemplate.get(TaskType.MOCK_INTERVIEW_START).render(params);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            wakeUpQuery = "请你用礼貌温和的语言提示用户通过正规渠道使用本系统！";
+        }
+
+        // 构建AI代理配置对象
+        AgentConfig agentConfig = AgentConfig.builder().greeting(greeting).wakeUpQuery(wakeUpQuery).build();
+        String userId = String.valueOf(userContextProvider.getUserId());
+        GenerateAIAgentCallResponse response = aiAgentService.generateAIAgentCall(userId, aiAgentId, region, agentConfig);
         Integer code;
         String message;
+
+        // 根据响应结果设置返回码和消息
         if (response == null || response.getCode() != ResponseCode.OK) {
             code = ResponseCode.GENERATE_AI_AGENT_CALL_ERROR.getCode();
             message = "生成AI代理会话Token失败！";

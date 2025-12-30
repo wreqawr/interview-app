@@ -29,5 +29,7 @@ public class AiAgentProperties {
     public static class LiveMic {
         private String appId;
         private String appKey;
+        private String region = "cn-shanghai";
+        private String voiceAgentId;
     }
 }

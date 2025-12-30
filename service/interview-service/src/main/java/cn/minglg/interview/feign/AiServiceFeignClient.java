@@ -24,4 +24,7 @@ public interface AiServiceFeignClient {
 
     @PostMapping("/api/ai/chat")
     ResponseEntity<GenericResponse<String>> chat(@RequestBody Map<String, Object> chatParamMap);
+
+    @PostMapping("/api/ai/agent/generateAIAgentCall")
+    ResponseEntity<?> generateAIAgentCall(@RequestBody Map<String, Object> chatParamMap);
 }

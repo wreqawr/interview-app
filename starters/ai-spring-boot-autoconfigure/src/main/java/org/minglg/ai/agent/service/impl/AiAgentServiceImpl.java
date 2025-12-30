@@ -284,15 +284,16 @@ public class AiAgentServiceImpl implements AiAgentService {
 
     /**
      * 生成AI智能体调用
-     * 该方法用于创建AI智能体的调用实例，通过OpenAPI接口发起请求并处理响应
+     * 该方法用于创建AI智能体的调用实例，通过调用OpenAPI接口生成相应的调用凭证和配置信息
      *
-     * @param aiAgentId   AI智能体ID，用于标识具体的AI智能体实例
-     * @param region      区域信息，指定服务所在的地理区域
-     * @param agentConfig AI智能体配置信息，包含智能体的运行配置参数
-     * @return GenerateAIAgentCallResponse 包含调用结果的响应对象，包含成功时的业务数据或失败时的错误信息
+     * @param userId      用户ID，用于标识调用该接口的用户
+     * @param aiAgentId   AI智能体ID，指定要调用的AI智能体
+     * @param region      地域信息，指定服务所在的区域
+     * @param agentConfig 智能体配置信息，包含AI智能体的具体配置参数
+     * @return GenerateAIAgentCallResponse 包含调用结果的响应对象，包括实例ID、请求ID、令牌等信息
      */
     @Override
-    public GenerateAIAgentCallResponse generateAIAgentCall(String aiAgentId, String region, AgentConfig agentConfig) {
+    public GenerateAIAgentCallResponse generateAIAgentCall(String userId, String aiAgentId, String region, AgentConfig agentConfig) {
         log.info("generateAIAgentCall, aiAgentId:{}, agentConfig:{}", aiAgentId, agentConfig);
         // 构造接口请求的基本参数
         Params params = new Params()
@@ -317,6 +318,7 @@ public class AiAgentServiceImpl implements AiAgentService {
         Map<String, Object> queries = new HashMap<>();
         queries.put("AIAgentId", aiAgentId);
         queries.put("Expire", 3600);
+        queries.put("UserId", userId);
         queries.put("AgentConfig", JsonUtils.toJsonStr(agentConfig));
         // 初始化运行时选项和变量
         RuntimeOptions runtime = new RuntimeOptions();
@@ -361,5 +363,6 @@ public class AiAgentServiceImpl implements AiAgentService {
                 .requestId(requestId)
                 .build();
     }
+
 
 }
