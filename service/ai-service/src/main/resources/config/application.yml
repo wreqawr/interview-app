@@ -3,9 +3,9 @@ server:
 
 interview:
 #  webmvc:
-#    security:
-#      white-list-patterns:
-#        - /api/ai/agent/**
+  #    security:
+  #      white-list-patterns:
+  #        - /api/ai/agent/**
   ai:
     agent:
       enable: true
@@ -35,4 +35,5 @@ spring:
   config:
     import:
       - nacos:nacos-${spring.application.name}.yml?refreshEnabled=true
-      - nacos:nacos-redis.yml?refreshEnabled=true
+      #      - nacos:nacos-redis.yml?refreshEnabled=true
+      - nacos:nacos-redis-local.yml?refreshEnabled=true

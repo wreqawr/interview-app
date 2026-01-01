@@ -159,7 +159,10 @@ public class ImsServiceImpl implements ImsService {
         }
 
         // 构建AI代理配置对象
-        AgentConfig agentConfig = AgentConfig.builder().greeting(greeting).wakeUpQuery(wakeUpQuery).build();
+        AgentConfig agentConfig = AgentConfig.builder()
+                .greeting(greeting)
+                .wakeUpQuery(wakeUpQuery)
+                .build();
         String userId = String.valueOf(userContextProvider.getUserId());
         GenerateAIAgentCallResponse response = aiAgentService.generateAIAgentCall(userId, aiAgentId, region, agentConfig);
         Integer code;

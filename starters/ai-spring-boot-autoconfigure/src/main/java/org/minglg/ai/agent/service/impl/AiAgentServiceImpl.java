@@ -317,7 +317,7 @@ public class AiAgentServiceImpl implements AiAgentService {
         // 设置请求参数
         Map<String, Object> queries = new HashMap<>();
         queries.put("AIAgentId", aiAgentId);
-        queries.put("Expire", 3600);
+        queries.put("Expire", 600);
         queries.put("UserId", userId);
         queries.put("AgentConfig", JsonUtils.toJsonStr(agentConfig));
         // 初始化运行时选项和变量
