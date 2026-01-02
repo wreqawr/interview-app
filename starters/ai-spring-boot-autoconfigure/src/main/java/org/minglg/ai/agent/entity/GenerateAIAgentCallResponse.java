@@ -38,8 +38,5 @@ public class GenerateAIAgentCallResponse {
     private String token;
     @JsonProperty("channel_id")
     private String channelId;
-    @JsonProperty("ai_agent_user_id")
-    @JsonIgnore
-    private String aiAgentUserId;
     private String message;
 }

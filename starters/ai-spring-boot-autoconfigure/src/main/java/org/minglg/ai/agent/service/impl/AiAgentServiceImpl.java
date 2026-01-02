@@ -349,7 +349,6 @@ public class AiAgentServiceImpl implements AiAgentService {
                             .workflowType(body.get("WorkflowType").toString())
                             .token(body.get("Token").toString())
                             .channelId(body.get("ChannelId").toString())
-                            .aiAgentUserId(body.get("AIAgentUserId").toString())
                             .build();
                 }
             }
