@@ -1,0 +1,114 @@
+networks:
+  interview-net:
+    external: true
+
+services:
+  # API 网关
+  gateway:
+    image: interview-gateway:latest
+    container_name: interview-gateway
+    ports:
+      - "80:80"
+    environment:
+      - NACOS_SERVER_ADDR=nacos-standalone:8848
+      - NACOS_GROUP_NAME=prod
+      - JAVA_OPTS=-Xms512m -Xmx512m
+    networks:
+      - interview-net
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/actuator/health" ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 60s
+
+  # 用户服务
+  user-service:
+    image: interview-user-service:latest
+    container_name: interview-user-service
+    environment:
+      - NACOS_SERVER_ADDR=nacos-standalone:8848
+      - NACOS_GROUP_NAME=prod
+      - JAVA_OPTS=-Xms512m -Xmx512m
+    networks:
+      - interview-net
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:10000/actuator/health" ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 60s
+
+  # 简历服务
+  resume-service:
+    image: interview-resume-service:latest
+    container_name: interview-resume-service
+    environment:
+      - NACOS_SERVER_ADDR=nacos-standalone:8848
+      - NACOS_GROUP_NAME=prod
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+    networks:
+      - interview-net
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:20000/actuator/health" ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 90s
+
+  # AI 服务
+  ai-service:
+    image: interview-ai-service:latest
+    container_name: interview-ai-service
+    environment:
+      - NACOS_SERVER_ADDR=nacos-standalone:8848
+      - NACOS_GROUP_NAME=prod
+      - JAVA_OPTS=-Xms1024m -Xmx2048m
+    networks:
+      - interview-net
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:50000/actuator/health" ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 60s
+
+  # 面试服务
+  interview-service:
+    image: interview-interview-service:latest
+    container_name: interview-interview-service
+    environment:
+      - NACOS_SERVER_ADDR=nacos-standalone:8848
+      - NACOS_GROUP_NAME=prod
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+    networks:
+      - interview-net
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:30000/actuator/health" ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 60s
+
+  # 候选人服务
+  candidate-service:
+    image: interview-candidate-service:latest
+    container_name: interview-candidate-service
+    environment:
+      - NACOS_SERVER_ADDR=nacos-standalone:8848
+      - NACOS_GROUP_NAME=prod
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+    networks:
+      - interview-net
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:40000/actuator/health" ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 60s

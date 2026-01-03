@@ -2,7 +2,7 @@ server:
   port: 80
 spring:
   application:
-    name: interview-app-gateway
+    name: interview-gateway
   banner:
     location: classpath:banner/banner.txt
 
@@ -13,7 +13,7 @@ spring:
       discovery:
         server-addr: ${spring.cloud.nacos.server-addr}
         namespace: interview
-        group: dev
+        group: ${NACOS_GROUP_NAME}
 
     gateway:
       server:

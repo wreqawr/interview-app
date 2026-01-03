@@ -2,7 +2,7 @@ server:
   port: 50000
 
 interview:
-#  webmvc:
+  #  webmvc:
   #    security:
   #      white-list-patterns:
   #        - /api/ai/agent/**
@@ -28,12 +28,11 @@ spring:
       discovery:
         server-addr: ${spring.cloud.nacos.server-addr}
         namespace: interview
-        group: dev
+        group: ${NACOS_GROUP_NAME}
       config:
         namespace: ${spring.cloud.nacos.discovery.namespace}
         group: ${spring.cloud.nacos.discovery.group}
   config:
     import:
       - nacos:nacos-${spring.application.name}.yml?refreshEnabled=true
-      #      - nacos:nacos-redis.yml?refreshEnabled=true
-      - nacos:nacos-redis-local.yml?refreshEnabled=true
+      - nacos:nacos-redis.yml?refreshEnabled=true
