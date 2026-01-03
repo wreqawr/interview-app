@@ -7,8 +7,6 @@ services:
   gateway:
     image: interview-gateway:latest
     container_name: interview-gateway
-    ports:
-      - "80:80"
     environment:
       - NACOS_SERVER_ADDR=nacos-standalone:8848
       - NACOS_GROUP_NAME=prod
