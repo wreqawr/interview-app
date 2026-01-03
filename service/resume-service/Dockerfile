@@ -79,6 +79,6 @@ EXPOSE 20000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:20000/actuator/health || exit 1
 
-# 启动应用
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# 启动应用（使用环境变量 JAVA_OPTS）
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
 

@@ -10,7 +10,15 @@ services:
     environment:
       - NACOS_SERVER_ADDR=nacos-standalone:8848
       - NACOS_GROUP_NAME=prod
-      - JAVA_OPTS=-Xms512m -Xmx512m
+      - JAVA_OPTS=-Xms256m -Xmx384m -XX:+UseSerialGC -XX:MaxMetaspaceSize=128m -XX:+UseContainerSupport
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
+        reservations:
+          cpus: '0.25'
+          memory: 256m
     networks:
       - interview-net
     restart: unless-stopped
@@ -28,7 +36,15 @@ services:
     environment:
       - NACOS_SERVER_ADDR=nacos-standalone:8848
       - NACOS_GROUP_NAME=prod
-      - JAVA_OPTS=-Xms512m -Xmx512m
+      - JAVA_OPTS=-Xms256m -Xmx384m -XX:+UseSerialGC -XX:MaxMetaspaceSize=128m -XX:+UseContainerSupport
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
+        reservations:
+          cpus: '0.25'
+          memory: 256m
     networks:
       - interview-net
     restart: unless-stopped
@@ -46,7 +62,15 @@ services:
     environment:
       - NACOS_SERVER_ADDR=nacos-standalone:8848
       - NACOS_GROUP_NAME=prod
-      - JAVA_OPTS=-Xms512m -Xmx1024m
+      - JAVA_OPTS=-Xms384m -Xmx512m -XX:+UseSerialGC -XX:MaxMetaspaceSize=128m -XX:+UseContainerSupport
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768m
+        reservations:
+          cpus: '0.25'
+          memory: 384m
     networks:
       - interview-net
     restart: unless-stopped
@@ -64,7 +88,15 @@ services:
     environment:
       - NACOS_SERVER_ADDR=nacos-standalone:8848
       - NACOS_GROUP_NAME=prod
-      - JAVA_OPTS=-Xms1024m -Xmx2048m
+      - JAVA_OPTS=-Xms512m -Xmx768m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:MaxMetaspaceSize=256m -XX:+UseContainerSupport
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1024m
+        reservations:
+          cpus: '0.5'
+          memory: 512m
     networks:
       - interview-net
     restart: unless-stopped
@@ -82,7 +114,15 @@ services:
     environment:
       - NACOS_SERVER_ADDR=nacos-standalone:8848
       - NACOS_GROUP_NAME=prod
-      - JAVA_OPTS=-Xms512m -Xmx1024m
+      - JAVA_OPTS=-Xms384m -Xmx512m -XX:+UseSerialGC -XX:MaxMetaspaceSize=128m -XX:+UseContainerSupport
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768m
+        reservations:
+          cpus: '0.25'
+          memory: 384m
     networks:
       - interview-net
     restart: unless-stopped
@@ -100,7 +140,15 @@ services:
     environment:
       - NACOS_SERVER_ADDR=nacos-standalone:8848
       - NACOS_GROUP_NAME=prod
-      - JAVA_OPTS=-Xms512m -Xmx1024m
+      - JAVA_OPTS=-Xms256m -Xmx384m -XX:+UseSerialGC -XX:MaxMetaspaceSize=128m -XX:+UseContainerSupport
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
+        reservations:
+          cpus: '0.25'
+          memory: 256m
     networks:
       - interview-net
     restart: unless-stopped

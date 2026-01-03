@@ -38,7 +38,7 @@ export NACOS_SERVER_ADDR=your-nacos-host:8848
 
 ```bash
 # 使用构建脚本（推荐）
-./build-docker.sh
+./build-app.sh
 
 # 或使用 docker-compose 构建
 docker-compose build
@@ -85,12 +85,12 @@ docker-compose down
 
 ```bash
 # 使用构建脚本
-./build-docker.sh gateway
-./build-docker.sh user-service
-./build-docker.sh resume-service
-./build-docker.sh ai-service
-./build-docker.sh interview-service
-./build-docker.sh candidate-service
+./build-app.sh gateway
+./build-app.sh user-service
+./build-app.sh resume-service
+./build-app.sh ai-service
+./build-app.sh interview-service
+./build-app.sh candidate-service
 
 # 或使用 Docker 命令
 docker build -f gateway/Dockerfile -t interview-gateway:latest .
@@ -100,7 +100,7 @@ docker build -f service/user-service/Dockerfile -t interview-user-service:latest
 ### 构建所有服务
 
 ```bash
-./build-docker.sh
+./build-app.sh
 ```
 
 ### Maven 镜像加速
@@ -357,7 +357,7 @@ curl http://localhost:10000/actuator/health
 
 ```bash
 # 1. 重新构建镜像
-./build-docker.sh user-service
+./build-app.sh user-service
 
 # 2. 重启服务
 docker-compose up -d --no-deps user-service
@@ -367,7 +367,7 @@ docker-compose up -d --no-deps user-service
 
 ```bash
 # 1. 重新构建所有镜像
-./build-docker.sh
+./build-app.sh
 
 # 2. 重启所有服务
 docker-compose up -d --force-recreate

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Docker 构建脚本
-# 使用方法: ./build-docker.sh [service-name]
+# 使用方法: ./build-app.sh [service-name]
 # 不传参数则构建所有服务（并行执行）
 
 # 颜色输出
