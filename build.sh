@@ -18,14 +18,17 @@ buildWeb(){
 }
 
 if [ $# -eq 0 ]; then
+  sh deploy.sh stop
   buildApp
   buildWeb
 else [ $# -eq 1 ]
     case $1 in
        app)
+         sh deploy.sh stop app
          buildApp
          ;;
        web)
+         sh deploy.sh stop web
          buildWeb
          ;;
        *)
