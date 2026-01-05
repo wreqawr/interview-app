@@ -14,7 +14,7 @@ buildApp(){
 
 buildWeb(){
   cd ${WEB_DIR}
-  sh build-web.sh
+  bash build-web.sh
 }
 
 if [ $# -eq 0 ]; then
@@ -24,11 +24,11 @@ if [ $# -eq 0 ]; then
 else [ $# -eq 1 ]
     case $1 in
        app)
-         sh deploy.sh stop app
+         bash deploy.sh stop app
          buildApp
          ;;
        web)
-         sh deploy.sh stop web
+         bash deploy.sh stop web
          buildWeb
          ;;
        *)

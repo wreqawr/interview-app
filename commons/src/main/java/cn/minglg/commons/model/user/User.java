@@ -28,7 +28,6 @@ public class User implements Serializable {
      */
     private Long userId;
     private String username;
-    @JsonIgnore
     private String password;
     private String nickname;
     private String email;

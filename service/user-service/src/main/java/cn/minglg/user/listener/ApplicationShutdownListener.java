@@ -36,10 +36,10 @@ public class ApplicationShutdownListener implements ApplicationListener<ContextC
      */
     @Override
     public void onApplicationEvent(@NonNull ContextClosedEvent event) {
-//        String authKeyPrefix = securityProperties.getAuthKeyPrefix();
+        String authKeyPrefix = securityProperties.getAuthKeyPrefix();
         String captchaKeyPrefix = securityProperties.getCaptcha().getRedisKeyPrefix();
         String roleRedisKeyPrefix = registerProperties.getRoleRedisKeyPrefix();
-//        this.deleteKeysByPrefix(authKeyPrefix);
+        this.deleteKeysByPrefix(authKeyPrefix);
         this.deleteKeysByPrefix(captchaKeyPrefix);
         this.deleteKeysByPrefix(roleRedisKeyPrefix);
     }

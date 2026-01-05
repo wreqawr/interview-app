@@ -54,8 +54,11 @@ elif [ $# -eq 1 ]; then
          ;;
      esac
 else
-  local func=$1
-  local options=$2
-  $(${func}${options^})
-
+  func=$1
+  options=$2
+  echo $func
+  echo $options
+  cmd="${func}${options^}"
+  echo "cmd:${cmd}"
+  $(${cmd})
 fi
