@@ -1,8 +1,8 @@
-package cn.minglg.user.listener;
+package cn.minglg.resume.listener;
 
-import cn.minglg.user.properties.RegisterProperties;
+import cn.minglg.commons.bloom.BloomFilter;
+import cn.minglg.resume.constants.ResumeConstants;
 import lombok.RequiredArgsConstructor;
-import org.minglg.authentication.properties.WebMvcSecurityProperties;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.data.redis.core.Cursor;
@@ -11,38 +11,37 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * ClassName:ApplicationShutdownListener
- * Package:cn.minglg.interview.auth.listener
- * Description:监听springboot项目停止
+ * Package:cn.minglg.resume.listener
+ * Description:
  *
  * @Author kfzx-minglg
- * @Create 2025/7/18
+ * @Create 2026/1/7
  * @Version 1.0
  */
 @RequiredArgsConstructor
 @Component
 public class ApplicationShutdownListener implements ApplicationListener<ContextClosedEvent> {
+    private final List<BloomFilter<?>> bloomFilter;
     private final StringRedisTemplate redisTemplate;
-    private final WebMvcSecurityProperties securityProperties;
-    private final RegisterProperties registerProperties;
-
 
     /**
-     * 处理应用程序事件。
-     * 当应用程序关闭时，清除redis中所有用户登录信息、验证码信息
+     * 应用程序事件监听方法，处理上下文关闭事件
+     * 在应用关闭时清理布隆过滤器和相关的Redis缓存数据
      *
-     * @param event 要响应的事件
+     * @param event 上下文关闭事件对象，包含应用关闭的相关信息
      */
     @Override
     public void onApplicationEvent(@NonNull ContextClosedEvent event) {
-        String authKeyPrefix = securityProperties.getAuthKeyPrefix();
-        String captchaKeyPrefix = securityProperties.getCaptcha().getRedisKeyPrefix();
-        String roleRedisKeyPrefix = registerProperties.getRoleRedisKeyPrefix();
-        this.deleteKeysByPrefix(authKeyPrefix);
-        this.deleteKeysByPrefix(captchaKeyPrefix);
-        this.deleteKeysByPrefix(roleRedisKeyPrefix);
+        // 销毁所有布隆过滤器实例，释放内存资源
+        bloomFilter.forEach(BloomFilter::destroyBloomFilter);
+        // 删除Redis中以简历元数据前缀开头的所有缓存键
+        deleteKeysByPrefix(ResumeConstants.RESUME_METADATA_REDIS_KEY_PREFIX);
     }
+
 
     /**
      * 删除所有以指定前缀开头的key

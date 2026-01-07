@@ -1,10 +1,6 @@
 package cn.minglg.resume.service;
 
-import cn.minglg.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.resume.pojo.ResumeMetadata;
-import cn.minglg.resume.properties.ResumeProperties;
-import cn.minglg.resume.repository.ResumeDetailRepository;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
  * ClassName:AsyncService
@@ -20,14 +16,9 @@ public interface AsyncService {
                                 String taskId,
                                 String resumeId,
                                 String userMessage,
-                                ResumeMetadataMapper resumeMetadataMapper,
-                                ResumeDetailRepository resumeDetailRepository,
                                 ResumeMetadata resumeMetadata);
 
     void resumeAnalyzeAndSave(Long userId,
                               String taskId,
-                              String resumeId, ResumeProperties resumeProperties,
-                              StringRedisTemplate redisTemplate,
-                              ResumeMetadataMapper resumeMetadataMapper,
-                              ResumeDetailRepository resumeDetailRepository);
+                              String resumeId);
 }

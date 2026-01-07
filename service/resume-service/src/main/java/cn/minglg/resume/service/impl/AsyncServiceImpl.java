@@ -6,6 +6,7 @@ import cn.minglg.commons.model.resume.ResumeDetail;
 import cn.minglg.commons.model.task.TaskStatus;
 import cn.minglg.commons.model.task.TaskType;
 import cn.minglg.commons.utils.JsonUtils;
+import cn.minglg.resume.constants.ResumeConstants;
 import cn.minglg.resume.exception.ResumeAnalyzeAndSaveException;
 import cn.minglg.resume.feign.AiServiceFeignClient;
 import cn.minglg.resume.mapper.ResumeMetadataMapper;
@@ -36,6 +37,11 @@ import java.util.Map;
 @Slf4j
 public class AsyncServiceImpl implements AsyncService {
     private final AiServiceFeignClient aiServiceFeignClient;
+    private final StringRedisTemplate redisTemplate;
+    private final ResumeMetadataMapper resumeMetadataMapper;
+    private final ResumeDetailRepository resumeDetailRepository;
+    private final ResumeProperties resumeProperties;
+
 
     @Override
     @Async("taskExecutor")
@@ -44,12 +50,14 @@ public class AsyncServiceImpl implements AsyncService {
                                        String taskId,
                                        String resumeId,
                                        String userMessage,
-                                       ResumeMetadataMapper resumeMetadataMapper,
-                                       ResumeDetailRepository resumeDetailRepository,
                                        ResumeMetadata resumeMetadata) {
         log.info("开始实际执行异步任务resumeSummarizeAndSave，taskId：{}", taskId);
         try {
-            // 第一步：获取ai解析结果
+            // 延时双删确保缓存一致性
+            // 第一步：删除redis缓存
+            String resumeRedisKeyPrefix = ResumeConstants.RESUME_METADATA_REDIS_KEY_PREFIX;
+            redisTemplate.delete(resumeRedisKeyPrefix + ":" + userId);
+            // 第二步：获取ai解析结果
             ResponseEntity<GenericResponse<String>> chatResponse = aiServiceFeignClient.chat(Map.of("userMessage", userMessage, "taskType", TaskType.RESUME_SUMMARIZE));
             String chatResult = null;
             if (chatResponse.getBody() != null) {
@@ -57,16 +65,20 @@ public class AsyncServiceImpl implements AsyncService {
             }
             ResumeDetail resumeDetail = JsonUtils.toBean(chatResult, ResumeDetail.class);
 
-            // 第二步：mongodb保存解析结果
+            // 第三步：mongodb保存解析结果
             resumeDetail.setUserId(userId);
             resumeDetail.setResumeId(resumeId);
             resumeDetail.setRawText(userMessage);
             resumeDetailRepository.save(resumeDetail);
 
-            // 第三步：mysql保存简历元信息
+            // 第四步：mysql保存简历元信息
             String resumeTitle = resumeDetail.getBasicInfo().getTargetTitle();
             resumeMetadata.setResumeTitle(resumeTitle);
             resumeMetadataMapper.addResumeMetadata(resumeMetadata);
+            // 第五步：延时删除redis
+            Thread.sleep(200);
+            redisTemplate.delete(resumeRedisKeyPrefix + ":" + userId);
+
         } catch (Exception e) {
             log.error("异步任务resumeSummarizeAndSave执行异常，taskId：{}", taskId);
             throw new ResumeAnalyzeAndSaveException(e.getMessage());
@@ -79,11 +91,7 @@ public class AsyncServiceImpl implements AsyncService {
     @TaskHandler(taskType = TaskType.RESUME_ANALYZE)
     public void resumeAnalyzeAndSave(Long userId,
                                      String taskId,
-                                     String resumeId,
-                                     ResumeProperties resumeProperties,
-                                     StringRedisTemplate redisTemplate,
-                                     ResumeMetadataMapper resumeMetadataMapper,
-                                     ResumeDetailRepository resumeDetailRepository) {
+                                     String resumeId) {
 
         log.info("开始实际执行异步任务resumeAnalyzeAndSave，taskId：{}", taskId);
         ResumeDetail resumeDetail = resumeDetailRepository.findByUserIdAndResumeId(userId, resumeId);

@@ -11,7 +11,10 @@ import cn.minglg.commons.model.resume.ResumeDetail;
 import cn.minglg.commons.model.resume.ResumeStatus;
 import cn.minglg.commons.model.task.TaskStatus;
 import cn.minglg.commons.model.user.User;
+import cn.minglg.commons.utils.JsonUtils;
 import cn.minglg.commons.utils.TaskUtils;
+import cn.minglg.resume.bloom.ResumeMetadataBloomFilter;
+import cn.minglg.resume.constants.ResumeConstants;
 import cn.minglg.resume.exception.*;
 import cn.minglg.resume.mapper.ResumeMetadataMapper;
 import cn.minglg.resume.pojo.ResumeMetadata;
@@ -23,6 +26,7 @@ import cn.minglg.resume.service.MinioService;
 import cn.minglg.resume.service.ResumeService;
 import cn.minglg.resume.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.parser.AutoDetectParser;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -44,6 +48,7 @@ import java.util.*;
  * @Create 2025/7/23
  * @Version 1.0
  */
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ResumeServiceImpl implements ResumeService {
@@ -56,6 +61,9 @@ public class ResumeServiceImpl implements ResumeService {
     private final StringRedisTemplate redisTemplate;
     private final RequestScopedUserContext userContext;
     private final AsyncService asyncService;
+    private final ResumeMetadataBloomFilter resumeMetadataBloomFilter;
+
+    private final String resumeRedisKeyPrefix = ResumeConstants.RESUME_METADATA_REDIS_KEY_PREFIX;
 
 
     /**
@@ -118,8 +126,12 @@ public class ResumeServiceImpl implements ResumeService {
             String content = FileUtils.getContentFromFile(autoDetectParser, is2);
             // 第七步：调用异步方法，分析提取简历信息，并持久化保存
             String taskId = TaskUtils.generateTaskId();
-            asyncService.resumeSummarizeAndSave(userId, taskId, resumeId, content, resumeMetadataMapper, resumeDetailRepository, resumeMetadata);
-            // 第八步：构建响应
+            asyncService.resumeSummarizeAndSave(userId, taskId, resumeId, content, resumeMetadata);
+            // 第八步：向布隆过滤器添加数据
+            if (!resumeMetadataBloomFilter.maybeExist(String.valueOf(userId))) {
+                resumeMetadataBloomFilter.addValue(String.valueOf(userId));
+            }
+            // 第九步：构建响应
             Map<String, ? extends Serializable> data = Map.of("taskId", taskId, "resumeId", resumeId);
 
             return GenericResponse.<Map<String, ? extends Serializable>>builder().code(ResponseCode.OK.getCode())
@@ -192,23 +204,29 @@ public class ResumeServiceImpl implements ResumeService {
             Long userId = currentUser.getUserId();
             List<String> resumeIdList = Arrays.stream(resumeIds).toList();
             List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeIdList(userId, resumeIdList);
-            // 第一步：删除mysql中元信息
+            // 第一步：删除redis缓存（元信息+详细信息）
+            String redisKey = resumeRedisKeyPrefix + ":" + userId;
+            redisTemplate.delete(redisKey);
+            List<String> redisKeyList = resumeIdList.stream().map(resumeId -> resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId).toList();
+            redisTemplate.delete(redisKeyList);
+            // 第二步：删除mysql中元信息
             int affectRows = resumeMetadataMapper.deleteResumeMetadataByUserIdAndResumeId(userId, resumeIdList);
             if (affectRows == 0) {
                 throw new ResumeDeleteException("删除失败，简历信息不存在！");
             }
-            // 第二步：删除mongodb中的详细信息
+            // 第三步：删除mongodb中的详细信息
             resumeIdList.forEach(resumeId -> resumeDetailRepository.deleteResumeDetailByUserIdAndResumeId(userId, resumeId));
-            // 第三步：删除minio存储的物理文件
+            // 第四步：删除minio存储的物理文件
             for (ResumeMetadata resumeMetadata : resumeMetadataList) {
                 String bucketName = resumeMetadata.getBucketName();
                 String objectName = resumeMetadata.getObjectName();
                 minioService.deleteFile(bucketName, objectName);
             }
-            // 第四步：删除redis中存储的简历信息
-            List<String> redisKeyList = resumeIdList.stream().map(resumeId -> resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId).toList();
+            // 第五步：redis延时双删（元信息+详细信息）
+            Thread.sleep(200);
+            redisTemplate.delete(redisKey);
             redisTemplate.delete(redisKeyList);
-            // 第五步：构建响应
+            // 第六步：构建响应
             result = GenericResponse.builder()
                     .code(ResponseCode.OK.getCode())
                     .message("简历删除成功！").build();
@@ -225,9 +243,36 @@ public class ResumeServiceImpl implements ResumeService {
      */
     @Override
     public GenericResponse<?> resumeMetadataDisplay() {
-        User currentUser = userContext.getUser();
-        List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserId(currentUser.getUserId());
-        String message = resumeMetadataList == null ? "未查询到当前用户的简历信息！" : "简历信息获取成功！";
+        String message = "未查询到当前用户的简历信息！";
+        List<ResumeMetadata> resumeMetadataList = null;
+
+        // 第一步：查询布隆过滤器中是否存在该用户的简历，不存在直接返回
+        if (resumeMetadataBloomFilter.maybeExist(String.valueOf(userContext.getUser().getUserId()))) {
+            // 布隆过滤器存在，查redis
+            log.info("布隆过滤器存在该用户信息，放行，查redis");
+            String redisKey = resumeRedisKeyPrefix + userContext.getUser().getUserId();
+            List<String> resumeMetadataStringList = redisTemplate.opsForList().range(redisKey, 0, -1);
+            // redis能查到，直接返回
+            if (resumeMetadataStringList != null && !resumeMetadataStringList.isEmpty()) {
+                log.info("redis能查到该用户信息，直接返回");
+                message = "简历信息获取成功！";
+                resumeMetadataList = resumeMetadataStringList.stream()
+                        .map(resumeMetadataString -> JsonUtils.toBean(resumeMetadataString, ResumeMetadata.class))
+                        .toList();
+            } else {
+                log.info("redis不能查到该用户简历信息，查mysql");
+                User currentUser = userContext.getUser();
+                resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserId(currentUser.getUserId());
+                message = resumeMetadataList == null ? "未查询到当前用户的简历信息！" : "简历信息获取成功！";
+                if (resumeMetadataList != null && !resumeMetadataList.isEmpty()) {
+                    // 回写redis
+                    log.info("mysql查询到了用户简历信息，回写redis");
+                    redisTemplate.opsForList().leftPushAll(redisKey, resumeMetadataList.stream().map(JsonUtils::toJsonStr).toArray(String[]::new));
+                }
+
+            }
+        }
+
         return GenericResponse.builder()
                 .code(ResponseCode.OK.getCode())
                 .data(resumeMetadataList)
@@ -339,7 +384,7 @@ public class ResumeServiceImpl implements ResumeService {
         }
         // 三级缓存从ai获取，触发异步任务
         String taskId = TaskUtils.generateTaskId();
-        asyncService.resumeAnalyzeAndSave(userId, taskId, resumeId, resumeProperties, redisTemplate, resumeMetadataMapper, resumeDetailRepository);
+        asyncService.resumeAnalyzeAndSave(userId, taskId, resumeId);
         return GenericResponse.builder()
                 .code(ResponseCode.ASYNC_TASK_RUNNING.getCode())
                 .data(Map.of("taskId", taskId))
@@ -397,5 +442,4 @@ public class ResumeServiceImpl implements ResumeService {
                 .message("获取简历详细信息成功")
                 .build();
     }
-
 }
