@@ -12,6 +12,8 @@ import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.Executor;
+
 /**
  * ClassName:ResumeMetadataBloomFilter
  * Package:cn.minglg.resume.bloom
@@ -24,9 +26,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ResumeMetadataBloomFilter implements BloomFilter<String> {
+public class ResumeMetadataBloomFilter implements BloomFilter<Long> {
     private final RedissonClient redissonClient;
     private final ResumeMetadataMapper resumeMetadataMapper;
+    private final Executor taskExecutor;
     // 暂时写死，后续可以放到配置文件中
     private static final String BLOOM_FILTER_NAME = ResumeConstants.RESUME_METADATA_BLOOM_FILTER_NAME;
     private static final long EXPECT_SIZE = ResumeConstants.RESUME_METADATA_BLOOM_FILTER_EXPECT_SIZE;
@@ -38,7 +41,7 @@ public class ResumeMetadataBloomFilter implements BloomFilter<String> {
      * @return 返回RBloomFilter类型的布隆过滤器实例
      */
     @Override
-    public RBloomFilter<String> getBloomFilter() {
+    public RBloomFilter<Long> getBloomFilter() {
         return redissonClient.getBloomFilter(BLOOM_FILTER_NAME);
     }
 
@@ -50,17 +53,24 @@ public class ResumeMetadataBloomFilter implements BloomFilter<String> {
     @Override
     @PostConstruct
     public void initBloomFilter() {
-        RBloomFilter<String> bloomFilter = getBloomFilter();
-        // 初始化布隆过滤器
-        if (bloomFilter.isExists()) {
-            bloomFilter.delete();
-        }
-        bloomFilter.tryInit(EXPECT_SIZE, ERROR_RATE);
-        LambdaQueryWrapper<ResumeMetadata> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.select(ResumeMetadata::getUserId)
-                .groupBy(ResumeMetadata::getUserId);
-        // 缓存预热，将用户id添加到布隆过滤器中
-        resumeMetadataMapper.selectList(queryWrapper)
-                .forEach(item -> bloomFilter.add(String.valueOf(item.getUserId())));
+
+        taskExecutor.execute(() -> {
+            log.info("异步初始化布隆过滤器...");
+            RBloomFilter<Long> bloomFilter = getBloomFilter();
+            // 初始化布隆过滤器
+            if (bloomFilter.isExists()) {
+                log.info("布隆过滤器已存在，无需初始化！");
+                return;
+//            bloomFilter.delete();
+            }
+            bloomFilter.tryInit(EXPECT_SIZE, ERROR_RATE);
+            LambdaQueryWrapper<ResumeMetadata> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.select(ResumeMetadata::getUserId)
+                    .groupBy(ResumeMetadata::getUserId);
+            // 缓存预热，将用户id添加到布隆过滤器中
+            resumeMetadataMapper.selectList(queryWrapper)
+                    .forEach(item -> bloomFilter.add(item.getUserId()));
+            log.info("异步布隆过滤器初始化完毕！");
+        });
     }
 }

@@ -128,8 +128,8 @@ public class ResumeServiceImpl implements ResumeService {
             String taskId = TaskUtils.generateTaskId();
             asyncService.resumeSummarizeAndSave(userId, taskId, resumeId, content, resumeMetadata);
             // 第八步：向布隆过滤器添加数据
-            if (!resumeMetadataBloomFilter.maybeExist(String.valueOf(userId))) {
-                resumeMetadataBloomFilter.addValue(String.valueOf(userId));
+            if (!resumeMetadataBloomFilter.maybeExist(userId)) {
+                resumeMetadataBloomFilter.addValue(userId);
             }
             // 第九步：构建响应
             Map<String, ? extends Serializable> data = Map.of("taskId", taskId, "resumeId", resumeId);
@@ -245,12 +245,13 @@ public class ResumeServiceImpl implements ResumeService {
     public GenericResponse<?> resumeMetadataDisplay() {
         String message = "未查询到当前用户的简历信息！";
         List<ResumeMetadata> resumeMetadataList = null;
+        Long userId = userContext.getUser().getUserId();
 
         // 第一步：查询布隆过滤器中是否存在该用户的简历，不存在直接返回
-        if (resumeMetadataBloomFilter.maybeExist(String.valueOf(userContext.getUser().getUserId()))) {
+        if (resumeMetadataBloomFilter.maybeExist(userId)) {
             // 布隆过滤器存在，查redis
             log.info("布隆过滤器存在该用户信息，放行，查redis");
-            String redisKey = resumeRedisKeyPrefix + userContext.getUser().getUserId();
+            String redisKey = resumeRedisKeyPrefix + userId;
             List<String> resumeMetadataStringList = redisTemplate.opsForList().range(redisKey, 0, -1);
             // redis能查到，直接返回
             if (resumeMetadataStringList != null && !resumeMetadataStringList.isEmpty()) {
@@ -261,8 +262,7 @@ public class ResumeServiceImpl implements ResumeService {
                         .toList();
             } else {
                 log.info("redis不能查到该用户简历信息，查mysql");
-                User currentUser = userContext.getUser();
-                resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserId(currentUser.getUserId());
+                resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserId(userId);
                 message = resumeMetadataList == null ? "未查询到当前用户的简历信息！" : "简历信息获取成功！";
                 if (resumeMetadataList != null && !resumeMetadataList.isEmpty()) {
                     // 回写redis
@@ -348,14 +348,17 @@ public class ResumeServiceImpl implements ResumeService {
         String hashKeyForAnalyzeStatus = "analyzeStatus";
         String hashKeyForAnalyzeTaskId = "analyzeTaskId";
         // 第一步：查询该简历是否已经处于分析状态，如是则避免重复请求，消耗资源
-        String status = (String) redisTemplate.opsForHash().get(redisKey, hashKeyForAnalyzeStatus);
-        String runningTaskId = (String) redisTemplate.opsForHash().get(redisKey, hashKeyForAnalyzeTaskId);
-        if (TaskStatus.RUNNING.toString().equals(status) && runningTaskId != null) {
-            return GenericResponse.builder()
-                    .code(ResponseCode.ASYNC_TASK_RUNNING.getCode())
-                    .data(Map.of("taskId", runningTaskId))
-                    .message("简历正在分析中，请勿重复提交！")
-                    .build();
+        List<Object> analyzeProcessingResult = redisTemplate.opsForHash().multiGet(redisKey, List.of(hashKeyForAnalyzeStatus, hashKeyForAnalyzeTaskId));
+        if (analyzeProcessingResult.size() == 2) {
+            String status = (String) analyzeProcessingResult.get(0);
+            String runningTaskId = (String) analyzeProcessingResult.get(1);
+            if (TaskStatus.RUNNING.toString().equals(status) && runningTaskId != null) {
+                return GenericResponse.builder()
+                        .code(ResponseCode.ASYNC_TASK_RUNNING.getCode())
+                        .data(Map.of("taskId", runningTaskId))
+                        .message("简历正在分析中，请勿重复提交！")
+                        .build();
+            }
         }
         // 第二步：首先查询数据库中是否已经保存了该简历的解析结果，采用：Redis-mongodb-ai，3级缓存提高查询效率
         // 一级缓存：redis读取

@@ -66,6 +66,8 @@ build_service() {
         tail -5 "$log_file" | grep -E "(Step|Successfully|built|tagged)" | sed "s/^/[${service}] /" || tail -3 "$log_file" | sed "s/^/[${service}] /"
 #        rm -f "$log_file"
         echo -e "${GREEN}[$(date '+%H:%M:%S')] ✓ 服务 ${service} 构建成功${NC}"
+        # 保存并压缩镜像
+#        docker save ${image_name}:latest | gzip > ${image_name}.tar.gz
         return 0
     else
         # 构建失败，显示错误信息
