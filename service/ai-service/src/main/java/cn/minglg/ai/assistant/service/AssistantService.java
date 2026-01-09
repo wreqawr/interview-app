@@ -6,12 +6,15 @@ import cn.minglg.commons.model.response.GenericResponse;
 import cn.minglg.commons.model.response.ResponseCode;
 import cn.minglg.commons.model.task.TaskType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.minglg.ai.advisors.CommonAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,6 +30,7 @@ import java.util.Objects;
  */
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class AssistantService {
     private final ChatClient chatClient;
     private final Map<TaskType, PromptTemplate> systemPromptDynamicTemplate;
@@ -90,8 +94,10 @@ public class AssistantService {
     public GenericResponse<String> assistant(String userMessage, TaskType taskType) {
         try {
             // 调用聊天客户端生成回复
+            Map<String, Object> param = Map.of("today", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy年M月d日")));
+            log.info("system prompt: {}", systemPromptDynamicTemplate.get(taskType).render(param));
             String data = chatClient.prompt()
-                    .system(systemPromptDynamicTemplate.get(taskType).render())
+                    .system(systemPromptDynamicTemplate.get(taskType).render(param))
                     .user(userMessage)
                     .call()
                     .content();

@@ -205,7 +205,7 @@ public class ResumeServiceImpl implements ResumeService {
             List<String> resumeIdList = Arrays.stream(resumeIds).toList();
             List<ResumeMetadata> resumeMetadataList = resumeMetadataMapper.getResumeMetadataByUserIdAndResumeIdList(userId, resumeIdList);
             // 第一步：删除redis缓存（元信息+详细信息）
-            String redisKey = resumeRedisKeyPrefix + ":" + userId;
+            String redisKey = resumeRedisKeyPrefix + userId;
             redisTemplate.delete(redisKey);
             List<String> redisKeyList = resumeIdList.stream().map(resumeId -> resumeProperties.getRedisKeyPrefixForAnalyze() + ":" + userId + ":" + resumeId).toList();
             redisTemplate.delete(redisKeyList);
